@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -126,453 +126,548 @@ nav button.on{color:var(--ink);box-shadow:inset 0 3px 0 var(--flap)}
   .flap:nth-child(3){animation-delay:.16s}
   @keyframes drop{from{transform:rotateX(90deg);opacity:0}to{transform:none;opacity:1}}
 }
+
+.lead{font-size:1.05rem}
+.note.hook{border-color:var(--ok);background:var(--okbg)}
+.btn.listen{padding:8px 14px;margin:0 0 14px;font-size:.95rem}
+.btn.danger{border-color:var(--ko);color:var(--ko)}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.cats .opt{margin:6px 0}
+ol.built{padding-left:1.3em;margin:8px 0 14px}
+ol.built li{color:var(--ok);font-weight:700;margin-bottom:4px}
+.card .q{font-size:1.15rem;font-weight:700}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <nav><div>
-  <button data-tab="home">Accueil</button>
-  <button data-tab="fiches">Fiches</button>
-  <button data-tab="weak">Faiblesses</button>
-  <button data-tab="settings">Réglages</button>
+  <button data-tab="home">Home</button>
+  <button data-tab="lessons">Lessons</button>
+  <button data-tab="weak">Weak spots</button>
+  <button data-tab="settings">Settings</button>
 </div></nav>
-
 <script>
-/* ============ PARAMÈTRES ============ */
-const FORMATION = "2026-11-22";      // Formation Blueguard, Lausanne
-const SESSION_MIN = 15;
-const INTERVALS = {1:1,2:3,3:7,4:14,5:30}; // jours avant la prochaine révision, par boîte
-
-/* ============ DOMAINES (référentiel ISC2, avril 2024) ============ */
+/* ================= CONTENT ================= */
 const DOMAINS = [
- {id:1,en:"Security and Risk Management",fr:"Sécurité et gestion des risques",w:16},
- {id:2,en:"Asset Security",fr:"Sécurité des actifs",w:10},
- {id:3,en:"Security Architecture and Engineering",fr:"Architecture et ingénierie",w:13},
- {id:4,en:"Communication and Network Security",fr:"Réseaux et communications",w:13},
- {id:5,en:"Identity and Access Management",fr:"Identités et accès",w:13},
- {id:6,en:"Security Assessment and Testing",fr:"Évaluation et tests",w:12},
- {id:7,en:"Security Operations",fr:"Opérations de sécurité",w:13},
- {id:8,en:"Software Development Security",fr:"Sécurité du développement logiciel",w:10}
+ {id:1,name:"Security and Risk Management",w:16},
+ {id:2,name:"Asset Security",w:10},
+ {id:3,name:"Security Architecture and Engineering",w:13},
+ {id:4,name:"Communication and Network Security",w:13},
+ {id:5,name:"Identity and Access Management (IAM)",w:13},
+ {id:6,name:"Security Assessment and Testing",w:12},
+ {id:7,name:"Security Operations",w:13},
+ {id:8,name:"Software Development Security",w:10}
 ];
 
-/* ============ FICHES ============
-   Reformulées à partir du Conrad (3e éd.), avec les mises à jour connues.
-   ref: c = Conrad, a = All-in-One 9e éd., o = Official Textbook 7e éd. */
-const FICHES = [
-{id:"d1-cia",d:1,t:"Les piliers de la sécurité",
- pts:["La triade CIA : confidentialité, intégrité, disponibilité. C'est la grille de lecture de tout le CISSP.",
-      "Son opposé, DAD : divulgation (disclosure), altération, destruction.",
-      "Le cours ISC2 ajoute l'authenticité et la non-répudiation, et parle aussi de vie privée (privacy) et de sûreté (safety).",
-      "AAA : authentification, autorisation, et traçabilité (accounting, aussi appelé auditing)."],
- en:[["Non-repudiation","l'auteur ne peut pas nier son action (ex. signature numérique)"],["Accounting / auditing","garder la trace de qui a fait quoi"]],
- trap:"Le troisième A de AAA n'est pas le contrôle d'accès : c'est la traçabilité (accounting/auditing).",
- ref:{c:"début du chap. 1",a:"chap. 1",o:"Domaine 1"}},
+/* Lessons: self-contained, written to teach from zero.
+   ref: c = Eleventh Hour (Conrad, 3rd ed.), a = All-in-One (9th ed.), o = ISC2 Official Textbook (7th ed.) */
+const LESSONS = [
+{id:"d1-cia",d:1,t:"The security pillars: CIA, DAD and AAA",
+ what:"Almost every CISSP question comes back to three goals: keep information away from the wrong people, keep it accurate, and keep it usable when it is needed. Together they form the CIA triad, the lens through which ISC2 looks at everything.",
+ pts:["Confidentiality: only authorized people can read the information. Typical tools: encryption, access control.",
+      "Integrity: information is not changed without authorization, and any change can be detected. Typical tools: hashing, digital signatures, change control.",
+      "Availability: authorized people can use the information when they need it. Typical tools: redundancy, backups, DDoS protection.",
+      "DAD is the attacker's view, the mirror image of CIA: Disclosure breaks confidentiality, Alteration breaks integrity, Destruction breaks availability.",
+      "ISC2 also names authenticity (proof of where something came from) and non-repudiation (the author cannot deny the action). Privacy and safety are discussed alongside CIA.",
+      "AAA describes how access is managed: Authentication (prove who you are), Authorization (what you are allowed to do), Accounting, also called auditing (record what you did). Some sources write IAAA, adding Identification first."],
+ ex:"Ransomware that encrypts a file server attacks availability. If the attackers also publish the files, confidentiality is broken too. A digitally signed purchase order gives integrity and non-repudiation: the supplier cannot later claim they never sent it.",
+ terms:[["Non-repudiation","The author of an action cannot credibly deny having performed it. Usually provided by digital signatures."],["Accounting (auditing)","Recording who did what and when, so users can be held accountable."],["Authenticity","Assurance that data or a message genuinely comes from its claimed source."]],
+ trap:"The third A in AAA is Accounting (auditing), not Access control.",
+ mnem:"CIA protects, DAD attacks: Confidentiality faces Disclosure, Integrity faces Alteration, Availability faces Destruction.",
+ ref:{c:"ch. 1, first pages",a:"ch. 1",o:"Domain 1"}},
 
-{id:"d1-ethique",d:1,t:"Le code d'éthique ISC2",
- pts:["Trois parties : le préambule, les canons (obligatoires), les directives (indicatives).",
-      "Les 4 canons s'appliquent dans l'ordre. En cas de conflit, le plus haut l'emporte.",
-      "1. Protéger la société, le bien commun, la confiance du public et l'infrastructure.",
-      "2. Agir de façon honorable, honnête, juste, responsable et légale.",
-      "3. Fournir un service diligent et compétent aux mandants (principals).",
-      "4. Faire progresser et protéger la profession.",
-      "Canon 2 : si des lois de pays différents se contredisent, priorité à la juridiction où le service est fourni. Pas de discours alarmiste (FUD)."],
- en:[["Principals","employeurs et clients à qui tu dois un service"],["Commonwealth / common good","le bien commun"]],
- trap:"Si toutes les réponses sont éthiques, choisis celle qui correspond au canon le plus haut. La réponse la plus éthique est en général la bonne.",
- maj:"Le Conrad cite la formulation ancienne du canon 1 (society, commonwealth, infrastructure). La version actuelle ajoute le bien commun et la confiance du public : vérifie sur isc2.org/ethics.",
- ref:{c:"p. 15 à 16",a:"chap. 1",o:"Domaine 1"}},
+{id:"d1-ethique",d:1,t:"The ISC2 Code of Ethics",
+ what:"Every CISSP must agree to the ISC2 Code of Ethics. It is short and heavily tested. What matters most is the order of its four canons, because ISC2 applies them in that order when they conflict.",
+ pts:["The Code has three parts: the preamble (the introduction), the canons (mandatory), and the guidance (advisory only).",
+      "Canon 1: Protect society, the common good, necessary public trust and confidence, and the infrastructure.",
+      "Canon 2: Act honorably, honestly, justly, responsibly, and legally. If laws from different jurisdictions conflict, give priority to the jurisdiction where the service is provided. Give prudent advice and avoid spreading fear, uncertainty and doubt (FUD).",
+      "Canon 3: Provide diligent and competent service to principals (employers and clients). Only take work you are qualified for, protect their confidentiality, avoid conflicts of interest.",
+      "Canon 4: Advance and protect the profession. Keep your skills current, share knowledge, and avoid associating with people who could damage the profession.",
+      "A violation can lead to a formal complaint and the loss of the certification."],
+ ex:"Your employer asks you to stay quiet about a breach that exposes customers' data. Loyalty to your employer is canon 3; protecting society and public trust is canon 1. Canon 1 wins.",
+ terms:[["Canons","The four mandatory rules of the Code."],["Principals","The people you serve professionally: employers and clients."],["Common good","The interest of society as a whole."],["FUD","Fear, uncertainty and doubt: exaggerating threats to push a decision."]],
+ trap:"When every answer looks ethical, choose the one tied to the highest canon. The most ethical answer is usually the right one.",
+ mnem:"S, H, P, P: Society, Honor, Principals, Profession. Society always comes first, the profession last.",
+ upd:"Some older books quote canon 1 as 'society, the commonwealth, and the infrastructure'. The current wording adds the common good and public trust. The logic and the order are unchanged.",
+ ref:{c:"p. 15 to 16",a:"ch. 1",o:"Domain 1"}},
 
-{id:"d1-codes",d:1,t:"Les autres codes d'éthique",
- pts:["Computer Ethics Institute : les « Dix commandements de l'éthique informatique » (ne pas nuire, ne pas espionner les fichiers d'autrui, ne pas voler, ne pas copier de logiciel non payé...).",
-      "IAB, RFC 1087 « Ethics and the Internet » (1989) : est contraire à l'éthique le fait, volontairement, de chercher un accès non autorisé, perturber l'usage d'Internet, gaspiller des ressources, détruire l'intégrité de l'information, compromettre la vie privée."],
- en:[["IAB","Internet Activities Board (aujourd'hui Internet Architecture Board)"]],
- trap:"À l'examen, le code ISC2 prime toujours. Les deux autres servent surtout à des questions d'identification.",
- ref:{c:"p. 16 à 17",a:"chap. 1",o:"Domaine 1"}},
+{id:"d1-codes",d:1,t:"Other codes of ethics",
+ what:"Besides ISC2, the exam can mention two older codes. You only need to recognize them and know who published them.",
+ pts:["The Computer Ethics Institute published the Ten Commandments of Computer Ethics. Examples: do not use a computer to harm people, do not snoop in other people's files, do not use software you have not paid for, think about the social consequences of the programs you write.",
+      "The Internet Activities Board (IAB) published RFC 1087, Ethics and the Internet, in 1989.",
+      "RFC 1087 says it is unethical to purposely: seek unauthorized access to Internet resources, disrupt the intended use of the Internet, waste resources (people, capacity, computers), destroy the integrity of computer-based information, or compromise users' privacy."],
+ ex:"A question asks which document lists 'wasting resources' as unethical behavior on the Internet. The answer is RFC 1087 from the IAB.",
+ terms:[["IAB","Internet Activities Board, today the Internet Architecture Board."],["RFC","Request for Comments: the document series that defines Internet standards."]],
+ trap:"On the exam, the ISC2 Code always takes precedence over these other codes.",
+ mnem:"RFC 1087 = the Internet's own ethics, written by the Internet's own board (IAB).",
+ ref:{c:"p. 16 to 17",a:"ch. 1",o:"Domain 1"}},
 
-{id:"d1-droit",d:1,t:"Systèmes juridiques et branches du droit",
- pts:["Trois grands systèmes : civil law (lois codifiées, le plus répandu, les précédents pèsent peu), common law (États-Unis, Royaume-Uni, Canada : les précédents judiciaires comptent), religious law (ex. charia). Le customary law repose sur les coutumes.",
-      "Dans la common law : droit pénal (criminal), civil (tort) et administratif (regulatory).",
-      "Pénal : la victime est la société, preuve au-delà du doute raisonnable, prison possible.",
-      "Civil : préjudice, preuve par prépondérance (plus probable que non), dommages financiers.",
-      "Administratif : règles des agences gouvernementales (HIPAA, FCC, FDA, FAA).",
-      "Dommages : statutory (fixés par la loi, même sans perte réelle), compensatory (réparer la perte), punitive (punir et dissuader)."],
- en:[["Beyond a reasonable doubt","au-delà du doute raisonnable (pénal)"],["Preponderance of the evidence","prépondérance de la preuve (civil)"],["Tort law","responsabilité civile pour préjudice"]],
- trap:"« Civil law » a deux sens : un système juridique mondial, et une branche du droit au sein de la common law. Lis bien le contexte.",
- ref:{c:"p. 6 à 8",a:"chap. 3",o:"Domaine 1"}},
+{id:"d1-droit",d:1,t:"Legal systems and types of law",
+ what:"A security professional works across countries and ends up dealing with lawyers, investigators and regulators. The exam expects you to know the major legal systems and the different branches of law inside them.",
+ pts:["Civil law (legal system): the most common system in the world. Laws are written down in codes; judges apply them and past rulings carry little weight. Examples: France, Switzerland, Germany.",
+      "Common law: judges' decisions (precedents) shape the law. Used in the US, the UK, Canada and most former British colonies.",
+      "Religious law: religious texts are the main source of law, for example Sharia. Customary law: long-accepted customs treated as law.",
+      "Inside common law there are three branches. Criminal law: the victim is society; penalties include prison; proof must be beyond a reasonable doubt.",
+      "Civil law (branch), also called tort law: disputes between private parties, usually for money; proof by preponderance of the evidence, meaning more likely than not.",
+      "Administrative (regulatory) law: rules issued by government agencies, such as HIPAA, FCC or FDA regulations.",
+      "Three types of financial damages: statutory (amounts set by law, due even without actual loss), compensatory (repay the actual loss), punitive (punish and deter outrageous behavior)."],
+ ex:"'Which legal system relies mainly on written codes rather than precedent?' Answer: civil law, the legal system. 'A company sues a vendor for money after a breach caused by negligence. Which type of law applies?' Answer: civil law, the branch, even though the case happens in the US, a common law country.",
+ terms:[["Tort law","The law of civil wrongs: compensating someone harmed outside of a contract, for example through negligence."],["Beyond a reasonable doubt","The high standard of proof required in criminal cases."],["Preponderance of the evidence","The civil standard of proof: more likely than not."],["Statutory damages","Damages whose amount is fixed by law, payable even if no actual loss is proven."]],
+ trap:"'Civil law' has two meanings. If the question talks about countries, codes or precedent, it means the legal system. If it talks about a lawsuit, damages or burden of proof, it means the branch of law, as opposed to criminal and administrative law.",
+ mnem:"Criminal = society is the victim, prison, beyond doubt. Civil = a person is the victim, money, more likely than not.",
+ ref:{c:"p. 6 to 8",a:"ch. 3",o:"Domain 1"}},
 
-{id:"d1-duecare",d:1,t:"Due care, due diligence, négligence",
- pts:["Due care : faire ce que ferait une personne raisonnable (règle du « prudent man »). Vient de « duty of care ».",
-      "Due diligence (selon Conrad) : la gestion de la due care, avec un processus. Exemple : demander aux équipes de patcher, c'est la due care ; vérifier qu'elles l'ont fait, c'est la due diligence.",
-      "Gross negligence : le contraire de la due care. Juridiquement, c'est la pire position.",
-      "Pouvoir démontrer la due care après une fuite de données te place en bien meilleure position devant un tribunal."],
- en:[["Prudent man rule","la règle de la personne prudente et raisonnable"],["Gross negligence","négligence grave"]],
- trap:"Les sources formulent différemment. Moyen mnémotechnique ISC2 : due diligence = savoir (rechercher, évaluer, vérifier) ; due care = agir (mettre en place les contrôles).",
- maj:"Le manuel officiel ISC2 définit la due diligence comme l'effort pour connaître et évaluer (avant et pendant), et la due care comme la mise en œuvre. En cas de doute à l'examen, suis l'ISC2.",
- ref:{c:"p. 8",a:"chap. 3",o:"Domaine 1"}},
+{id:"d1-duecare",d:1,t:"Due care, due diligence and gross negligence",
+ what:"Courts judge organizations by asking a simple question: did they behave like a reasonable, responsible organization would? Two terms describe that behavior, and ISC2 loves to test the difference.",
+ pts:["Due care: doing what a reasonable person would do in the same situation. Also called the prudent man rule. It comes from the idea of a duty of care.",
+      "Due diligence: the effort to know, investigate, assess and verify. ISC2's view: due diligence is understanding the risks and checking that things are done; due care is acting on that knowledge.",
+      "Another way to put it: due diligence is thinking before (and while) you act, due care is doing the right thing.",
+      "Gross negligence is the opposite of due care. Being unable to show due care after an incident puts the organization in a much worse legal position.",
+      "Being able to demonstrate due care after a data breach is a strong legal defense."],
+ ex:"Before signing with a cloud provider, you review its audit reports and security questionnaire: due diligence. You then encrypt the data you send there and enforce MFA: due care. Afterwards you verify every quarter that MFA is still enforced: due diligence again.",
+ terms:[["Prudent man rule","The standard of what a sensible, responsible person would do."],["Due care","Taking the reasonable actions to protect assets."],["Due diligence","Investigating, assessing and verifying, so that you know what needs protecting and that protection works."],["Gross negligence","Failing to exercise even basic care."]],
+ trap:"Books phrase it differently. Conrad calls due diligence 'the management of due care'. Follow ISC2 on the exam: diligence = know and verify, care = act.",
+ mnem:"Due diligence = do detect. Due care = do correct.",
+ ref:{c:"p. 8",a:"ch. 3",o:"Domain 1"}},
 
-{id:"d1-preuves",d:1,t:"Enquêtes et preuves",
- pts:["Types de preuves : real (objet physique), direct (témoignage des 5 sens), circumstantial (établit des circonstances), corroborative (renforce un fait), hearsay (de seconde main), secondary (copies, descriptions orales).",
-      "Les journaux générés par ordinateur sont souvent classés en preuve secondaire.",
-      "Best evidence rule : le tribunal préfère l'original à la copie.",
-      "Intégrité : empreinte (hash) avant et après analyse. Chaîne de possession (chain of custody) : qui a manipulé la preuve, quand et où.",
-      "Entrapment : la police pousse quelqu'un qui n'avait pas l'intention de commettre un crime (illégal). Enticement : on crée des conditions favorables pour quelqu'un déjà décidé (ex. honeypot).",
-      "Crime informatique : l'ordinateur est soit la cible, soit l'outil."],
- en:[["Chain of custody","traçabilité complète de la manipulation d'une preuve"],["Hearsay","preuve par ouï-dire"]],
- trap:"Honeypot = enticement, pas entrapment.",
- maj:"Le Conrad cite MD5 et SHA-1 pour les empreintes. Les deux sont considérés comme faibles aujourd'hui : on utilise SHA-256.",
- ref:{c:"p. 9 à 10",a:"chap. 3",o:"Domaine 1"}},
+{id:"d1-preuves",d:1,t:"Investigations and evidence",
+ what:"When an incident ends up in court, how evidence was collected matters as much as what it shows. Sloppy handling can make solid evidence useless.",
+ pts:["Real evidence: physical objects, such as a hard drive or a USB key.",
+      "Direct evidence: testimony from a witness about what they saw or heard with their own senses.",
+      "Circumstantial evidence: establishes circumstances from which a fact can be inferred. Corroborative evidence: supports another piece of evidence.",
+      "Hearsay: second-hand evidence, what someone heard from someone else. Secondary evidence: copies of documents or oral descriptions of them. Computer logs are often treated as secondary evidence.",
+      "Best evidence rule: courts prefer the original over a copy.",
+      "Integrity: take a hash of the evidence before and after analysis; identical hashes prove nothing changed. Chain of custody: document who handled the evidence, when, where and why, from collection to court.",
+      "Entrapment: law enforcement pushes someone who had no intention of committing a crime into committing one. It is illegal. Enticement: creating tempting conditions for someone already intent on the crime, such as a honeypot. It is legal."],
+ ex:"You image a compromised laptop, compute its SHA-256 hash, seal the original drive in a bag, and log every person who touches it. That is integrity plus chain of custody.",
+ terms:[["Chain of custody","A complete record of who handled evidence, when and where."],["Hearsay","Second-hand testimony, generally weaker in court."],["Best evidence rule","Originals are preferred over copies."],["Enticement","Luring someone who already intends to commit a crime."]],
+ trap:"A honeypot is enticement, not entrapment.",
+ mnem:"Entrapment traps the innocent. Enticement tempts the guilty.",
+ upd:"Older books cite MD5 or SHA-1 for evidence hashes. Both are considered weak today; SHA-256 is the usual choice.",
+ ref:{c:"p. 9 to 10",a:"ch. 3",o:"Domain 1"}},
 
-{id:"d1-pi",d:1,t:"Propriété intellectuelle",
- pts:["Trademark : protège une marque (nom, logo). ™ pour une marque non enregistrée, ® pour une marque enregistrée.",
-      "Patent (brevet) : monopole sur une invention nouvelle, en échange de sa publication. En général 20 ans depuis le dépôt.",
-      "Copyright : protège la forme de l'expression (texte, musique, code), pas l'idée.",
-      "Licences (EULA) : contrat entre éditeur et utilisateur, accepté par l'usage.",
-      "Trade secret : information confidentielle qui donne un avantage concurrentiel. Protégée par NDA et clauses de non-concurrence, et par la due care de l'entreprise."],
- en:[["Trade secret","secret d'affaires"],["NDA","accord de confidentialité"]],
- trap:"Un secret d'affaires n'est jamais publié. Un brevet, si. Si la question parle de garder une recette secrète, c'est un trade secret.",
- ref:{c:"p. 10 à 11",a:"chap. 3",o:"Domaine 1"}},
+{id:"d1-pi",d:1,t:"Intellectual property",
+ what:"Intellectual property (IP) protects intangible things created by the mind. Each type protects something different, and the exam tests whether you can match the right protection to the situation.",
+ pts:["Trademark: protects a brand, such as a name, logo or slogan, so customers know who makes a product. ™ marks an unregistered trademark, ® a registered one.",
+      "Patent: gives the inventor a monopoly on an invention for a limited time, usually 20 years from filing, in exchange for making it public. The invention must be novel and not obvious.",
+      "Copyright ©: protects the form of expression, such as text, music or software code, not the underlying idea.",
+      "Licenses: contracts between a software vendor and a user, such as an EULA (end-user license agreement), accepted simply by using the software.",
+      "Trade secret: confidential business information that gives a competitive edge. Never published; protected by NDAs, non-compete clauses and the company's own due care."],
+ ex:"A plantation company's unique process for improving palm oil yield: if it wants legal exclusivity while revealing the method, it files a patent. If it prefers to keep the method secret indefinitely, it treats it as a trade secret and has staff sign NDAs.",
+ terms:[["Trade secret","Proprietary information kept secret to stay competitive."],["NDA","Non-disclosure agreement."],["EULA","End-user license agreement."]],
+ trap:"If the scenario is about keeping something secret, the answer is trade secret. A patent always requires public disclosure.",
+ mnem:"Trademark = brand. Patent = invention. Copyright = expression. Trade secret = secrecy.",
+ ref:{c:"p. 10 to 11",a:"ch. 3",o:"Domain 1"}},
 
-{id:"d1-privacy",d:1,t:"Vie privée et transferts internationaux",
- pts:["Privacy : protéger la confidentialité des données personnelles (PII).",
-      "Principes européens : informer, permettre de refuser le partage, consentement explicite pour les données sensibles, protection raisonnable.",
-      "OCDE : lignes directrices sur la vie privée, dont la limitation de la collecte.",
-      "Transferts UE vers pays tiers : seulement si le pays protège correctement les données.",
-      "Convention de Budapest (Conseil de l'Europe) : coopération internationale contre la cybercriminalité.",
-      "Export de cryptographie : CoCom pendant la guerre froide, puis l'arrangement de Wassenaar."],
- en:[["PII","données permettant d'identifier une personne"],["Data subject","la personne concernée par les données"]],
- trap:"Le Conrad parle de la directive de 1995 et du Safe Harbor : ces deux textes ne sont plus en vigueur.",
- maj:"Directive 95/46 remplacée par le RGPD (GDPR) en 2018. Safe Harbor invalidé en 2015, Privacy Shield invalidé en 2020, remplacé en 2023 par le EU-US Data Privacy Framework. L'OCDE compte aujourd'hui 38 membres. En Suisse : nouvelle LPD en vigueur depuis septembre 2023.",
- ref:{c:"p. 11 à 13",a:"chap. 3",o:"Domaine 1"}},
+{id:"d1-privacy",d:1,t:"Privacy and cross-border data",
+ what:"Privacy means protecting the confidentiality of personal information. Because data moves across borders, you need to know the main laws and agreements, and which older ones are no longer valid.",
+ pts:["PII (personally identifiable information): data that identifies a person, such as a social security number, salary, bank details or health data.",
+      "Core European principles: tell people how their data is used, let them opt out of sharing, require explicit opt-in for the most sensitive data, protect the data reasonably.",
+      "The EU only allows personal data to leave the EU if the destination protects it adequately.",
+      "The OECD privacy guidelines influence laws worldwide; one principle is collection limitation: collect only what you need, lawfully and fairly.",
+      "The Council of Europe Convention on Cybercrime (Budapest Convention) is the main international treaty for cooperation on cybercrime investigations.",
+      "Export of cryptography: controlled during the Cold War by CoCom, today by the Wassenaar Arrangement."],
+ ex:"A Swiss company sends HR data to a payroll provider in the US. It must check that the transfer is allowed under Swiss and EU rules, for example because the provider is certified under the EU-US or Swiss-US Data Privacy Framework.",
+ terms:[["PII","Personally identifiable information."],["Data subject","The person the data is about."],["Transborder data flow","Personal data crossing national borders."]],
+ trap:"Older books describe the EU Data Protection Directive and Safe Harbor as current. Both are gone.",
+ mnem:"Directive to GDPR (2018). Safe Harbor to Privacy Shield to Data Privacy Framework (2023).",
+ upd:"The 1995 EU Data Protection Directive was replaced by the GDPR in 2018. Safe Harbor was invalidated in 2015, Privacy Shield in 2020; the EU-US Data Privacy Framework has applied since 2023. The OECD now has 38 members. Switzerland's revised data protection act (nFADP) has applied since September 2023.",
+ ref:{c:"p. 11 to 13",a:"ch. 3",o:"Domain 1"}},
 
-{id:"d1-tiers",d:1,t:"Sécurité et tiers",
- pts:["Le contrat est le principal contrôle de sécurité face à un prestataire.",
-      "SLA : engagements mesurables, surtout sur la disponibilité.",
-      "Attestation : un tiers audite le prestataire contre une référence et se prononce sur sa sécurité.",
-      "Droit d'audit ou de test d'intrusion, ou à défaut un rapport d'audit tiers fourni par le prestataire.",
-      "Achats (procurement) : impliquer la sécurité tôt est un contrôle préventif.",
-      "Acquisition : évaluer les risques et tester la société rachetée avant de fusionner les réseaux.",
-      "Scission (divestiture) : souvent plus risquée. Comptes et mots de passe dupliqués, badges, clés : tout révoquer."],
- en:[["SLA","accord de niveau de service"],["Divestiture","cession ou scission d'une activité"]],
- trap:"Face à un prestataire, la réponse « contrat » bat en général la réponse technique.",
- ref:{c:"p. 13 à 14",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-tiers",d:1,t:"Security and third parties",
+ what:"Organizations rely on suppliers, cloud providers and outsourcers for critical services. You cannot control their systems directly, so you control the relationship.",
+ pts:["The contract is the primary security control when dealing with a service provider.",
+      "Service level agreement (SLA): measurable commitments the vendor must meet, mostly about availability.",
+      "Attestation: an independent third party audits the provider against a known baseline and states its opinion on its security. A SOC 2 report is a common example.",
+      "Right to audit or right to penetration test: contract clauses letting you test the provider yourself, or have a trusted firm do it. Alternative: the provider hands over a recent third-party audit.",
+      "Procurement: involving security early in purchasing is a preventive control.",
+      "Acquisitions: perform a full risk assessment, including vulnerability scans and penetration tests, before connecting the acquired company's network.",
+      "Divestitures (splitting a company): often riskier than acquisitions. Duplicate accounts, shared passwords, badges and keys must all be revoked."],
+ ex:"A plantation wants to deploy a vendor's fuel management software. Before installation, security reviews the vendor, the contract includes security clauses and a right to audit, and the vendor must meet a defined SLA.",
+ terms:[["SLA","Service level agreement."],["Attestation","An independent statement on a provider's security posture after an audit."],["Divestiture","Selling or spinning off part of a company."],["Procurement","The process of acquiring products or services from third parties."]],
+ trap:"When a question involves a service provider, the contract usually beats a technical answer.",
+ mnem:"Contract first, then SLA for availability, then audit to trust but verify.",
+ ref:{c:"p. 13 to 14",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d1-docs",d:1,t:"Politique, procédure, standard, guideline, baseline",
- pts:["Policy : directive de haut niveau de la direction, obligatoire, sans nommer de technologie.",
-      "Procedure : pas à pas pour une tâche, obligatoire.",
-      "Standard : usage précis d'une technologie (ex. tel modèle de portable, tel OS), obligatoire.",
-      "Guideline : recommandation, facultative.",
-      "Baseline : façon uniforme d'appliquer un standard (ex. benchmarks CIS). Toute exception demande la signature de la direction.",
-      "Passer de Windows à Linux ne change pas la politique, mais change les procédures et standards."],
- en:[["Mandatory / discretionary","obligatoire / facultatif"],["Hardening","durcissement d'un système"]],
- trap:"Le Conrad classe la baseline comme facultative (la méthode peut varier si le résultat est aussi sûr). La plupart des sources la voient comme le niveau minimum obligatoire. Retiens : le niveau fixé par la baseline est obligatoire.",
- ref:{c:"p. 17 à 19",a:"chap. 1",o:"Domaine 1"}},
+{id:"d1-docs",d:1,t:"Policies, procedures, standards, guidelines, baselines",
+ what:"Security is governed by a hierarchy of documents. Each has a specific role and level of detail, and the exam expects you to tell them apart instantly.",
+ pts:["Policy: a high-level directive from management. Mandatory. States what and why, never names a specific technology.",
+      "Procedure: step-by-step instructions to complete a task. Mandatory.",
+      "Standard: a specific, mandatory use of technology, such as a laptop model or an operating system version.",
+      "Guideline: a recommendation or piece of advice. Discretionary.",
+      "Baseline: a uniform, minimum level of security for a system, often based on a benchmark such as the CIS Benchmarks. Exceptions require senior management sign-off.",
+      "Information security governance: security at the organizational level, led by senior management, who set priorities, staffing and funding."],
+ ex:"Policy: 'Systems must protect the confidentiality of PII.' Standard: 'All laptops run Windows 11 Enterprise.' Baseline: 'Harden servers according to the CIS benchmark.' Procedure: 'Step 1, install the hardened image; step 2, apply patches.' Guideline: 'Use a passphrase built from a sentence.'",
+ terms:[["Mandatory","Must be followed."],["Discretionary","Optional, a recommendation."],["Hardening","Reducing a system's attack surface by removing and locking down features."],["Governance","Direction and oversight of security by senior management."]],
+ trap:"Migrating from Windows to Linux does not change the policy, because a policy never names a technology. Procedures, standards and baselines do change.",
+ mnem:"Policy says WHY, standard says WHAT, procedure says HOW, guideline says MAYBE.",
+ upd:"Conrad lists baselines as discretionary because the method can vary if the result is as secure. Most sources, including ISC2, treat the baseline as the mandatory minimum level of security.",
+ ref:{c:"p. 17 to 19",a:"ch. 1",o:"Domain 1"}},
 
-{id:"d1-personnel",d:1,t:"Sécurité du personnel",
- pts:["Les utilisateurs sont le plus grand risque.",
-      "Awareness (sensibilisation) : change le comportement. Training (formation) : donne une compétence.",
-      "Vérification d'antécédents avant embauche : casier, expérience, diplômes, certifications. Mentir sur ses diplômes est très courant.",
-      "Départ : révocation immédiate de tous les accès, et processus équitable (un ex-employé mécontent connaît les points faibles).",
-      "Prestataires et consultants : mêmes formations, contrôles et règles que les employés.",
-      "Outsourcing et offshoring : attention aux lois (HIPAA, SOX, GLBA ne s'appliquent pas à l'étranger). Consulter le juridique, protéger par contrat."],
- en:[["Awareness","sensibilisation"],["Offshoring","externalisation vers un autre pays"]],
- trap:"« Rappeler aux utilisateurs de ne pas partager leur mot de passe » = awareness, pas training.",
- ref:{c:"p. 19 à 20",a:"chap. 1",o:"Domaine 1"}},
+{id:"d1-personnel",d:1,t:"Personnel security",
+ what:"People are the biggest security risk in any organization. Personnel security covers the whole employee life cycle: hiring, daily work, and departure.",
+ pts:["Background checks before hiring: criminal records, experience, education, certifications. Lying about degrees and certifications is one of the most common forms of dishonesty in hiring.",
+      "Security awareness changes behavior, for example reminders never to share passwords.",
+      "Security training teaches a skill, for example how a new help desk agent resets passwords safely.",
+      "Termination: revoke all access immediately. The process must also be fair, because a disgruntled former employee, especially from IT, knows where the weak spots are.",
+      "Vendors, consultants and contractors must be trained and controlled like employees, with clear rules about where data may be stored.",
+      "Outsourcing and offshoring can reduce cost, but laws such as HIPAA, SOX or GLBA do not follow data abroad. Consult legal staff and protect data by contract."],
+ ex:"An administrator is dismissed on Friday afternoon. The best practice is to disable their accounts during the meeting, collect badges and keys, and review any shared passwords they knew.",
+ terms:[["Awareness","Changing behavior and attitudes."],["Training","Teaching a specific skill."],["Offshoring","Outsourcing to another country."],["Background check","Verification of a candidate's history before hiring."]],
+ trap:"Reminding users not to write down passwords is awareness, not training.",
+ mnem:"Awareness = attitude. Training = task.",
+ ref:{c:"p. 19 to 20",a:"ch. 1",o:"Domain 1"}},
 
-{id:"d1-controles",d:1,t:"Types et catégories de contrôles",
- pts:["6 types : preventive (empêche), detective (alerte pendant ou après), corrective (répare), recovery (restaure), deterrent (dissuade), compensating (compense la faiblesse d'un autre contrôle).",
-      "3 catégories : administrative (aussi appelée directive : politiques, formations), technical (logiciel, matériel : pare-feu, chiffrement), physical (serrures, clôtures, gardes).",
-      "L'antivirus est à la fois détectif (scan) et correctif (quarantaine).",
-      "Un contrôle se décrit par un type ET une catégorie : un dépistage avant embauche est administratif et préventif."],
- en:[["Deterrent","dissuasif"],["Compensating","compensatoire"]],
- trap:"Panneau « Attention au chien » = deterrent. Le chien lui-même serait plutôt préventif.",
- ref:{c:"p. 20 à 22",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-controles",d:1,t:"Types and categories of controls",
+ what:"A control is anything that reduces risk. ISC2 describes every control in two ways: by what it does (its type) and by how it is implemented (its category).",
+ pts:["Preventive: stops an action from happening (firewall rule, lock, pre-employment screening).",
+      "Detective: alerts during or after an attack (IDS, CCTV watched by guards, burglar alarm).",
+      "Corrective: fixes a damaged system or process (antivirus quarantining a file). Recovery: restores normal operations after an incident (restoring from backup, reinstalling from an image).",
+      "Deterrent: discourages an action ('Beware of dog' sign, a sanctions policy). Compensating: an extra control that makes up for a weakness in another control.",
+      "Categories: administrative, also called directive or managerial (policies, procedures, training); technical or logical (firewalls, encryption); physical (fences, locks, guards).",
+      "Every control has both a type and a category. A pre-employment drug test is administrative and preventive."],
+ ex:"A legacy server cannot be patched. You isolate it in its own network segment and monitor it closely: those are compensating controls for the missing patch.",
+ terms:[["Compensating control","A substitute control used when the primary one is not possible or is weak."],["Deterrent control","A control that discourages rather than blocks."],["Administrative control","A control based on policy, procedure or training."]],
+ trap:"A 'Beware of dog' sign is deterrent. The dog itself would be preventive. Antivirus is both detective (scanning) and corrective (quarantine).",
+ mnem:"Types: Please Do Call Right Down Carefully (Preventive, Detective, Corrective, Recovery, Deterrent, Compensating). Categories: A, T, P (Administrative, Technical, Physical).",
+ ref:{c:"p. 20 to 22",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d1-risque",d:1,t:"Menace, vulnérabilité, matrice de risque",
- pts:["Asset : ce qui a de la valeur (données, systèmes, personnes, bâtiments).",
-      "Threat : événement potentiellement nuisible (séisme, panne, ver). Vulnerability : faiblesse qui permet à la menace de nuire (système non patché).",
-      "Risk = Threat × Vulnerability, parfois × Impact (ou × Cost).",
-      "Vie humaine : impact quasi infini à l'examen. Le risque doit toujours être traité.",
-      "Matrice qualitative : probabilité (rare à presque certain) × conséquences (insignifiant à catastrophique) donne L, M, H, E.",
-      "Faible : processus normal. Moyen : informer le management. Élevé : informer la direction générale. Extrême : action immédiate, plan détaillé, direction informée."],
- en:[["Likelihood","probabilité"],["Consequences / impact","gravité"]],
- trap:"Dès qu'une réponse protège la vie humaine, elle passe avant tout le reste.",
- ref:{c:"p. 22 à 23",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-risque",d:1,t:"Assets, threats, vulnerabilities and the risk matrix",
+ what:"Risk analysis decides where money and effort go. It starts with three building blocks and ends with a decision about which risks need urgent action.",
+ pts:["Asset: anything of value that needs protection: data, systems, people, buildings.",
+      "Threat: a potentially harmful event, such as an earthquake, a power outage or a worm.",
+      "Vulnerability: a weakness that allows a threat to cause harm, such as an unpatched server or a data center without backup power.",
+      "Risk = Threat × Vulnerability. Sometimes × Impact (or × Cost) is added, where impact is the severity of the damage.",
+      "Human life has a near-infinite impact on the exam: any risk to life must be mitigated.",
+      "A risk matrix is qualitative: likelihood (rare to almost certain) against consequences (insignificant to catastrophic), giving Low, Medium, High or Extreme.",
+      "Low: normal processes. Medium: notify management. High: notify senior management. Extreme: immediate action, a detailed mitigation plan, and senior management notification."],
+ ex:"A remote site depends on a single Starlink link (vulnerability). A storm (threat) could cut the site off from its ERP (asset). Likely and major: high risk, senior management should know.",
+ terms:[["Threat","A potential cause of harm."],["Vulnerability","A weakness a threat can exploit."],["Likelihood","The probability that a risk occurs."],["Impact","How severe the damage would be."]],
+ trap:"If an answer protects human life, it beats every other answer.",
+ mnem:"No threat, no risk. No vulnerability, no risk. Risk needs both.",
+ ref:{c:"p. 22 to 23",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d1-ale",d:1,t:"ALE, TCO et ROI",
- pts:["AV : valeur de l'actif. EF : pourcentage de valeur perdu par incident.",
-      "SLE = AV × EF (coût d'un incident).",
-      "ARO : nombre d'incidents par an. ALE = SLE × ARO (coût annuel du risque).",
-      "TCO : coût total d'une mesure (achat initial + maintenance, heures, abonnements), ramené par an.",
-      "Valeur annuelle d'une mesure = ALE avant − ALE après − TCO annuel. Positive : bon investissement.",
-      "Exemple Conrad : 1000 portables, AV 25 000, EF 100 %, ARO 11, ALE 275 000. Le chiffrement ramène l'EF à 10 % et l'ALE à 27 500, pour un TCO de 136 667 par an."],
- en:[["Exposure factor","facteur d'exposition"],["Annualized rate of occurrence","fréquence annuelle"]],
- trap:"Toujours comparer des montants annuels : un coût mensuel doit être multiplié par 12 avant de le comparer à l'ALE.",
- ref:{c:"p. 24 à 26",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-ale",d:1,t:"Calculating risk: ALE, TCO and ROI",
+ what:"Quantitative risk analysis puts a price on risk so management can compare it with the cost of a safeguard. Five formulas do all the work, and you will likely calculate at least one on the exam.",
+ pts:["Asset value (AV): what the asset is worth, including data, fines and reputation, not just hardware.",
+      "Exposure factor (EF): the percentage of the asset's value lost in one incident.",
+      "Single loss expectancy: SLE = AV × EF. The cost of one incident.",
+      "Annual rate of occurrence (ARO): how many times per year the incident happens. Annualized loss expectancy: ALE = SLE × ARO. The yearly cost of the risk.",
+      "Total cost of ownership (TCO): the full cost of a safeguard, upfront plus ongoing (licences, support, staff hours), expressed per year.",
+      "Value of a safeguard per year = ALE before − ALE after − annual TCO. Positive means a good investment."],
+ ex:"1,000 laptops with PII. Each lost laptop costs 25,000 (2,500 hardware plus 22,500 of exposed data), EF 100 %, 11 lost per year: ALE = 275,000. Encryption drops the EF to 10 % (only the hardware is lost): new ALE 27,500. Encryption costs 136,667 per year. Value: 275,000 − 27,500 − 136,667 = 110,833 per year. Worth it.",
+ terms:[["SLE","Single loss expectancy = AV × EF."],["ARO","Annual rate of occurrence."],["ALE","Annualized loss expectancy = SLE × ARO."],["TCO","Total cost of ownership of a safeguard."]],
+ trap:"Always compare yearly figures. A monthly cost must be multiplied by 12 before you compare it with the ALE.",
+ mnem:"A-E-S-A-A: AV times EF gives SLE, SLE times ARO gives ALE.",
+ ref:{c:"p. 24 to 26",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d1-choix",d:1,t:"Traiter le risque",
- pts:["Accepter : possible pour un risque faible, après avoir étudié toutes les options. Jamais pour un risque élevé, légal ou touchant la vie humaine.",
-      "Réduire (mitigate) : ramener à un niveau acceptable. L'éliminer quand c'est possible.",
-      "Transférer : typiquement l'assurance.",
-      "Éviter : renoncer à l'activité ou au projet.",
-      "Quantitatif : chiffres (ALE). Qualitatif : échelles approximatives (matrice). Hybride : les deux."],
- en:[["Risk transference","transfert du risque"],["Risk avoidance","évitement du risque"]],
- trap:"Ignorer un risque (rejet) n'est jamais une bonne réponse. Et transférer le risque ne transfère pas la responsabilité.",
- ref:{c:"p. 26 à 27",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-choix",d:1,t:"Responding to risk",
+ what:"Once a risk is assessed, management must decide what to do with it. There are four legitimate options and one that is never acceptable.",
+ pts:["Accept: live with the risk. Only for low risks, and only after considering all the options. Never for high or extreme risks, risks to human life, or data protected by law.",
+      "Mitigate (reduce): lower the risk to an acceptable level with controls. Removing it completely is called eliminating the risk.",
+      "Transfer: pass the financial impact to someone else, typically an insurer.",
+      "Avoid: stop the activity or cancel the project that creates the risk.",
+      "Quantitative analysis uses hard numbers (ALE). Qualitative analysis uses approximate scales (the risk matrix). Hybrid uses numbers where possible and scales for the rest."],
+ ex:"Laptop encryption mitigates the PII risk. A cyber insurance policy transfers the financial part. Cancelling a project to store customer card data yourself avoids the risk.",
+ terms:[["Risk acceptance","Consciously deciding to live with a risk."],["Risk transference","Shifting the financial impact, for example through insurance."],["Risk avoidance","Stopping the risky activity."],["Residual risk","The risk that remains after controls."]],
+ trap:"Ignoring a known risk (sometimes called rejecting it) is never correct. And transferring a risk does not transfer responsibility.",
+ mnem:"A-M-T-A: Accept, Mitigate, Transfer, Avoid. Never Ignore.",
+ ref:{c:"p. 26 to 27",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d1-attaquants",d:1,t:"Processus de risque NIST et types d'attaquants",
- pts:["NIST SP 800-30 (version 2002) : 9 étapes, de la caractérisation du système à la documentation des résultats.",
-      "Black hat : malveillant. White hat : autorisé (pentesteurs). Hacktivist : motivation politique. Script kiddie : utilise des outils qu'il ne comprend pas.",
-      "Outsiders : sans accès autorisé, la majorité des attaques, freinés par la défense en profondeur.",
-      "Insiders : ont des accès, intention ou erreur, impact potentiel fort.",
-      "Bot et botnet : machines infectées pilotées par un serveur de commande (C&C) géré par un bot herder. Zombie = bot.",
-      "Phishing : tromper pour obtenir des identifiants. Spear phishing : vise une personne précise."],
- en:[["Bot herder","celui qui pilote le botnet"],["Spear phishing","hameçonnage ciblé"]],
- maj:"NIST SP 800-30 rev. 1 (2012) remplace les 9 étapes par 4 : préparer, conduire, communiquer, maintenir. Le cadre global est le RMF (SP 800-37). On parle aussi de whaling pour le phishing visant les dirigeants.",
- ref:{c:"p. 28 à 29",a:"chap. 2",o:"Domaine 1"}},
+{id:"d1-attaquants",d:1,t:"Risk process and types of attackers",
+ what:"NIST publishes a well-known guide for running a risk assessment, and the exam expects you to recognize the main types of attackers you are assessing against.",
+ pts:["NIST SP 800-30 is the Guide for Conducting Risk Assessments. Its 2002 version had nine steps, from system characterization to results documentation.",
+      "Black hat: malicious hacker. White hat: authorized, such as a penetration tester. Hacktivist: attacks for political reasons. Script kiddie: uses tools they do not understand.",
+      "Outsiders: no authorized access; they launch most attacks, which defense in depth mostly stops.",
+      "Insiders: have legitimate access; the attack can be intentional or accidental, and the impact can be severe.",
+      "Bot: an infected computer controlled remotely, also called a zombie. Botnet: many bots controlled through a command and control (C&C) network run by a bot herder.",
+      "Phishing: tricking users into giving credentials or PII. Spear phishing: phishing aimed at a specific person. Whaling: spear phishing aimed at executives."],
+ ex:"A fake invoice email sent only to the CFO, written with details from LinkedIn, is spear phishing, more precisely whaling.",
+ terms:[["Insider threat","Risk from people with legitimate access."],["Bot herder","The person controlling a botnet."],["Spear phishing","Targeted phishing."],["Defense in depth","Several layers of controls, so one failure is not fatal."]],
+ trap:"Insiders are rarer than outsiders but can do much more damage, because they are already inside.",
+ mnem:"Spear = one target. Whale = a big target (an executive).",
+ upd:"NIST SP 800-30 Revision 1 (2012) replaced the nine steps with four: prepare, conduct, communicate, maintain. The broader framework is the NIST Risk Management Framework (SP 800-37).",
+ ref:{c:"p. 28 to 29",a:"ch. 2",o:"Domain 1"}},
 
-{id:"d2-classif",d:2,t:"Classifier les données",
- pts:["Les objets ont des labels, les sujets ont des clearances.",
-      "Gouvernement US : Top Secret (dommage exceptionnellement grave), Secret (dommage grave), Confidential (dommage).",
-      "Privé : « Internal use only », « Company proprietary »...",
-      "Clearance : peut-on faire confiance à cette personne, aujourd'hui et à l'avenir ?",
-      "Formal access approval : accord documenté du data owner, la personne comprend les règles et les conséquences.",
-      "Need to know : plus fin que le moindre privilège, décision objet par objet. La compartimentation l'applique techniquement."],
- en:[["Clearance","habilitation"],["Need to know","besoin d'en connaître"],["Compartmentalization","cloisonnement"]],
- trap:"Need to know ≠ least privilege : le moindre privilège regroupe des objets, le besoin d'en connaître décide pour chaque objet.",
- maj:"Le Conrad cite l'Executive Order 12356, remplacé depuis 2009 par l'EO 13526. Les trois niveaux restent les mêmes.",
- ref:{c:"p. 34 à 35",a:"chap. 5",o:"Domaine 2"}},
+{id:"d2-classif",d:2,t:"Classifying data: labels, clearances, need to know",
+ what:"You cannot protect data properly until you know how sensitive it is. Classification links the sensitivity of data (objects) with the trust placed in people (subjects).",
+ pts:["Objects (data) have labels. Subjects (people, processes) have clearances.",
+      "US government labels: Top Secret (exceptionally grave damage to national security if disclosed), Secret (serious damage), Confidential (damage).",
+      "Private companies use labels such as 'Internal use only' or 'Company proprietary'.",
+      "A clearance decides whether a person can be trusted with a given level of information, now and in the future. Assessing future trustworthiness is harder and more expensive.",
+      "Formal access approval: documented approval from the data owner, and the subject understands the rules and the consequences of misuse.",
+      "Need to know: even with the right clearance, you only access what your job requires. It is decided object by object, which makes it more granular than least privilege. Compartmentalization enforces need to know technically."],
+ ex:"An engineer cleared for Secret works on project A. A Secret document about project B is still off limits: the clearance is right, but there is no need to know.",
+ terms:[["Label","The sensitivity marking on an object."],["Clearance","A formal decision on how far a subject can be trusted."],["Need to know","Access only to the specific objects a job requires."],["Compartmentalization","Technical separation that enforces need to know."]],
+ trap:"Need to know is not the same as least privilege: least privilege groups objects together; need to know decides for each object.",
+ mnem:"Top Secret = exceptionally grave. Secret = serious. Confidential = damage. The longer the adjective, the higher the level.",
+ upd:"Older books cite Executive Order 12356. It was replaced by EO 13526 in 2009; the three levels are unchanged.",
+ ref:{c:"p. 34 to 35",a:"ch. 5",o:"Domain 2"}},
 
-{id:"d2-media",d:2,t:"Supports sensibles, manipulation, conservation",
- pts:["Les données sensibles sont sur un support : penser aussi aux sauvegardes.",
-      "Manipulation : personnes vérifiées, formées, et journal écrit indiquant qui est responsable du support.",
-      "Conservation (retention) : pas au delà de la durée d'utilité ou de l'obligation légale, la plus longue des deux.",
-      "Garder trop longtemps expose inutilement les données."],
- en:[["Retention","durée de conservation"],["Handling","manipulation"]],
- trap:"La loi peut obliger à garder des données bien au delà de leur utilité : l'obligation légale gagne.",
- ref:{c:"p. 35",a:"chap. 5",o:"Domaine 2"}},
+{id:"d2-media",d:2,t:"Sensitive media: handling and retention",
+ what:"Sensitive information always lives on some physical media: disks, tapes, paper, USB keys, backups. Protecting data means managing those media for their whole life.",
+ pts:["Wherever data exists, processes must prevent loss of availability, disclosure (confidentiality) and alteration (integrity). Backups count as much as primary storage.",
+      "Handling: only trusted, vetted people handle sensitive media. Written logs record who is responsible for each item.",
+      "Retention: keep data no longer than its useful life or the legal requirement, whichever is longer.",
+      "Keeping data too long needlessly exposes it to disclosure.",
+      "Historically, backup media have been one of the biggest sources of data loss."],
+ ex:"Payroll records have no business use after three years, but the law requires ten. Keep them ten years, then destroy them securely.",
+ terms:[["Retention","How long data is kept."],["Media","The physical support on which data is stored."],["Handling","How media are marked, moved, stored and tracked."]],
+ trap:"The legal requirement wins over usefulness: if the law says keep it longer, you keep it longer.",
+ mnem:"Keep it as long as the longer of: need or law.",
+ ref:{c:"p. 35",a:"ch. 5",o:"Domain 2"}},
 
-{id:"d2-roles",d:2,t:"Les rôles autour des données",
- pts:["Business ou mission owner (direction générale) : crée le programme de sécurité, le finance, lui donne sa priorité.",
-      "Data owner : un manager responsable d'une donnée. Fixe le label de sensibilité et la fréquence de sauvegarde.",
-      "System owner : un manager responsable des machines qui hébergent les données (patchs, durcissement, sécurité physique).",
-      "Custodian : protection concrète au quotidien (sauvegardes, restaurations, patchs, antivirus). Exécute, ne décide pas.",
-      "Users : respectent les règles et connaissent les sanctions.",
-      "Data controller : crée et gère la donnée (ex. RH). Data processor : la traite pour son compte (ex. prestataire de paie).",
-      "Limitation de la collecte : ne collecter que le minimum, de façon légale et loyale."],
- en:[["Custodian","gardien, exécutant"],["Data processor","sous-traitant du traitement"]],
- trap:"Le data owner décide, le custodian exécute. Une société de paie externe est un data processor.",
- maj:"Au sens du RGPD, le controller est celui qui détermine les finalités et les moyens du traitement.",
- ref:{c:"p. 36 à 37",a:"chap. 5",o:"Domaine 2"}},
+{id:"d2-roles",d:2,t:"Roles: owners, custodians, controllers, processors",
+ what:"Protecting data is a shared job. The exam checks that you know exactly who decides, who executes and who is ultimately responsible.",
+ pts:["Business or mission owner (senior management): creates the security program, funds and staffs it, gives it priority. Ultimately responsible for protecting all assets.",
+      "Data owner (information owner): a manager responsible for specific data. Decides its sensitivity label and how often it is backed up.",
+      "System owner: a manager responsible for the computers that hold the data: patching, hardening, physical security.",
+      "Custodian: provides hands-on protection: backups, restores, patches, antivirus. Follows orders and does not make critical decisions.",
+      "Users: must follow the rules and know the penalties for breaking them.",
+      "Data controller: creates and manages sensitive data, for example HR. Data processor: handles data on behalf of the controller, for example an outsourced payroll company.",
+      "Data collection limitation: collect only the minimum personal data needed, lawfully and fairly, with the subject's knowledge or consent where appropriate."],
+ ex:"The HR director decides that salary data is 'Confidential' and must be backed up daily (data owner). The infrastructure team runs the backup jobs (custodians). An external payroll firm processes the salaries (data processor).",
+ terms:[["Data owner","The manager accountable for a specific data set."],["Custodian","The person doing the hands-on protection."],["Data controller","The party that decides why and how personal data is processed."],["Data processor","The party processing data on the controller's behalf."]],
+ trap:"The data owner decides, the custodian executes. An outsourced payroll company is a data processor.",
+ mnem:"Owner = orders. Custodian = carries out.",
+ upd:"Under the GDPR, the controller is the party that determines the purposes and means of processing.",
+ ref:{c:"p. 36 to 37",a:"ch. 5",o:"Domain 2"}},
 
-{id:"d2-memoire",d:2,t:"Mémoire et rémanence",
- pts:["Rémanence : données qui persistent malgré une suppression non invasive.",
-      "RAM : volatile, perd tout sans courant. ROM, disque, bande : non volatiles.",
-      "Cache : la plus rapide. Registres dans le CPU, cache L1 sur le CPU, L2 juste à côté. Le cache utilise de la SRAM.",
-      "SRAM : bascules (flip-flops), rapide et chère, pas de rafraîchissement. DRAM : condensateurs, moins chère, doit être rafraîchie en permanence.",
-      "PROM : écrite une seule fois. EPROM : effacée aux ultraviolets. EEPROM : effacée électriquement, octet par octet.",
-      "Flash (clé USB) : EEPROM écrite par blocs."],
- en:[["Data remanence","rémanence des données"],["Flip-flop","bascule électronique"]],
- trap:"SRAM = rapide, chère, bascules, cache. DRAM = condensateurs, rafraîchissement.",
- ref:{c:"p. 37 à 38",a:"chap. 6",o:"Domaine 2"}},
+{id:"d2-memoire",d:2,t:"Memory types and data remanence",
+ what:"To destroy data properly, you must understand where it hides. Different memory types keep data in different ways, and some keep it after you think it is gone.",
+ pts:["Data remanence: data that persists after non-invasive attempts to delete it.",
+      "Volatile memory (RAM) loses its content without power. Non-volatile memory (ROM, disk, tape) keeps it.",
+      "Cache is the fastest memory: registers inside the CPU, level 1 cache on the CPU, level 2 cache next to it. Cache uses SRAM.",
+      "SRAM (static RAM): uses flip-flops, fast and expensive, no refresh needed. DRAM (dynamic RAM): uses small capacitors, slower and cheaper, must be refreshed constantly because the capacitors leak.",
+      "Firmware is stored in ROM chips. PROM: written once. EPROM: erased with ultraviolet light. EEPROM: erased electrically, byte by byte.",
+      "Flash memory, such as a USB key, is a type of EEPROM written in larger blocks."],
+ ex:"Pulling the power cord wipes a server's RAM, but not the BIOS settings stored in EEPROM, nor anything on its SSD.",
+ terms:[["Data remanence","Residual data left after deletion."],["Volatile","Loses data when power is lost."],["Flip-flop","A tiny circuit that holds one bit, used in SRAM."],["Firmware","Software stored in ROM, such as a BIOS."]],
+ trap:"SRAM = fast, expensive, flip-flops, cache. DRAM = capacitors, refresh, main memory.",
+ mnem:"Static RAM stays still (no refresh). Dynamic RAM needs constant attention (refresh).",
+ ref:{c:"p. 37 to 38",a:"ch. 6",o:"Domain 2"}},
 
-{id:"d2-ssd",d:2,t:"Le cas des SSD",
- pts:["Un SSD combine de la mémoire flash et de la DRAM.",
-      "Le dégaussage n'a aucun effet sur un SSD.",
-      "Les blocs sont logiques : le SSD n'écrase pas un bloc, il écrit ailleurs. L'écrasement secteur par secteur n'est donc pas fiable.",
-      "TRIM améliore les performances mais ne détruit pas les données de façon fiable.",
-      "Méthodes valables : ATA Secure Erase (SSD en état de marche) et destruction (SSD endommagé)."],
- en:[["Garbage collection","nettoyage des blocs en arrière-plan"],["Secure erase","effacement sécurisé intégré au disque"]],
- trap:"SSD + dégaussage = toujours faux.",
- maj:"NIST SP 800-88 ajoute l'effacement cryptographique (crypto erase) : on détruit la clé d'un disque chiffré.",
- ref:{c:"p. 39",a:"chap. 6",o:"Domaine 2"}},
+{id:"d2-ssd",d:2,t:"Why SSDs are different",
+ what:"Solid-state drives do not store data the way magnetic disks do, so the classic wiping methods fail on them. This is a favorite exam topic.",
+ pts:["An SSD combines flash memory (EEPROM) with DRAM.",
+      "Degaussing has no effect on an SSD: there is nothing magnetic to disrupt.",
+      "SSD blocks are logical and mapped to physical blocks. The drive does not overwrite a block in place; it writes to a free block and marks the old one as unallocated.",
+      "Garbage collection later cleans the old blocks in the background. The TRIM command helps it, but TRIM does not reliably destroy data.",
+      "A sector-by-sector overwrite is therefore unreliable, and so is file-level 'electronic shredding'.",
+      "Valid methods: ATA Secure Erase for a working SSD, physical destruction for a damaged one."],
+ ex:"A decommissioned laptop SSD goes back to the leasing company. Use the drive's Secure Erase function (or crypto erase if it is encrypted), never a free overwrite tool.",
+ terms:[["ATA Secure Erase","A built-in command that makes the drive erase all its cells."],["Garbage collection","Background cleanup of unused SSD blocks."],["TRIM","A command marking blocks as no longer in use."],["Crypto erase","Destroying the encryption key so the data becomes unreadable."]],
+ trap:"SSD plus degaussing is always the wrong answer.",
+ mnem:"SSD: no magnet, no overwrite. Secure Erase or shred.",
+ upd:"NIST SP 800-88 also recognizes cryptographic erase: destroy the key of a self-encrypting drive.",
+ ref:{c:"p. 39",a:"ch. 6",o:"Domain 2"}},
 
-{id:"d2-destruction",d:2,t:"Détruire les données",
- pts:["Object reuse : récupérer des informations sur un support réutilisé (de la fouille de poubelles à l'analyse des blocs non alloués).",
-      "Supprimer un fichier retire seulement son entrée dans la table (FAT). Formater remplace la table. Les données restent.",
-      "Overwriting (wiping) : écrire des zéros ou des caractères aléatoires sur tout le disque.",
-      "Degaussing : champ magnétique puissant, uniquement pour les supports magnétiques (bandes, disques durs).",
-      "Destruction : incinération, broyage, acide. La méthode la plus sûre.",
-      "Shredding : destruction physique du papier ou de petits supports."],
- en:[["Dumpster diving","fouille de poubelles"],["Degaussing","démagnétisation"]],
- trap:"La destruction physique est toujours la réponse la plus sûre. Pour un support endommagé, écraser n'est pas possible.",
- maj:"NIST SP 800-88 classe les méthodes en trois niveaux : clear, purge, destroy.",
- ref:{c:"p. 39 à 40",a:"chap. 6",o:"Domaine 2"}},
+{id:"d2-destruction",d:2,t:"Data destruction methods",
+ what:"All media must be cleaned or destroyed before disposal. Otherwise attackers can recover information through object reuse.",
+ pts:["Object reuse: recovering information from previously used objects, from dumpster diving through paper to reading unallocated blocks on a disk.",
+      "Deleting a file only removes its entry in the file allocation table (FAT). Formatting replaces the table. In both cases the data usually remains.",
+      "Overwriting (wiping): writing zeros or random characters over every sector. Much better than deleting.",
+      "Degaussing: a strong magnetic field destroys the integrity of magnetic media such as tapes and hard disks.",
+      "Destruction: incineration, pulverizing, shredding, acid. The most secure method, and the only one for damaged media.",
+      "Shredding: the simplest form of physical destruction, for paper and small media such as optical discs."],
+ ex:"A failed hard drive that no longer spins cannot be overwritten. Degauss it and then physically destroy it.",
+ terms:[["Object reuse","Recovering data from reused or discarded media."],["Dumpster diving","Searching trash for information."],["Degaussing","Erasing magnetic media with a strong magnetic field."],["Wiping","Overwriting all data on a disk."]],
+ trap:"Physical destruction is always the most secure answer. Overwriting is impossible on damaged media.",
+ mnem:"Delete < Format < Overwrite < Degauss < Destroy.",
+ upd:"NIST SP 800-88 groups sanitization into three levels: clear, purge, destroy.",
+ ref:{c:"p. 39 to 40",a:"ch. 6",o:"Domain 2"}},
 
-{id:"d2-certif",d:2,t:"Certification, accréditation, Common Criteria",
- pts:["Certification : le système répond aux exigences de sécurité du data owner.",
-      "Accreditation : le data owner accepte la certification et le risque résiduel, avant la mise en production.",
-      "Common Criteria (ISO 15408) : standard international pour évaluer la sécurité des produits IT.",
-      "Target of Evaluation (ToE) : le produit évalué. Security Target : sa documentation de sécurité. Protection Profile : exigences indépendantes pour une catégorie de produits (ex. pare-feu).",
-      "EAL1 à EAL7 : de fonctionnellement testé à formellement vérifié, conçu et testé."],
- en:[["Residual risk","risque résiduel"],["EAL","niveau d'assurance de l'évaluation"]],
- trap:"Certification = technique. Accréditation = décision de la direction qui accepte le risque.",
- maj:"Dans le vocabulaire NIST actuel (RMF), l'accréditation s'appelle « authorization » (ATO).",
- ref:{c:"p. 40 à 42",a:"chap. 6",o:"Domaine 2"}},
+{id:"d2-certif",d:2,t:"Certification, accreditation and Common Criteria",
+ what:"Before a system goes live, someone must check that it is secure enough, and someone must formally accept what risk remains. For products, an international standard rates how thoroughly they were evaluated.",
+ pts:["Certification: the system has been checked against the data owner's security requirements, considering the system, its controls and the residual risk.",
+      "Accreditation: the data owner formally accepts the certification and the residual risk. Required before the system goes into production.",
+      "Common Criteria (ISO/IEC 15408): the international standard for evaluating the security of IT products.",
+      "Target of Evaluation (ToE): the product being evaluated. Security Target: the document describing the ToE and its security requirements. Protection Profile: an independent set of security requirements for a category of products, such as firewalls.",
+      "Evaluation Assurance Levels, each building on the previous one: EAL1 functionally tested, EAL2 structurally tested, EAL3 methodically tested and checked, EAL4 methodically designed, tested and reviewed, EAL5 semiformally designed and tested, EAL6 semiformally verified, designed and tested, EAL7 formally verified, designed and tested."],
+ ex:"A new HR system passes its security review (certification). The HR director, as data owner, signs off on the remaining risk and authorizes go-live (accreditation).",
+ terms:[["Certification","Technical evaluation against requirements."],["Accreditation","Management's formal acceptance of residual risk."],["Protection Profile","Standard requirements for a product category."],["EAL","Evaluation Assurance Level, 1 to 7."]],
+ trap:"Certification is technical. Accreditation is a management decision to accept risk.",
+ mnem:"EAL words climb: functionally, structurally, methodically (x2), semiformally (x2), formally.",
+ upd:"In current NIST terminology (Risk Management Framework), accreditation is called authorization, or authorization to operate (ATO).",
+ ref:{c:"p. 40 to 42",a:"ch. 6",o:"Domain 2"}},
 
-{id:"d2-cadres",d:2,t:"Standards et cadres de contrôle",
- pts:["PCI DSS : protège les données de cartes bancaires, imposé aux commerçants.",
-      "OCTAVE (Carnegie Mellon) : gestion des risques en 3 phases.",
-      "ISO 27002 (ex 17799) : code de bonnes pratiques, catalogue de contrôles. ISO 27001 : exigences d'un système de management (ISMS), certifiable.",
-      "COBIT (ISACA) : gouvernance et contrôle de l'IT.",
-      "ITIL : gestion des services IT.",
-      "Scoping : décider quelles parties d'un standard s'appliquent (pas de WiFi, pas de contrôles WiFi). Tailoring : adapter le standard à l'organisation (sélection, scoping, contrôles compensatoires)."],
- en:[["ISMS","système de management de la sécurité de l'information"],["Tailoring","personnalisation d'un référentiel"]],
- trap:"27001 = exigences, certifiable. 27002 = catalogue de contrôles, pas de certification.",
- maj:"Versions actuelles : PCI DSS v4.0 (2022), ISO 27001 et 27002 édition 2022 (93 contrôles en 4 thèmes : organisationnel, humain, physique, technologique), COBIT 2019, ITIL 4.",
- ref:{c:"p. 40 à 43",a:"chap. 4",o:"Domaine 2"}},
+{id:"d2-cadres",d:2,t:"Standards and control frameworks",
+ what:"You rarely invent security controls from scratch. Standards and frameworks give you tested catalogs, which you then adapt to your organization.",
+ pts:["PCI DSS: the Payment Card Industry Data Security Standard, created by the card brands. Mandatory for organizations that handle card data.",
+      "OCTAVE (Carnegie Mellon University): a risk management framework in three phases: identify assets and threats, identify vulnerabilities, analyze risk and plan mitigation.",
+      "ISO 27002 (formerly ISO 17799): a code of practice, a catalog of security controls. ISO 27001: the requirements for an information security management system (ISMS). Organizations can be certified against 27001.",
+      "COBIT (from ISACA): a framework for IT governance and control.",
+      "ITIL: a framework for IT service management.",
+      "Scoping: deciding which parts of a standard apply. An organization with no wireless network declares the wireless controls out of scope.",
+      "Tailoring: customizing a standard to the organization. It starts with selecting controls, continues with scoping, and ends with compensating controls."],
+ ex:"A company adopts ISO 27001. It removes the controls for software development because it develops nothing (scoping), then adds extra monitoring where a control cannot be applied as written (tailoring with compensating controls).",
+ terms:[["ISMS","Information security management system."],["Scoping","Choosing which parts of a standard apply."],["Tailoring","Adapting a standard to the organization."],["Control framework","A structured catalog of controls."]],
+ trap:"ISO 27001 = requirements, certifiable. ISO 27002 = catalog of controls, not certifiable.",
+ mnem:"27001 = the 1 you get certified in. 27002 = the 2nd book, the toolbox.",
+ upd:"Current versions: PCI DSS 4.0 (2022, updated 4.0.1 in 2024), ISO/IEC 27001 and 27002:2022 (93 controls in four themes: organizational, people, physical, technological), COBIT 2019, ITIL 4.",
+ ref:{c:"p. 40 to 43",a:"ch. 4",o:"Domain 2"}},
 
-{id:"d2-donnees",d:2,t:"Données au repos et en transit",
- pts:["Data at rest : sur un disque ou dans un fichier. Data in motion : en transit sur un réseau.",
-      "Chiffrement des disques et bandes : protège même après une brèche physique. Le chiffrement complet du disque est préférable au chiffrement partiel (fichiers temporaires, swap).",
-      "Sauvegardes hors site, via un prestataire cautionné et assuré, sur un site non exposé au même sinistre. Jamais chez les employés.",
-      "En transit : chiffrement de bout en bout (ex. VPN IPsec), aussi en interne par défense en profondeur."],
- en:[["Whole disk encryption","chiffrement complet du disque"],["Bonded","cautionné (garantie financière)"]],
- trap:"Emporter les bandes chez soi est toujours une mauvaise réponse.",
- ref:{c:"p. 43 à 44",a:"chap. 6",o:"Domaine 2"}}
+{id:"d2-donnees",d:2,t:"Protecting data at rest and in motion",
+ what:"Data exists in two main states, and each needs different controls. Data at rest sits on a disk or in a file. Data in motion travels across a network.",
+ pts:["Drive and tape encryption protect data at rest, even after physical security has been breached. Recommended for all mobile devices and media leaving a secure site.",
+      "Whole-disk encryption is preferred. Partial encryption (encrypted folders or partitions) risks leaving sensitive data in temporary files, swap space or unallocated space.",
+      "Backups must be stored offsite, with a bonded and insured company, in secure vehicles, at a site unlikely to be hit by the same disaster. Never at employees' homes.",
+      "Data in motion is best protected by standards-based end-to-end encryption, such as an IPsec VPN, especially over untrusted networks like the Internet.",
+      "Encrypting traffic on internal networks and private WAN links adds defense in depth."],
+ ex:"Sites in Africa send daily backups to a data center in Switzerland over an IPsec VPN (data in motion), and the backup files are encrypted on disk (data at rest).",
+ terms:[["Data at rest","Stored data."],["Data in motion","Data travelling across a network."],["Bonded","Covered by a financial guarantee against theft or misconduct."],["Whole-disk encryption","Encrypting the entire drive, including temporary and swap areas."]],
+ trap:"Taking backup tapes home is always a wrong answer.",
+ mnem:"At rest: encrypt the disk. In motion: encrypt the pipe.",
+ ref:{c:"p. 43 to 44",a:"ch. 6",o:"Domain 2"}}
 ];
 
-/* ============ CARTES (rappel actif) ============ */
-const CARDS = [
-["d1-cia","Les trois propriétés de la triade CIA ?","Confidentiality, Integrity, Availability."],
-["d1-cia","Que signifie DAD ?","Disclosure, Alteration, Destruction : l'opposé de CIA."],
-["d1-cia","Les trois A de AAA ?","Authentication, Authorization, Accounting (auditing)."],
-["d1-cia","Non-repudiation ?","L'auteur ne peut pas nier avoir fait l'action (ex. signature numérique)."],
-["d1-ethique","Les 4 canons ISC2, dans l'ordre ?","1. Protéger la société et l'infrastructure. 2. Agir honorablement, honnêtement, légalement. 3. Servir les mandants avec diligence et compétence. 4. Faire progresser la profession."],
-["d1-ethique","Canons ou directives : lesquels sont obligatoires ?","Les canons. Les directives sont indicatives."],
-["d1-ethique","Lois de deux pays en conflit : laquelle privilégier ?","Celle de la juridiction où le service est fourni."],
-["d1-codes","Qui a publié la RFC 1087 « Ethics and the Internet » ?","L'IAB (Internet Activities Board), en 1989."],
-["d1-codes","Deux comportements jugés non éthiques par la RFC 1087 ?","Au choix : accès non autorisé, perturber Internet, gaspiller des ressources, détruire l'intégrité, compromettre la vie privée."],
-["d1-droit","Charge de la preuve : pénal vs civil ?","Pénal : au-delà du doute raisonnable. Civil : prépondérance de la preuve."],
-["d1-droit","Statutory damages ?","Dommages fixés par la loi, dus même sans perte réelle."],
-["d1-droit","Exemples de droit administratif ?","HIPAA, FCC, FDA, FAA : règles des agences gouvernementales."],
-["d1-duecare","Due care en une phrase ?","Faire ce que ferait une personne raisonnable (prudent man rule)."],
-["d1-duecare","Due diligence selon l'ISC2 ?","Rechercher, évaluer, vérifier : savoir. La due care, c'est agir."],
-["d1-duecare","Contraire de la due care ?","La négligence grave (gross negligence)."],
-["d1-preuves","Best evidence rule ?","Le tribunal préfère l'original à la copie, et l'objet à la parole."],
-["d1-preuves","Entrapment ou enticement pour un honeypot ?","Enticement : la personne était déjà décidée."],
-["d1-preuves","Chain of custody ?","Tracer qui a manipulé la preuve, quand et où, depuis son acquisition."],
-["d1-preuves","Les logs informatiques sont souvent quel type de preuve ?","Secondaire (secondary evidence)."],
-["d1-pi","™ ou ® : lequel pour une marque enregistrée ?","®. Le ™ sert pour une marque non enregistrée."],
-["d1-pi","Que protège le copyright ?","La forme de l'expression, pas l'idée."],
-["d1-pi","Durée habituelle d'un brevet ?","20 ans à partir du dépôt."],
-["d1-privacy","Qu'est-ce qui a remplacé la directive européenne 95/46 ?","Le RGPD (GDPR), en 2018."],
-["d1-privacy","Mécanisme actuel de transfert UE vers États-Unis ?","Le EU-US Data Privacy Framework (2023), après Safe Harbor et Privacy Shield."],
-["d1-privacy","Accord actuel de contrôle des exportations de crypto ?","L'arrangement de Wassenaar (après CoCom)."],
-["d1-tiers","Principal contrôle de sécurité face à un prestataire ?","Le contrat."],
-["d1-tiers","Que couvre surtout un SLA ?","La disponibilité."],
-["d1-tiers","Acquisition ou scission : laquelle est souvent plus risquée ?","La scission (divestiture) : comptes dupliqués, accès oubliés."],
-["d1-docs","Quels documents sont obligatoires ?","Policy, procedure, standard. La guideline est facultative."],
-["d1-docs","Une politique nomme-t-elle Windows ou Linux ?","Non : elle reste de haut niveau et neutre technologiquement."],
-["d1-docs","Exemple de standard ?","« Tous les portables tournent sous Windows 11 Enterprise 64 bits. »"],
-["d1-personnel","Awareness vs training ?","Awareness change le comportement. Training donne une compétence."],
-["d1-personnel","Première action lors d'un licenciement ?","Révoquer immédiatement tous les accès."],
-["d1-controles","Les 6 types de contrôles ?","Preventive, detective, corrective, recovery, deterrent, compensating."],
-["d1-controles","Les 3 catégories de contrôles ?","Administrative (directive), technical, physical."],
-["d1-controles","Compensating control ?","Contrôle ajouté pour compenser la faiblesse d'un autre."],
-["d1-risque","Formule de base du risque ?","Risk = Threat × Vulnerability (× Impact)."],
-["d1-risque","Un serveur non patché : menace ou vulnérabilité ?","Vulnérabilité."],
-["d1-risque","Que faire d'un risque extrême dans la matrice ?","Action immédiate, plan de réduction détaillé, direction informée."],
-["d1-ale","Formule du SLE ?","SLE = AV × EF."],
-["d1-ale","Formule de l'ALE ?","ALE = SLE × ARO."],
-["d1-ale","Quand une mesure est-elle rentable ?","Quand ALE avant − ALE après − TCO annuel est positif."],
-["d1-choix","Les 4 façons de traiter un risque ?","Accepter, réduire, transférer, éviter."],
-["d1-choix","Acheter une assurance cyber : quel traitement ?","Transfert du risque."],
-["d1-choix","Quelle attitude n'est jamais acceptable ?","Ignorer le risque (rejet)."],
-["d1-attaquants","Script kiddie ?","Attaquant qui utilise des outils qu'il ne comprend pas."],
-["d1-attaquants","Bot herder ?","Celui qui pilote un botnet via un serveur de commande (C&C)."],
-["d1-attaquants","Spear phishing ?","Phishing ciblant une personne précise."],
-["d2-classif","Labels ou clearances : qu'ont les sujets ?","Des clearances. Les objets ont des labels."],
-["d2-classif","Dommage « serious » : quel niveau ?","Secret. Top Secret = exceptionnellement grave. Confidential = dommage."],
-["d2-classif","Need to know vs least privilege ?","Need to know décide objet par objet, plus fin que le moindre privilège."],
-["d2-classif","Formal access approval ?","Accord documenté du data owner pour un sujet."],
-["d2-media","Combien de temps garder une donnée ?","Pas plus que la durée d'utilité ou l'obligation légale, la plus longue des deux."],
-["d2-roles","Qui fixe le label et la fréquence de sauvegarde ?","Le data owner."],
-["d2-roles","Qui fait les sauvegardes au quotidien ?","Le custodian."],
-["d2-roles","Qui finance le programme de sécurité ?","Le business ou mission owner (direction générale)."],
-["d2-roles","Prestataire de paie externe : quel rôle ?","Data processor."],
-["d2-memoire","SRAM ou DRAM : laquelle utilise des condensateurs ?","DRAM. Elle doit être rafraîchie."],
-["d2-memoire","Comment efface-t-on une EPROM ?","Aux ultraviolets."],
-["d2-memoire","Flash vs EEPROM ?","Même famille. La flash s'écrit par blocs, l'EEPROM octet par octet."],
-["d2-ssd","Le dégaussage marche-t-il sur un SSD ?","Non, jamais."],
-["d2-ssd","Deux méthodes fiables pour un SSD ?","ATA Secure Erase et la destruction physique."],
-["d2-destruction","Que fait vraiment la suppression d'un fichier ?","Elle retire l'entrée dans la table (FAT). Les données restent."],
-["d2-destruction","Méthode la plus sûre ?","La destruction physique."],
-["d2-destruction","Object reuse ?","Récupérer des infos sur un support réutilisé ou jeté."],
-["d2-certif","Certification vs accreditation ?","Certification : conformité technique. Accreditation : le data owner accepte le risque résiduel."],
-["d2-certif","Protection Profile ?","Exigences de sécurité indépendantes pour une catégorie de produits."],
-["d2-certif","EAL le plus élevé ?","EAL7 : formellement vérifié, conçu et testé."],
-["d2-cadres","ISO 27001 vs 27002 ?","27001 : exigences d'un ISMS, certifiable. 27002 : catalogue de contrôles."],
-["d2-cadres","Scoping vs tailoring ?","Scoping : choisir ce qui s'applique. Tailoring : adapter tout le standard (inclut le scoping)."],
-["d2-cadres","Qui a créé COBIT ?","L'ISACA."],
-["d2-donnees","Meilleure protection des données en transit sur Internet ?","Chiffrement de bout en bout, par exemple un VPN IPsec."],
-["d2-donnees","Où stocker les sauvegardes ?","Hors site, chez un prestataire cautionné et assuré, loin du même sinistre."]
-].map((c,i)=>({id:"c"+i,f:c[0],q:c[1],a:c[2]}));
+/* Recall cards: full questions */
+const CARD_SRC = {
+"d1-cia":[["What are the three properties of the CIA triad?","Confidentiality, Integrity, Availability."],["What does DAD stand for, and how does it relate to CIA?","Disclosure, Alteration, Destruction: the attacker's view, the opposite of CIA."],["What are the three A's of AAA?","Authentication, Authorization, Accounting (also called auditing)."],["What is non-repudiation?","The author of an action cannot deny having performed it, typically thanks to a digital signature."]],
+"d1-ethique":[["List the four ISC2 canons in order.","1. Protect society, the common good, public trust and the infrastructure. 2. Act honorably, honestly, justly, responsibly and legally. 3. Provide diligent and competent service to principals. 4. Advance and protect the profession."],["Which parts of the ISC2 Code are mandatory, and which are advisory?","The canons are mandatory. The guidance is advisory."],["Laws from two countries conflict. Which one should you give priority to, according to the ISC2 Code?","The law of the jurisdiction where the service is provided."],["Who are your 'principals' in the ISC2 Code?","Your employers and clients."]],
+"d1-codes":[["Who published RFC 1087, Ethics and the Internet, and when?","The Internet Activities Board (IAB), in 1989."],["Name three behaviors that RFC 1087 considers unethical.","Any three of: seeking unauthorized access, disrupting the intended use of the Internet, wasting resources, destroying the integrity of information, compromising users' privacy."],["Who published the Ten Commandments of Computer Ethics?","The Computer Ethics Institute."]],
+"d1-droit":[["What is the burden of proof in a criminal case, and in a civil case?","Criminal: beyond a reasonable doubt. Civil: preponderance of the evidence (more likely than not)."],["What are statutory damages, and what makes them special?","Damages whose amount is fixed by law. They can be awarded even if the victim cannot prove any actual loss."],["What is tort law?","The law of civil wrongs: compensating someone harmed outside a contract, for example through negligence."],["Give two examples of administrative (regulatory) law.","Any two of: HIPAA, FCC regulations, FDA regulations, FAA regulations."],["Which legal system relies mainly on precedent, and which on written codes?","Common law relies on precedent. Civil law (the legal system) relies on written codes."]],
+"d1-duecare":[["What is due care?","Doing what a reasonable person would do in the same situation (the prudent man rule): taking the right actions."],["What is due diligence, according to ISC2?","The effort to know: investigating, assessing risks and verifying that protections work."],["What is the opposite of due care?","Gross negligence."]],
+"d1-preuves":[["What does the best evidence rule say?","Courts prefer original evidence over copies."],["What is chain of custody?","A record of everyone who handled the evidence, when, where and why, from collection to court."],["Is a honeypot entrapment or enticement? Why?","Enticement: it only tempts someone who already intends to attack."],["What type of evidence are computer logs usually considered?","Secondary evidence."],["How do you prove a forensic image was not altered?","Compare its hash before and after analysis; identical hashes prove integrity."]],
+"d1-pi":[["What is the difference between the ™ and ® symbols?","™ marks an unregistered trademark, ® a registered one."],["What does copyright protect, and what does it not protect?","It protects the form of expression, not the underlying idea."],["How long does a patent usually last?","20 years from the filing date."],["How is a trade secret protected?","By keeping it secret: NDAs, non-compete agreements and due care. It is never published."]],
+"d1-privacy":[["What replaced the EU Data Protection Directive, and when?","The GDPR, applicable since 2018."],["What is the current legal mechanism for EU to US personal data transfers?","The EU-US Data Privacy Framework (2023), after Safe Harbor and Privacy Shield were invalidated."],["Which agreement controls the export of cryptography today?","The Wassenaar Arrangement (successor of CoCom)."],["What is the Budapest Convention?","The Council of Europe Convention on Cybercrime, for international cooperation on cybercrime."]],
+"d1-tiers":[["What is the primary security control when working with a service provider?","The contract."],["What does an SLA mainly address?","Availability."],["What is attestation?","An independent third party audits a provider against a baseline and states its opinion on its security."],["Which is often riskier, an acquisition or a divestiture? Why?","A divestiture: duplicate accounts, shared passwords, badges and keys may remain valid."]],
+"d1-docs":[["Which security documents are mandatory, and which is discretionary?","Policies, procedures, standards (and baselines) are mandatory. Guidelines are discretionary."],["Does a security policy name specific technologies such as Windows or Linux? Why?","No. It stays high level, so it does not change when technology changes."],["Give an example of a standard.","'All laptops run Windows 11 Enterprise, 64-bit.'"],["What is a baseline?","A uniform minimum level of security, often based on a benchmark such as CIS. Exceptions need senior management sign-off."]],
+"d1-personnel":[["What is the difference between awareness and training?","Awareness changes behavior. Training teaches a skill."],["What must happen first when an employee is terminated?","Revoke all access immediately."],["Why is offshoring data a legal concern?","Laws such as HIPAA, SOX or GLBA do not apply abroad, so protection must come from contracts and legal review."]],
+"d1-controles":[["Name the six types of controls.","Preventive, detective, corrective, recovery, deterrent, compensating."],["Name the three categories of controls.","Administrative (directive), technical (logical), physical."],["What is a compensating control?","An additional control that makes up for a weakness or gap in another control."],["Why is antivirus both detective and corrective?","It detects malware by scanning, then corrects by quarantining or deleting it."]],
+"d1-risque":[["What is the basic risk formula?","Risk = Threat × Vulnerability (sometimes × Impact)."],["An unpatched server: is it a threat or a vulnerability?","A vulnerability."],["What must happen for a risk rated Extreme in the risk matrix?","Immediate action, a detailed mitigation plan, and senior management notification."],["How does the exam treat risk to human life?","As near-infinite impact: it must always be mitigated."]],
+"d1-ale":[["What is the formula for SLE?","SLE = AV × EF."],["What is the formula for ALE?","ALE = SLE × ARO."],["How do you calculate the yearly value of a safeguard?","ALE before − ALE after − annual TCO. Positive means worth it."],["What does TCO include?","Upfront costs plus ongoing costs: support, subscriptions, staff hours, over the life of the safeguard."]],
+"d1-choix":[["What are the four legitimate responses to risk?","Accept, mitigate, transfer, avoid."],["Buying cyber insurance is which risk response?","Transfer."],["Which response to risk is never acceptable?","Ignoring (rejecting) a known risk."],["What is the difference between quantitative and qualitative risk analysis?","Quantitative uses hard numbers such as money (ALE). Qualitative uses approximate scales such as a risk matrix."]],
+"d1-attaquants":[["What is a script kiddie?","An attacker using tools they do not understand."],["What is a bot herder?","The person controlling a botnet through a command and control network."],["What is the difference between spear phishing and whaling?","Spear phishing targets a specific person. Whaling is spear phishing aimed at executives."],["Who launches most attacks, and who can do the most damage?","Outsiders launch most attacks. Insiders can do the most damage."]],
+"d2-classif":[["What do objects have, and what do subjects have?","Objects have labels. Subjects have clearances."],["What damage defines Top Secret, Secret and Confidential?","Top Secret: exceptionally grave damage. Secret: serious damage. Confidential: damage."],["How is need to know different from least privilege?","Need to know is decided object by object; least privilege groups objects together."],["What is formal access approval?","Documented approval from the data owner for a subject to access certain objects."]],
+"d2-media":[["How long should sensitive data be retained?","No longer than its useful life or the legal requirement, whichever is longer."],["What should a sensitive media handling policy require?","Trusted, vetted handlers and written logs recording who is responsible for the media."]],
+"d2-roles":[["Who sets the sensitivity label and backup frequency of a data set?","The data owner."],["Who performs the daily backups?","The custodian."],["Who funds and prioritizes the security program?","The business or mission owner (senior management)."],["An outsourced payroll company: data controller or data processor?","Data processor."]],
+"d2-memoire":[["Which memory uses capacitors and must be refreshed: SRAM or DRAM?","DRAM."],["How is an EPROM erased?","With ultraviolet light."],["How does flash memory differ from EEPROM?","Flash is a type of EEPROM written in larger blocks rather than byte by byte."],["What is data remanence?","Data that persists after non-invasive attempts to delete it."]],
+"d2-ssd":[["Does degaussing work on an SSD?","No, never."],["What are the two valid ways to destroy data on an SSD?","ATA Secure Erase (working drive) and physical destruction (damaged drive)."],["Does the TRIM command destroy data?","No, not reliably. It only helps garbage collection."]],
+"d2-destruction":[["What does deleting a file actually do?","It removes the file's entry in the file allocation table. The data remains on disk."],["What is the most secure destruction method?","Physical destruction."],["What is object reuse?","Recovering information from previously used or discarded media."]],
+"d2-certif":[["What is the difference between certification and accreditation?","Certification checks the system against requirements. Accreditation is the data owner accepting the residual risk before production."],["In Common Criteria, what is a Protection Profile?","An independent set of security requirements for a category of products."],["What does EAL7 mean?","Formally verified, designed and tested: the highest level."],["What is the Target of Evaluation?","The product or system being evaluated."]],
+"d2-cadres":[["What is the difference between ISO 27001 and ISO 27002?","27001: ISMS requirements, certifiable. 27002: catalog of security controls."],["What is the difference between scoping and tailoring?","Scoping chooses which parts of a standard apply. Tailoring adapts the whole standard, including scoping and compensating controls."],["Who created COBIT?","ISACA."],["What does PCI DSS protect?","Payment card data."]],
+"d2-donnees":[["What is the best protection for data in motion over the Internet?","Standards-based end-to-end encryption, such as an IPsec VPN."],["Where should backup media be stored?","Offsite, with a bonded and insured company, at a site not exposed to the same disaster."],["Why is whole-disk encryption preferred over partial encryption?","Partial encryption can leave sensitive data in temporary files, swap space or unallocated space."]]
+};
 
-/* ============ QCM (en anglais, comme à l'examen) ============ */
-const QCM = [
-["d1-cia","Which security property ensures that a sender cannot later deny having sent a message?",["Confidentiality","Integrity","Non-repudiation","Availability"],2,"La non-répudiation empêche de nier une action. L'intégrité prouve que le message n'a pas changé, pas qui l'a envoyé."],
-["d1-cia","A distributed denial-of-service attack primarily targets which property?",["Confidentiality","Availability","Integrity","Authenticity"],1,"Un DDoS rend le service indisponible. Rien n'est lu ni modifié."],
-["d1-ethique","According to the ISC2 Code of Ethics, which canon takes precedence when canons conflict?",["Advance and protect the profession","Provide diligent and competent service to principals","Act honorably, honestly, justly, responsibly, and legally","Protect society, the common good, and the infrastructure"],3,"Les canons s'appliquent dans l'ordre. Protéger la société est le premier."],
-["d1-ethique","Your manager asks you to hide a breach that exposed customer data. What should guide your decision first?",["Your duty to your employer","Protecting society and public trust","Preserving your professional reputation","The confidentiality clause in your contract"],1,"Le devoir envers l'employeur (canon 3) passe après la protection de la société (canon 1)."],
-["d1-ethique","A security consultant exaggerates threats to sell more services. Which canon is most directly violated?",["Protect society","Act honorably, honestly, justly, responsibly, and legally","Provide competent service","Advance the profession"],1,"Le canon 2 demande explicitement de ne pas semer inutilement la peur (FUD)."],
-["d1-codes","RFC 1087, Ethics and the Internet, was published by which body?",["ISC2","Computer Ethics Institute","Internet Activities Board","OECD"],2,"La RFC 1087 vient de l'IAB (1989). Les Dix commandements viennent du Computer Ethics Institute."],
-["d1-droit","In a US civil case, what is the burden of proof?",["Beyond a reasonable doubt","Preponderance of the evidence","Clear and certain proof","Absolute certainty"],1,"Civil : plus probable que non. Pénal : au-delà du doute raisonnable."],
-["d1-droit","Which type of damages is intended mainly to punish and deter egregious conduct?",["Statutory","Compensatory","Punitive","Nominal"],2,"Les dommages punitifs punissent. Les compensatoires réparent la perte."],
-["d1-droit","HIPAA security requirements are an example of which type of law?",["Criminal law","Administrative (regulatory) law","Religious law","Customary law"],1,"Règles émises par une agence gouvernementale : droit administratif."],
-["d1-duecare","Implementing the controls a reasonable person would implement in the same situation demonstrates:",["Due diligence","Due care","Gross negligence","Risk transference"],1,"Agir comme une personne prudente et raisonnable : due care."],
-["d1-duecare","A CISO audits whether patches were actually deployed across all servers. This is an example of:",["Due care","Due diligence","Risk acceptance","Accreditation"],1,"Vérifier, contrôler, évaluer : due diligence, selon le Conrad comme selon l'ISC2."],
-["d1-preuves","A honeypot that attracts an attacker already intent on breaking in is an example of:",["Entrapment","Enticement","Hearsay","Corroboration"],1,"La personne était déjà décidée : enticement, légal. L'entrapment pousse un innocent."],
-["d1-preuves","What best demonstrates that a forensic disk image was not altered during analysis?",["Chain of custody form alone","Matching hash values before and after analysis","A witness statement","Storing the image on read-only media"],1,"Une empreinte identique avant et après prouve l'intégrité. La chaîne de possession est complémentaire."],
-["d1-preuves","Courts generally prefer original documents over copies. This principle is known as:",["Hearsay rule","Best evidence rule","Exclusionary rule","Chain of custody"],1,"C'est la best evidence rule."],
-["d1-pi","Which form of intellectual property protects the expression of an idea but not the idea itself?",["Patent","Trademark","Copyright","Trade secret"],2,"Le copyright protège la forme, jamais l'idée."],
-["d1-pi","A company protects its proprietary formula using NDAs and never discloses it publicly. This is a:",["Patent","Trade secret","Copyright","Trademark"],1,"Jamais publié, protégé par NDA : secret d'affaires. Un brevet exige la publication."],
-["d1-privacy","Which regulation replaced the EU Data Protection Directive in 2018?",["Privacy Shield","GDPR","Safe Harbor","Wassenaar Arrangement"],1,"Le RGPD (GDPR) est applicable depuis mai 2018."],
-["d1-privacy","Which multilateral agreement currently governs the export of dual-use technologies such as cryptography?",["CoCom","Wassenaar Arrangement","Budapest Convention","OECD Guidelines"],1,"Wassenaar a succédé à CoCom après la guerre froide."],
-["d1-tiers","What is the primary control for ensuring security when using a third-party service provider?",["Firewall rules","The contract","Vulnerability scans","Security awareness"],1,"Face à un tiers, le contrat est le contrôle principal."],
-["d1-tiers","After an acquisition, what should happen before the two networks are merged?",["Immediate merge to reduce costs","A risk assessment including vulnerability and penetration testing","Rename all domains","Terminate all acquired staff"],1,"La due diligence exige d'évaluer la sécurité de l'entreprise rachetée avant la fusion."],
-["d1-docs","'All laptops will run Windows 11 Enterprise, 64-bit' is an example of a:",["Policy","Standard","Guideline","Procedure"],1,"Usage précis d'une technologie : standard, obligatoire."],
-["d1-docs","Which security document is discretionary?",["Policy","Procedure","Standard","Guideline"],3,"La guideline est une recommandation."],
-["d1-docs","A company migrates its servers from Windows to Linux. Which document is LEAST likely to change?",["Server security policy","Hardening procedure","Operating system standard","Baseline"],0,"La politique ne nomme pas de technologie. Procédures, standards et baselines changent."],
-["d1-personnel","Reminding users never to write down their passwords is an example of:",["Training","Awareness","Education","Certification"],1,"Changer un comportement : awareness. Apprendre une compétence : training."],
-["d1-personnel","An IT administrator is being terminated. What should happen FIRST?",["Exit interview","Revoke all access immediately","Collect the badge at the end of the week","Notify customers"],1,"Révocation immédiate : un ex-administrateur connaît les points faibles."],
-["d1-controles","A 'Beware of Dog' sign is which type of control?",["Preventive","Detective","Deterrent","Compensating"],2,"Le panneau dissuade. Il n'empêche rien physiquement."],
-["d1-controles","A pre-employment drug screening is best described as:",["Technical detective","Administrative preventive","Physical deterrent","Administrative corrective"],1,"Une procédure RH qui empêche une embauche : administrative et préventive."],
-["d1-controles","Restoring a server from backup after ransomware is which type of control?",["Corrective","Recovery","Detective","Deterrent"],1,"Restaurer après incident : recovery."],
-["d1-risque","A Windows server that has not been patched in two years is a:",["Threat","Vulnerability","Risk","Exposure factor"],1,"Faiblesse exploitable : vulnérabilité. La menace est ce qui pourrait l'exploiter."],
-["d1-risque","A risk involving potential loss of human life should be:",["Accepted if the ALE is low","Transferred to an insurer","Treated as extremely high and mitigated","Documented and reviewed next year"],2,"À l'examen, la vie humaine a un impact quasi infini."],
-["d1-ale","An asset is worth 40,000, the exposure factor is 50%, and the ARO is 3. What is the ALE?",["20,000","60,000","120,000","13,333"],1,"SLE = 40 000 × 50 % = 20 000. ALE = 20 000 × 3 = 60 000."],
-["d1-ale","A safeguard costs 30,000 per year and lowers the ALE from 80,000 to 20,000. What is the annual value?",["30,000","50,000","60,000","-10,000"],0,"80 000 − 20 000 − 30 000 = 30 000 par an : bon investissement."],
-["d1-ale","A mitigation service costs 5,000 per month. The ALE it removes is 50,000. Is it worth it?",["Yes, 5,000 is less than 50,000","No, the annual cost of 60,000 exceeds the ALE","Yes, the ROI is 45,000","It cannot be determined"],1,"Toujours annualiser : 5 000 × 12 = 60 000, plus que les 50 000 évités."],
-["d1-choix","Purchasing cyber insurance is an example of:",["Risk acceptance","Risk avoidance","Risk transference","Risk mitigation"],2,"L'assureur prend en charge le risque financier."],
-["d1-choix","A project is cancelled because its risks are extreme and cannot be mitigated. This is:",["Risk avoidance","Risk rejection","Risk transference","Risk acceptance"],0,"Renoncer à l'activité : évitement."],
-["d1-choix","Which response to risk is never appropriate?",["Accepting a low risk","Transferring a risk","Ignoring a known risk","Avoiding a risk"],2,"Ignorer un risque connu n'est jamais acceptable."],
-["d1-attaquants","An attacker uses automated tools without understanding how they work. This attacker is best described as a:",["Hacktivist","Script kiddie","White hat","Insider"],1,"Outils non maîtrisés : script kiddie."],
-["d1-attaquants","A phishing email crafted for one specific finance manager is:",["Spam","Spear phishing","Vishing","Pharming"],1,"Phishing ciblé sur une personne : spear phishing."],
+/* Exam-style questions */
+const QCM_SRC = [
+["d1-cia","Which security property ensures that a sender cannot later deny having sent a message?",["Confidentiality","Integrity","Non-repudiation","Availability"],2,"Non-repudiation prevents denial. Integrity proves the message was not changed, not who sent it."],
+["d1-cia","A distributed denial-of-service attack primarily targets which property?",["Confidentiality","Availability","Integrity","Authenticity"],1,"A DDoS makes a service unusable. Nothing is read or modified."],
+["d1-cia","Logging every administrator action so it can be reviewed later supports which part of AAA?",["Authentication","Authorization","Accounting","Access control"],2,"Recording actions is accounting (auditing). It makes users accountable."],
+["d1-ethique","According to the ISC2 Code of Ethics, which canon takes precedence when canons conflict?",["Advance and protect the profession","Provide diligent and competent service to principals","Act honorably, honestly, justly, responsibly, and legally","Protect society, the common good, necessary public trust and confidence, and the infrastructure"],3,"The canons apply in order. Protecting society is the first."],
+["d1-ethique","Your manager asks you to hide a breach that exposed customer data. What should guide your decision FIRST?",["Your duty to your employer","Protecting society and public trust","Your professional reputation","The confidentiality clause in your contract"],1,"Duty to your employer is canon 3. Protecting society (canon 1) comes first."],
+["d1-ethique","A consultant exaggerates threats to sell more services. Which canon is most directly violated?",["Protect society","Act honorably, honestly, justly, responsibly, and legally","Provide diligent and competent service","Advance the profession"],1,"Canon 2 explicitly warns against spreading unnecessary fear, uncertainty and doubt."],
+["d1-codes","RFC 1087, Ethics and the Internet, was published by which body?",["ISC2","Computer Ethics Institute","Internet Activities Board","OECD"],2,"RFC 1087 comes from the IAB (1989). The Ten Commandments come from the Computer Ethics Institute."],
+["d1-droit","In a US civil case, what is the burden of proof?",["Beyond a reasonable doubt","Preponderance of the evidence","Clear and certain proof","Absolute certainty"],1,"Civil: more likely than not. Criminal: beyond a reasonable doubt."],
+["d1-droit","Which type of damages is intended mainly to punish and deter egregious conduct?",["Statutory","Compensatory","Punitive","Nominal"],2,"Punitive damages punish. Compensatory damages repay the actual loss."],
+["d1-droit","HIPAA security requirements are an example of which type of law?",["Criminal law","Administrative (regulatory) law","Religious law","Customary law"],1,"Rules issued by a government agency are administrative law."],
+["d1-droit","A company sues a vendor for financial losses caused by the vendor's negligence. Which type of law applies?",["Criminal law","Administrative law","Civil (tort) law","Customary law"],2,"A private party seeking money for harm caused by negligence: civil law, the branch, also called tort law."],
+["d1-duecare","Implementing the controls a reasonable person would implement in the same situation demonstrates:",["Due diligence","Due care","Gross negligence","Risk transference"],1,"Acting like a prudent, reasonable person is due care."],
+["d1-duecare","Before signing a contract, a CISO reviews the vendor's audit reports and security practices. This is an example of:",["Due care","Due diligence","Risk acceptance","Accreditation"],1,"Investigating and assessing before acting is due diligence."],
+["d1-preuves","A honeypot that attracts an attacker already intent on breaking in is an example of:",["Entrapment","Enticement","Hearsay","Corroboration"],1,"The attacker had already decided: enticement, which is legal. Entrapment pushes an innocent person."],
+["d1-preuves","What BEST demonstrates that a forensic disk image was not altered during analysis?",["A chain of custody form alone","Matching hash values before and after analysis","A witness statement","Storing the image on a shared drive"],1,"Identical hashes prove integrity. Chain of custody complements it but does not prove the content is unchanged."],
+["d1-preuves","Courts generally prefer original documents over copies. This principle is known as the:",["Hearsay rule","Best evidence rule","Exclusionary rule","Chain of custody"],1,"That is the best evidence rule."],
+["d1-pi","Which form of intellectual property protects the expression of an idea but not the idea itself?",["Patent","Trademark","Copyright","Trade secret"],2,"Copyright protects the form of expression, never the idea."],
+["d1-pi","A company protects its proprietary formula with NDAs and never discloses it publicly. This is a:",["Patent","Trade secret","Copyright","Trademark"],1,"Never published, protected by NDAs: trade secret. A patent requires public disclosure."],
+["d1-privacy","Which regulation replaced the EU Data Protection Directive in 2018?",["Privacy Shield","GDPR","Safe Harbor","Wassenaar Arrangement"],1,"The GDPR has applied since May 2018."],
+["d1-privacy","Which multilateral agreement currently governs the export of dual-use technologies such as cryptography?",["CoCom","Wassenaar Arrangement","Budapest Convention","OECD Guidelines"],1,"Wassenaar succeeded CoCom after the Cold War."],
+["d1-tiers","What is the PRIMARY control for ensuring security when using a third-party service provider?",["Firewall rules","The contract","Vulnerability scans","Security awareness"],1,"With third parties, the contract is the primary control."],
+["d1-tiers","After an acquisition, what should happen BEFORE the two networks are connected?",["Connect immediately to reduce costs","A risk assessment including vulnerability and penetration testing","Rename all domains","Replace all acquired staff"],1,"Due diligence requires assessing the acquired company's security before connecting networks."],
+["d1-docs","'All laptops will run Windows 11 Enterprise, 64-bit' is an example of a:",["Policy","Standard","Guideline","Procedure"],1,"A specific, mandatory use of technology is a standard."],
+["d1-docs","Which security document is discretionary?",["Policy","Procedure","Standard","Guideline"],3,"A guideline is a recommendation."],
+["d1-docs","A company migrates its servers from Windows to Linux. Which document is LEAST likely to change?",["Server security policy","Hardening procedure","Operating system standard","Baseline"],0,"A policy never names a technology. Procedures, standards and baselines change."],
+["d1-personnel","Reminding users never to write down their passwords is an example of:",["Training","Awareness","Education","Certification"],1,"Changing behavior is awareness. Teaching a skill is training."],
+["d1-personnel","An IT administrator is being terminated. What should happen FIRST?",["Exit interview","Revoke all access immediately","Collect the badge at the end of the week","Notify customers"],1,"Immediate revocation: a former administrator knows the weak spots."],
+["d1-controles","A 'Beware of Dog' sign is which type of control?",["Preventive","Detective","Deterrent","Compensating"],2,"The sign discourages. It does not physically stop anyone."],
+["d1-controles","A pre-employment drug screening is BEST described as:",["Technical detective","Administrative preventive","Physical deterrent","Administrative corrective"],1,"An HR procedure that prevents a bad hire: administrative and preventive."],
+["d1-controles","A server cannot be patched, so it is isolated and closely monitored. These measures are:",["Deterrent controls","Recovery controls","Compensating controls","Directive controls"],2,"They make up for the missing patch: compensating controls."],
+["d1-risque","A Windows server that has not been patched in two years is a:",["Threat","Vulnerability","Risk","Exposure factor"],1,"An exploitable weakness is a vulnerability. The threat is what could exploit it."],
+["d1-risque","A risk involving potential loss of human life should be:",["Accepted if the ALE is low","Transferred to an insurer","Treated as extremely high and mitigated","Documented and reviewed next year"],2,"On the exam, human life has near-infinite impact."],
+["d1-ale","An asset is worth 40,000, the exposure factor is 50 %, and the ARO is 3. What is the ALE?",["20,000","60,000","120,000","13,333"],1,"SLE = 40,000 × 50 % = 20,000. ALE = 20,000 × 3 = 60,000."],
+["d1-ale","A safeguard costs 30,000 per year and lowers the ALE from 80,000 to 20,000. What is its annual value?",["30,000","50,000","60,000","-10,000"],0,"80,000 − 20,000 − 30,000 = 30,000 per year: a good investment."],
+["d1-ale","A mitigation service costs 5,000 per month and removes an ALE of 50,000. Is it worth it?",["Yes, 5,000 is less than 50,000","No, its annual cost of 60,000 exceeds the ALE","Yes, the ROI is 45,000","It cannot be determined"],1,"Always annualize: 5,000 × 12 = 60,000, more than the 50,000 avoided."],
+["d1-choix","Purchasing cyber insurance is an example of:",["Risk acceptance","Risk avoidance","Risk transference","Risk mitigation"],2,"The insurer takes on the financial impact."],
+["d1-choix","A project is cancelled because its risks are extreme and cannot be mitigated. This is:",["Risk avoidance","Risk rejection","Risk transference","Risk acceptance"],0,"Stopping the activity is avoidance."],
+["d1-choix","Which response to risk is NEVER appropriate?",["Accepting a low risk","Transferring a risk","Ignoring a known risk","Avoiding a risk"],2,"Ignoring a known risk is never acceptable."],
+["d1-attaquants","An attacker uses automated tools without understanding how they work. This attacker is BEST described as a:",["Hacktivist","Script kiddie","White hat","Insider"],1,"Tools they do not understand: script kiddie."],
+["d1-attaquants","A fraudulent email crafted specifically for the company's CFO is:",["Spam","Whaling","Vishing","Pharming"],1,"Spear phishing aimed at an executive is whaling."],
 ["d2-classif","Unauthorized disclosure that could reasonably be expected to cause serious damage to national security is labeled:",["Confidential","Secret","Top Secret","Sensitive but unclassified"],1,"Serious = Secret. Exceptionally grave = Top Secret."],
-["d2-classif","Which technical method enforces need to know?",["Clearance","Compartmentalization","Labeling","Least privilege"],1,"La compartimentation applique techniquement le besoin d'en connaître."],
-["d2-classif","Documented approval from the data owner for a subject to access certain objects is:",["Need to know","Clearance","Formal access approval","Accreditation"],2,"C'est la formal access approval."],
-["d2-media","How long should sensitive data be retained?",["Forever","Until the backup tape is full","No longer than the longer of its useful life or legal requirement","Seven years in all cases"],2,"Garder au-delà expose inutilement. La loi peut imposer plus long."],
-["d2-roles","Who determines the sensitivity label and backup frequency of a specific data set?",["Custodian","System owner","Data owner","User"],2,"Le data owner décide. Le custodian exécute."],
-["d2-roles","Who performs the daily backups according to the requirements set by management?",["Data owner","Custodian","Mission owner","Data controller"],1,"Protection concrète au quotidien : custodian."],
-["d2-roles","A company outsources payroll to a third party. That third party is a:",["Data controller","Data owner","Data processor","Custodian"],2,"Il traite les données pour le compte du controller : data processor."],
-["d2-memoire","Which memory type must be continually refreshed to retain data?",["SRAM","DRAM","EEPROM","ROM"],1,"Les condensateurs de la DRAM fuient : rafraîchissement permanent."],
-["d2-memoire","CPU cache is typically built using:",["DRAM","SRAM","Flash","EPROM"],1,"Le cache utilise la SRAM, rapide et chère."],
-["d2-ssd","What is the most reliable way to sanitize a functioning SSD for reuse?",["Degaussing","Single-pass overwrite","ATA Secure Erase","TRIM command"],2,"Dégaussage inefficace, écrasement non fiable, TRIM ne détruit pas."],
-["d2-ssd","A physically damaged SSD contains sensitive data. What should be done?",["Degauss it","Overwrite it","Destroy it","Format it"],2,"Endommagé : on ne peut plus l'effacer, destruction."],
-["d2-destruction","What happens when a user simply deletes a file?",["Data is overwritten with zeros","The file table entry is removed but data remains","The sectors are degaussed","The file is encrypted"],1,"Seule l'entrée dans la table disparaît : rémanence."],
-["d2-destruction","Which media sanitization method is the most secure?",["Overwriting","Formatting","Degaussing","Physical destruction"],3,"La destruction physique est toujours la plus sûre."],
-["d2-certif","The data owner formally accepts the residual risk before a system goes into production. This is:",["Certification","Accreditation","Attestation","Scoping"],1,"Accepter le risque résiduel : accréditation."],
-["d2-certif","In the Common Criteria, the independent set of security requirements for a category of products is the:",["Target of Evaluation","Security Target","Protection Profile","EAL"],2,"Protection Profile. Le ToE est le produit, la Security Target sa documentation."],
-["d2-cadres","An organization with no wireless network declares the wireless controls of a standard out of scope. This is:",["Tailoring","Scoping","Baselining","Accreditation"],1,"Choisir ce qui s'applique : scoping."],
-["d2-cadres","Which standard defines certifiable requirements for an information security management system?",["ISO 27002","ISO 27001","COBIT","ITIL"],1,"27001 est certifiable. 27002 est un catalogue de contrôles."],
-["d2-donnees","What is the best protection for sensitive data sent over the Internet?",["Whole disk encryption","End-to-end encryption such as an IPsec VPN","A bonded courier","Data classification"],1,"Données en transit : chiffrement de bout en bout."],
-["d2-donnees","Where should backup media be stored?",["At an employee's home","In the server room","Offsite with a bonded and insured company","In the data owner's office"],2,"Hors site, prestataire cautionné et assuré, à l'abri du même sinistre."]
-].map((q,i)=>({id:"q"+i,f:q[0],q:q[1],o:q[2],a:q[3],x:q[4]}));
+["d2-classif","Which technical method enforces need to know?",["Clearance","Compartmentalization","Labeling","Least privilege"],1,"Compartmentalization enforces need to know technically."],
+["d2-classif","Documented approval from the data owner for a subject to access certain objects is:",["Need to know","Clearance","Formal access approval","Accreditation"],2,"That is formal access approval."],
+["d2-media","How long should sensitive data be retained?",["Forever","Until the backup tape is full","No longer than the longer of its useful life or legal requirement","Seven years in all cases"],2,"Keeping data longer exposes it needlessly. The law may require longer."],
+["d2-roles","Who determines the sensitivity label and backup frequency of a specific data set?",["Custodian","System owner","Data owner","User"],2,"The data owner decides. The custodian executes."],
+["d2-roles","Who performs the daily backups according to requirements set by management?",["Data owner","Custodian","Mission owner","Data controller"],1,"Hands-on daily protection is the custodian's job."],
+["d2-roles","A company outsources payroll to a third party. That third party is a:",["Data controller","Data owner","Data processor","Custodian"],2,"It processes data on behalf of the controller: data processor."],
+["d2-memoire","Which memory type must be continually refreshed to retain data?",["SRAM","DRAM","EEPROM","ROM"],1,"DRAM capacitors leak charge, so they must be refreshed."],
+["d2-memoire","CPU cache is typically built using:",["DRAM","SRAM","Flash","EPROM"],1,"Cache uses fast, expensive SRAM."],
+["d2-ssd","What is the MOST reliable way to sanitize a functioning SSD for reuse?",["Degaussing","Single-pass overwrite","ATA Secure Erase","TRIM command"],2,"Degaussing has no effect, overwriting is unreliable, TRIM does not destroy data."],
+["d2-ssd","A physically damaged SSD contains sensitive data. What should be done?",["Degauss it","Overwrite it","Destroy it","Format it"],2,"A damaged drive cannot be erased: destroy it."],
+["d2-destruction","What happens when a user simply deletes a file?",["Data is overwritten with zeros","The file table entry is removed but the data remains","The sectors are degaussed","The file is encrypted"],1,"Only the table entry disappears: data remanence."],
+["d2-destruction","Which media sanitization method is the MOST secure?",["Overwriting","Formatting","Degaussing","Physical destruction"],3,"Physical destruction is always the most secure."],
+["d2-certif","The data owner formally accepts the residual risk before a system goes into production. This is:",["Certification","Accreditation","Attestation","Scoping"],1,"Accepting residual risk is accreditation."],
+["d2-certif","In the Common Criteria, the independent set of security requirements for a category of products is the:",["Target of Evaluation","Security Target","Protection Profile","EAL"],2,"Protection Profile. The ToE is the product; the Security Target documents it."],
+["d2-cadres","An organization with no wireless network declares a standard's wireless controls out of scope. This is:",["Tailoring","Scoping","Baselining","Accreditation"],1,"Choosing what applies is scoping."],
+["d2-cadres","Which standard defines certifiable requirements for an information security management system?",["ISO 27002","ISO 27001","COBIT","ITIL"],1,"ISO 27001 is certifiable. 27002 is a catalog of controls."],
+["d2-donnees","What is the BEST protection for sensitive data sent over the Internet?",["Whole-disk encryption","End-to-end encryption such as an IPsec VPN","A bonded courier","Data classification"],1,"Data in motion: end-to-end encryption."],
+["d2-donnees","Where should backup media be stored?",["At an employee's home","In the server room","Offsite with a bonded and insured company","In the data owner's office"],2,"Offsite, bonded and insured, away from the same disaster."]
+];
 
-/* ============ ÉTAT ============ */
-const KEY="cissprep.v1";
-function blank(){return {cards:{},qcm:{},read:{},streak:{last:null,count:0},log:[]}}
+/* Practice drills: match, sort, order, explain */
+const DRILL_SRC = [
+{f:"d1-cia",type:"match",title:"Match each CIA property with the attack that breaks it",pairs:[["Confidentiality","Disclosure"],["Integrity","Alteration"],["Availability","Destruction"]]},
+{f:"d1-cia",type:"explain",title:"Explain it out loud",prompt:"In 30 seconds, explain the difference between integrity and non-repudiation, with an example.",model:"Integrity proves the data has not been changed. Non-repudiation proves who created or sent it, so they cannot deny it. A digital signature on a contract provides both: the text is unchanged, and the signer cannot deny signing."},
+{f:"d1-ethique",type:"order",title:"Put the ISC2 canons in order of priority",items:["Protect society, the common good and the infrastructure","Act honorably, honestly, justly, responsibly and legally","Provide diligent and competent service to principals","Advance and protect the profession"]},
+{f:"d1-ethique",type:"explain",title:"Explain it out loud",prompt:"Why does the ISC2 Code rank protecting society above serving your employer?",model:"Because security professionals are trusted with information that affects the public. If an employer's interest harms society or public trust, the wider interest wins. The canons are applied in order, and society is canon 1 while principals are canon 3."},
+{f:"d1-codes",type:"match",title:"Match each code of ethics with its author",pairs:[["RFC 1087, Ethics and the Internet","Internet Activities Board"],["Ten Commandments of Computer Ethics","Computer Ethics Institute"],["Four mandatory canons","ISC2"]]},
+{f:"d1-droit",type:"sort",title:"Criminal, civil or administrative law?",cats:["Criminal","Civil","Administrative"],items:[["The victim is society",0],["Proof beyond a reasonable doubt",0],["Prison sentence",0],["Preponderance of the evidence",1],["A company sues a vendor for money",1],["Punitive damages",1],["HIPAA security rule",2],["FCC regulations",2]]},
+{f:"d1-droit",type:"match",title:"Match each type of damages with its purpose",pairs:[["Statutory","Amount fixed by law, even without actual loss"],["Compensatory","Repay the actual loss"],["Punitive","Punish and deter outrageous behavior"]]},
+{f:"d1-duecare",type:"sort",title:"Due care or due diligence?",cats:["Due care","Due diligence"],items:[["Deploying security patches",0],["Encrypting all laptops",0],["Enforcing the password policy",0],["Auditing whether patches were applied",1],["Reviewing a vendor before signing",1],["Researching threats to the business",1]]},
+{f:"d1-preuves",type:"match",title:"Match each type of evidence with an example",pairs:[["Real evidence","A seized hard drive"],["Direct evidence","A witness describing what she saw"],["Hearsay","A witness repeating what a colleague told him"],["Secondary evidence","A photocopy of a contract"],["Corroborative evidence","A badge log confirming a witness's statement"]]},
+{f:"d1-pi",type:"match",title:"Match each situation with the right protection",pairs:[["A company logo","Trademark"],["A new engine design, made public","Patent"],["The source code of an application","Copyright"],["A secret recipe protected by NDAs","Trade secret"]]},
+{f:"d1-privacy",type:"order",title:"Put these privacy milestones in chronological order",items:["EU Data Protection Directive (1995)","Safe Harbor invalidated (2015)","GDPR applies (2018)","Privacy Shield invalidated (2020)","EU-US Data Privacy Framework (2023)"]},
+{f:"d1-tiers",type:"match",title:"Match each third-party tool with its purpose",pairs:[["Contract","Primary security control with a provider"],["SLA","Measurable commitments, mostly availability"],["Attestation","Independent opinion after an audit"],["Right to audit","Lets you test the provider yourself"]]},
+{f:"d1-docs",type:"match",title:"Match each example with its document type",pairs:[["Systems must protect the confidentiality of PII","Policy"],["All laptops run Windows 11 Enterprise","Standard"],["Step 1: install the image. Step 2: apply patches","Procedure"],["Use a sentence to build a strong passphrase","Guideline"],["Harden servers according to the CIS benchmark","Baseline"]]},
+{f:"d1-personnel",type:"sort",title:"Awareness or training?",cats:["Awareness","Training"],items:[["Poster reminding staff to lock their screen",0],["Email warning about a phishing campaign",0],["Reminder never to share passwords",0],["Teaching help desk staff to reset accounts",1],["Teaching engineers to configure a firewall",1],["Showing admins how to create user accounts",1]]},
+{f:"d1-controles",type:"sort",title:"Which type of control?",cats:["Preventive","Detective","Corrective","Recovery","Deterrent","Compensating"],items:[["Firewall rule blocking a port",0],["Intrusion detection system alert",1],["Antivirus quarantining a file",2],["Restoring a server from backup",3],["'Beware of dog' sign",4],["Extra monitoring on a server that cannot be patched",5]]},
+{f:"d1-controles",type:"sort",title:"Which category of control?",cats:["Administrative","Technical","Physical"],items:[["Security policy",0],["Background check",0],["Encryption",1],["Firewall",1],["Fence",2],["Security guard",2]]},
+{f:"d1-risque",type:"sort",title:"Asset, threat or vulnerability?",cats:["Asset","Threat","Vulnerability"],items:[["Customer database",0],["Payroll server",0],["Earthquake",1],["Computer worm",1],["Unpatched operating system",2],["Data center without backup power",2]]},
+{f:"d1-ale",type:"calc",title:"Calculate the ALE"},
+{f:"d1-ale",type:"order",title:"Put the calculation steps in order",items:["Determine the asset value (AV)","Estimate the exposure factor (EF)","Compute SLE = AV × EF","Estimate the annual rate of occurrence (ARO)","Compute ALE = SLE × ARO","Compare the ALE with the annual TCO of the safeguard"]},
+{f:"d1-choix",type:"match",title:"Match each decision with its risk response",pairs:[["Buy cyber insurance","Transfer"],["Encrypt all laptops","Mitigate"],["Cancel the risky project","Avoid"],["Live with a low risk after review","Accept"]]},
+{f:"d1-attaquants",type:"match",title:"Match each attacker with its description",pairs:[["Hacktivist","Attacks for political reasons"],["Script kiddie","Uses tools they do not understand"],["White hat","Authorized tester"],["Bot herder","Controls a botnet"],["Insider","Already has legitimate access"]]},
+{f:"d2-classif",type:"order",title:"Order the US government labels from lowest to highest",items:["Confidential","Secret","Top Secret"]},
+{f:"d2-classif",type:"explain",title:"Explain it out loud",prompt:"An engineer has the right clearance but is refused a document. Explain why this can be correct.",model:"A clearance only says how far a person can be trusted. Access also requires need to know: the document must be required for their job. If it belongs to another project, access is refused, and compartmentalization enforces this."},
+{f:"d2-roles",type:"match",title:"Match each role with its responsibility",pairs:[["Mission owner","Funds and prioritizes the security program"],["Data owner","Sets the label and backup frequency"],["System owner","Responsible for the computers holding the data"],["Custodian","Runs backups and applies patches"],["Data processor","Processes data on behalf of the controller"]]},
+{f:"d2-memoire",type:"match",title:"Match each memory type with its key property",pairs:[["SRAM","Flip-flops, fast, used for cache"],["DRAM","Capacitors, must be refreshed"],["PROM","Written only once"],["EPROM","Erased with ultraviolet light"],["Flash","EEPROM written in blocks"]]},
+{f:"d2-ssd",type:"sort",title:"Does this method reliably sanitize an SSD?",cats:["Reliable","Not reliable"],items:[["ATA Secure Erase",0],["Physical destruction",0],["Cryptographic erase",0],["Degaussing",1],["Sector-by-sector overwrite",1],["TRIM command",1]]},
+{f:"d2-destruction",type:"order",title:"Order these methods from least to most secure",items:["Deleting the file","Formatting the disk","Overwriting the disk","Degaussing","Physical destruction"]},
+{f:"d2-certif",type:"order",title:"Order the Common Criteria levels from EAL1 to EAL7",items:["Functionally tested","Structurally tested","Methodically tested and checked","Methodically designed, tested and reviewed","Semiformally designed and tested","Semiformally verified, designed and tested","Formally verified, designed and tested"]},
+{f:"d2-certif",type:"explain",title:"Explain it out loud",prompt:"Explain the difference between certification and accreditation, as you would to a new team member.",model:"Certification is the technical check: does the system meet the owner's security requirements, and what risk remains? Accreditation is the business decision: the data owner accepts that remaining risk and authorizes production."},
+{f:"d2-cadres",type:"match",title:"Match each framework with its purpose",pairs:[["ISO 27001","Certifiable ISMS requirements"],["ISO 27002","Catalog of security controls"],["COBIT","IT governance and control (ISACA)"],["ITIL","IT service management"],["PCI DSS","Protection of payment card data"],["OCTAVE","Risk management in three phases"]]},
+{f:"d2-donnees",type:"sort",title:"Data at rest or data in motion?",cats:["At rest","In motion"],items:[["Whole-disk encryption",0],["Encrypted backup tape",0],["Encrypted file partition",0],["IPsec VPN",1],["TLS for a web session",1],["Encrypted private WAN link",1]]}
+];
+
+/* ================= SETTINGS ================= */
+const TRAINING = "2026-11-22";          // Blueguard training, Lausanne
+const SESSION_MIN = 15;
+const INTERVALS = {1:1,2:3,3:7,4:14,5:30};
+
+/* Build stable ids */
+const CARDS = [];
+Object.keys(CARD_SRC).forEach(f=>CARD_SRC[f].forEach((c,i)=>CARDS.push({id:f+"-c"+i,f,q:c[0],a:c[1]})));
+const QCM = [];
+{const n={};QCM_SRC.forEach(q=>{n[q[0]]=(n[q[0]]||0)+1;QCM.push({id:q[0]+"-q"+n[q[0]],f:q[0],q:q[1],o:q[2],a:q[3],x:q[4]})})}
+const DRILLS = [];
+{const n={};DRILL_SRC.forEach(d=>{n[d.f]=(n[d.f]||0)+1;DRILLS.push({...d,id:d.f+"-d"+n[d.f]})})}
+
+/* ================= STATE ================= */
+const KEY="cissprep.v2";
+function blank(){return {cards:{},qcm:{},drills:{},read:{},streak:{last:null,count:0},log:[]}}
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))||blank()}catch(e){S=blank()}
+["cards","qcm","drills","read","log"].forEach(k=>{if(!S[k])S[k]=k==="log"?[]:{}});
+if(!S.streak)S.streak={last:null,count:0};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 const pad=n=>String(n).padStart(2,"0");
@@ -580,19 +675,21 @@ function today(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+
 function addDays(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 function daysUntil(iso){return Math.round((new Date(iso+"T12:00:00")-new Date(today()+"T12:00:00"))/864e5)}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const fiche=id=>FICHES.find(f=>f.id===id);
+const lesson=id=>LESSONS.find(l=>l.id===id);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt=n=>Math.round(n).toLocaleString("en-US");
 
 function dueCards(){const t=today();return CARDS.filter(c=>S.cards[c.id]&&S.cards[c.id].due<=t).sort((a,b)=>S.cards[a.id].due.localeCompare(S.cards[b.id].due))}
-function nextFiche(){return FICHES.find(f=>!S.read[f.id])||null}
+function nextLesson(){return LESSONS.find(l=>!S.read[l.id])||null}
 function weakness(fid){
   let w=0;
   CARDS.filter(c=>c.f===fid).forEach(c=>{const s=S.cards[c.id];if(s&&s.miss&&s.box<=2)w+=s.miss});
   QCM.filter(q=>q.f===fid).forEach(q=>{const s=S.qcm[q.id];if(s&&s.last===false)w+=2});
+  DRILLS.filter(d=>d.f===fid).forEach(d=>{const s=S.drills[d.id];if(s&&s.last===false)w+=2});
   return w;
 }
 function mastery(d){
-  const cs=CARDS.filter(c=>fiche(c.f).d===d);if(!cs.length)return null;
+  const cs=CARDS.filter(c=>lesson(c.f).d===d);if(!cs.length)return null;
   return Math.round(cs.reduce((t,c)=>t+((S.cards[c.id]||{box:0}).box/5),0)/cs.length*100);
 }
 function grade(card,g){
@@ -602,212 +699,329 @@ function grade(card,g){
   else{s.box=Math.min(5,Math.max(1,s.box+1));s.due=addDays(today(),INTERVALS[s.box])}
   S.cards[card.id]=s;save();
 }
-function bumpStreak(){
-  const t=today(),st=S.streak;
-  if(st.last===t)return;
-  st.count=(st.last===addDays(t,-1))?st.count+1:1;st.last=t;save();
+function recordDrill(d,ok){const s=S.drills[d.id]||{ok:0,miss:0};ok?s.ok++:s.miss++;s.last=ok;S.drills[d.id]=s;save()}
+function bumpStreak(){const t=today(),st=S.streak;if(st.last===t)return;st.count=(st.last===addDays(t,-1))?st.count+1:1;st.last=t;save()}
+
+/* ================= LISTEN (text to speech) ================= */
+function speak(text){
+  if(!("speechSynthesis" in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=0.9;
+  const vs=speechSynthesis.getVoices();
+  const v=vs.find(v=>v.lang==="en-US")||vs.find(v=>v.lang&&v.lang.startsWith("en"));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+function stopSpeak(){if("speechSynthesis" in window)speechSynthesis.cancel()}
+if("speechSynthesis" in window)speechSynthesis.getVoices();
+function lessonText(l){return [l.t+".",l.what,...l.pts,"Example. "+l.ex,"Exam trap. "+l.trap,"Memory hook. "+l.mnem].join(" ").replace(/×/g," times ").replace(/−/g," minus ")}
+
+/* ================= CALC DRILL GENERATOR ================= */
+function makeCalc(){
+  const av=[20,40,50,80,100,150,200][Math.floor(Math.random()*7)]*1000;
+  const ef=[10,20,25,40,50,75,100][Math.floor(Math.random()*7)];
+  const aro=[0.5,1,2,3,4,6][Math.floor(Math.random()*6)];
+  const sle=av*ef/100,ale=sle*aro;
+  const wrong=[sle,av*aro,ale*2,ale/2,av*ef/100/aro].filter(x=>x!==ale&&x>0);
+  const opts=shuffle([ale,...shuffle([...new Set(wrong)]).slice(0,3)]);
+  return {q:`An asset is worth ${fmt(av)}. One incident destroys ${ef} % of its value, and incidents happen ${aro===0.5?"once every two years":aro+" time"+(aro>1?"s":"")+" per year"}. What is the ALE?`,
+    o:opts.map(fmt),a:opts.indexOf(ale),x:`SLE = ${fmt(av)} × ${ef} % = ${fmt(sle)}. ARO = ${aro}. ALE = ${fmt(sle)} × ${aro} = ${fmt(ale)}.`};
 }
 
-/* ============ VUES ============ */
+/* ================= VIEWS ================= */
 const app=document.getElementById("app");
-let tab="home",ses=null,ficheFilter=1,openFiche=null;
-
-function setTab(t){tab=t;ses=null;openFiche=null;render();window.scrollTo(0,0)}
+let tab="home",ses=null,filter=1,openLesson=null;
+function setTab(t){stopSpeak();tab=t;ses=null;openLesson=null;render();window.scrollTo(0,0)}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-
 function render(){
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab&&!ses));
   if(ses)return renderSession();
-  ({home:renderHome,fiches:renderFiches,weak:renderWeak,settings:renderSettings})[tab]();
+  ({home:renderHome,lessons:renderLessons,weak:renderWeak,settings:renderSettings})[tab]();
 }
-
-function flaps(n){return String(Math.max(0,n)).padStart(2,"0").split("").map(d=>`<span class="flap">${d}</span>`).join("")}
+const flaps=n=>String(Math.max(0,n)).padStart(2,"0").split("").map(d=>`<span class="flap">${d}</span>`).join("");
 
 function renderHome(){
-  const dleft=daysUntil(FORMATION);
-  const due=dueCards().length,nf=nextFiche();
-  const ficheLine=nf?`Notion du jour : ${esc(nf.t)}`:"Toutes les fiches disponibles sont vues : séance de révision.";
+  const dleft=daysUntil(TRAINING),due=dueCards().length,nl=nextLesson();
+  const line=nl?`Today's lesson: ${esc(nl.t)}`:"All available lessons done: review session.";
+  const streak=(S.streak.last===today()||S.streak.last===addDays(today(),-1))?S.streak.count:0;
   app.innerHTML=`
-  <div class="board" role="region" aria-label="Compte à rebours">
-    <div class="row">
-      <div><div class="dest">Formation Blueguard, Lausanne</div><div class="dest">22 novembre 2026</div></div>
-      <div class="flaps" aria-label="${dleft} jours">${flaps(dleft)}</div>
-    </div>
-    <div class="sub">${dleft>0?"jours avant le départ":"C'est parti. Prochaine étape : l'examen."}</div>
+  <div class="board" role="region" aria-label="Countdown">
+    <div class="row"><div><div class="dest">Blueguard training, Lausanne</div><div class="dest">22 November 2026</div></div>
+    <div class="flaps" aria-label="${dleft} days">${flaps(dleft)}</div></div>
+    <div class="sub">${dleft>0?"days to departure":"Training has started. Next stop: the exam."}</div>
   </div>
-
-  <button class="go" id="go">Commencer ma séance de ${SESSION_MIN} min
-    <span>${ficheLine}${due?` · ${due} carte${due>1?"s":""} à revoir`:""}</span></button>
-
+  <button class="go" id="go">Start my ${SESSION_MIN}-minute session<span>${line}${due?`. ${due} card${due>1?"s":""} to review`:""}</span></button>
   <div class="stat">
-    <div><b>${S.streak.last===today()||S.streak.last===addDays(today(),-1)?S.streak.count:0}</b><span class="muted small">jours d'affilée</span></div>
-    <div><b>${Object.keys(S.read).length}/${FICHES.length}</b><span class="muted small">fiches vues</span></div>
-    <div><b>${S.log.length}</b><span class="muted small">séances faites</span></div>
+    <div><b>${streak}</b><span class="muted small">day streak</span></div>
+    <div><b>${Object.keys(S.read).length}/${LESSONS.length}</b><span class="muted small">lessons learned</span></div>
+    <div><b>${S.log.length}</b><span class="muted small">sessions done</span></div>
   </div>
-
-  <div class="block">
-    <h2>Où tu en es</h2>
-    <p class="muted small">Étape 1 de la méthode du coach : survol avec le Conrad. Le pourcentage indique ton niveau de maîtrise des cartes, le poids celui du domaine à l'examen.</p>
-    ${DOMAINS.map(d=>{
-      const m=mastery(d.id),nf=FICHES.filter(f=>f.d===d.id);
-      if(m===null)return `<div class="dom soon"><div class="top"><span>D${d.id} · ${esc(d.fr)}</span><span>${d.w} %</span></div><div class="small muted">Bientôt</div></div>`;
-      const r=nf.filter(f=>S.read[f.id]).length;
-      return `<div class="dom"><div class="top"><span>D${d.id} · ${esc(d.fr)}</span><span>${d.w} %</span></div>
-        <div class="small muted">${r}/${nf.length} fiches · maîtrise ${m} %</div><div class="bar"><i style="width:${m}%"></i></div></div>`}).join("")}
+  <div class="block"><h2>Your progress</h2>
+  <p class="muted small">Stage 1 of the coach's method: a first pass through all eight domains. Mastery measures your recall cards; the weight is the domain's share of the exam.</p>
+  ${DOMAINS.map(d=>{const m=mastery(d.id),ls=LESSONS.filter(l=>l.d===d.id);
+    if(m===null)return `<div class="dom soon"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${d.w} %</span></div><div class="small muted">Coming soon</div></div>`;
+    const r=ls.filter(l=>S.read[l.id]).length;
+    return `<div class="dom"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${d.w} %</span></div><div class="small muted">${r}/${ls.length} lessons, mastery ${m} %</div><div class="bar"><i style="width:${m}%"></i></div></div>`}).join("")}
   </div>`;
-  document.getElementById("go").onclick=()=>startSession(nf?nf.id:null,false);
+  document.getElementById("go").onclick=()=>startSession(nl?nl.id:null,false);
 }
 
-/* ---- Séance ---- */
-function startSession(fid,weakMode){
-  let cards,qcm,f=fid?fiche(fid):null;
+/* ---------- Session ---------- */
+function pickDrills(l,weakMode){
+  const learned=Object.keys(S.read);
   if(weakMode){
-    const weakF=FICHES.filter(x=>weakness(x.id)>0).map(x=>x.id);
-    cards=CARDS.filter(c=>weakF.includes(c.f)&&S.cards[c.id]&&S.cards[c.id].box<=2).slice(0,15);
+    const missed=shuffle(DRILLS.filter(d=>S.drills[d.id]&&S.drills[d.id].last===false));
+    return missed.slice(0,2);
+  }
+  const out=[];
+  if(l){const mine=shuffle(DRILLS.filter(d=>d.f===l.id));if(mine.length)out.push(mine[0])}
+  const pool=DRILLS.filter(d=>learned.includes(d.f)&&!out.includes(d)&&(!l||d.f!==l.id));
+  const missed=shuffle(pool.filter(d=>S.drills[d.id]&&S.drills[d.id].last===false));
+  const fresh=shuffle(pool.filter(d=>!out.some(o=>o.type===d.type)));
+  const second=missed[0]||fresh[0]||shuffle(pool)[0];
+  if(second)out.push(second);
+  return out;
+}
+function prepDrill(d){
+  const st={d,err:0,done:false};
+  if(d.type==="match"){st.queue=shuffle(d.pairs);st.i=0;st.opts=shuffle(d.pairs.map(p=>p[1]));st.fb=null}
+  if(d.type==="sort"){st.queue=shuffle(d.items);st.i=0;st.fb=null}
+  if(d.type==="order"){st.pool=shuffle(d.items);st.built=[];st.fb=null}
+  if(d.type==="explain"){st.shown=false}
+  if(d.type==="calc"){st.c=makeCalc();st.picked=null}
+  return st;
+}
+function startSession(lid,weakMode){
+  stopSpeak();
+  const l=lid?lesson(lid):null;let cards,qcm;
+  if(weakMode){
+    const wl=LESSONS.filter(x=>weakness(x.id)>0).map(x=>x.id);
+    cards=CARDS.filter(c=>wl.includes(c.f)&&S.cards[c.id]&&S.cards[c.id].box<=2).slice(0,15);
     qcm=shuffle(QCM.filter(q=>S.qcm[q.id]&&S.qcm[q.id].last===false)).slice(0,5);
-    if(qcm.length<5)qcm=qcm.concat(shuffle(QCM.filter(q=>weakF.includes(q.f)&&!qcm.includes(q))).slice(0,5-qcm.length));
+    if(qcm.length<5)qcm=qcm.concat(shuffle(QCM.filter(q=>wl.includes(q.f)&&!qcm.includes(q))).slice(0,5-qcm.length));
   }else{
     cards=dueCards().slice(0,12);
-    if(f)cards=cards.concat(CARDS.filter(c=>c.f===f.id&&!S.cards[c.id]&&!cards.includes(c)));
-    const mine=f?shuffle(QCM.filter(q=>q.f===f.id)).slice(0,3):[];
-    const readIds=Object.keys(S.read);
-    const missed=shuffle(QCM.filter(q=>readIds.includes(q.f)&&S.qcm[q.id]&&S.qcm[q.id].last===false&&!mine.includes(q)));
-    const other=shuffle(QCM.filter(q=>readIds.includes(q.f)&&!mine.includes(q)&&!missed.includes(q)));
+    if(l)cards=cards.concat(CARDS.filter(c=>c.f===l.id&&!S.cards[c.id]&&!cards.includes(c)));
+    const learned=Object.keys(S.read).concat(l?[l.id]:[]);
+    const mine=l?shuffle(QCM.filter(q=>q.f===l.id)).slice(0,2):[];
+    const missed=shuffle(QCM.filter(q=>learned.includes(q.f)&&S.qcm[q.id]&&S.qcm[q.id].last===false&&!mine.includes(q)));
+    const other=shuffle(QCM.filter(q=>learned.includes(q.f)&&!mine.includes(q)&&!missed.includes(q)));
     qcm=mine.concat(missed,other).slice(0,5);
-    if(qcm.length<5&&f)qcm=qcm.concat(shuffle(QCM.filter(q=>q.f===f.id&&!qcm.includes(q)))).slice(0,5);
   }
-  qcm=qcm.map(q=>{const order=shuffle(q.o.map((_,i)=>i));return {...q,order}});
-  ses={f,weakMode,step:f&&!weakMode?0:1,cards,ci:0,reveal:false,qcm,qi:0,picked:null,score:0,graded:{ok:0,mid:0,ko:0},start:Date.now(),missedQ:[]};
-  if(ses.step===1&&!cards.length)ses.step=2;
-  render();window.scrollTo(0,0);
+  qcm=qcm.map(q=>({...q,order:shuffle(q.o.map((_,i)=>i))}));
+  const drills=(l&&!weakMode)?null:pickDrills(null,weakMode);
+  ses={l,weakMode,step:l&&!weakMode?0:1,cards,ci:0,reveal:false,drills,di:0,dst:null,qcm,qi:0,picked:null,score:0,
+       graded:{ok:0,mid:0,ko:0},drillOk:0,start:Date.now(),missed:new Set()};
+  advanceEmpty();render();window.scrollTo(0,0);
 }
+function advanceEmpty(){
+  const s=ses;
+  if(s.step===1&&!s.cards.length)s.step=2;
+  if(s.step===2){
+    if(!s.drills)s.drills=pickDrills(s.l,s.weakMode);
+    if(!s.drills.length)s.step=3;else if(!s.dst)s.dst=prepDrill(s.drills[s.di]);
+  }
+  if(s.step===3&&!s.qcm.length)finish();
+}
+function finish(){ses.step=4;bumpStreak();S.log.push({d:today(),q:ses.score+"/"+ses.qcm.length,l:ses.l?ses.l.id:"weak"});save()}
+function go(step){stopSpeak();ses.step=step;advanceEmpty();render();window.scrollTo(0,0)}
 
-function sessionHeader(){
-  const names=["Notion","Rappel","QCM","Bilan"];
+function header(){
+  const names=["Learn","Recall","Practice","Exam questions","Recap"];
   const min=Math.floor((Date.now()-ses.start)/60000);
-  return `<div class="sessionbar"><div class="steps">${names.map((n,i)=>`<span class="${i<ses.step?"done":i===ses.step?"on":""}" title="${n}"></span>`).join("")}</div>
-  <div class="clock"><span>${names[ses.step]}</span><span>${min} / ${SESSION_MIN} min</span></div></div>`;
+  return `<div class="sessionbar"><div class="steps">${names.slice(0,4).map((n,i)=>`<span class="${i<ses.step?"done":i===ses.step?"on":""}"></span>`).join("")}</div>
+  <div class="clock"><span>${names[ses.step]}</span><span id="clk">${min} / ${SESSION_MIN} min</span></div></div>`;
 }
-
-function ficheHTML(f){
+function lessonHTML(l){
   return `<div class="fiche">
-  <p class="muted small">Domaine ${f.d} · ${esc(DOMAINS[f.d-1].en)}</p>
-  <h1>${esc(f.t)}</h1>
-  <ul>${f.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>
-  <h3>Termes de l'examen</h3>
-  <dl class="terms">${f.en.map(e=>`<dt lang="en">${esc(e[0])}</dt><dd>${esc(e[1])}</dd>`).join("")}</dl>
-  ${f.trap?`<div class="note trap"><b>Piège d'examen.</b> ${esc(f.trap)}</div>`:""}
-  ${f.maj?`<div class="note"><b>Mis à jour depuis le livre.</b> ${esc(f.maj)}</div>`:""}
-  <p class="refs">Conrad ${esc(f.ref.c)}. Pour approfondir : All-in-One ${esc(f.ref.a)}, Official Textbook ${esc(f.ref.o)}.</p>
+  <p class="muted small">Domain ${l.d}: ${esc(DOMAINS[l.d-1].name)}</p>
+  <h1>${esc(l.t)}</h1>
+  <button class="btn listen" id="listen">▶ Listen</button>
+  <p class="lead">${esc(l.what)}</p>
+  <h3>Key points</h3>
+  <ul>${l.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>
+  <h3>Example</h3><p>${esc(l.ex)}</p>
+  <h3>ISC2 vocabulary</h3>
+  <dl class="terms">${l.terms.map(e=>`<dt>${esc(e[0])}</dt><dd>${esc(e[1])}</dd>`).join("")}</dl>
+  <div class="note trap"><b>Exam trap.</b> ${esc(l.trap)}</div>
+  <div class="note hook"><b>Memory hook.</b> ${esc(l.mnem)}</div>
+  ${l.upd?`<div class="note"><b>Updated since the books.</b> ${esc(l.upd)}</div>`:""}
+  <p class="refs">Book references: Eleventh Hour ${esc(l.ref.c)}, All-in-One ${esc(l.ref.a)}, Official Textbook ${esc(l.ref.o)}.</p>
   </div>`;
+}
+function bindListen(l){const b=document.getElementById("listen");if(!b)return;
+  if(!("speechSynthesis" in window)){b.remove();return}
+  b.onclick=()=>{if(speechSynthesis.speaking){stopSpeak();b.textContent="▶ Listen"}else{speak(lessonText(l));b.textContent="■ Stop"}}}
+
+function drillHTML(st){
+  const d=st.d;let h=`<p class="muted small">Exercise ${ses.di+1} of ${ses.drills.length}. From: ${esc(lesson(d.f).t)}</p><h2>${esc(d.title)}</h2>`;
+  if(d.type==="match"){
+    if(st.i<st.queue.length){
+      const p=st.queue[st.i];
+      h+=`<div class="card"><div class="q">${esc(p[0])}</div></div>`+
+        st.opts.map(o=>`<button class="opt ${st.fb&&o===p[1]?"right":""} ${st.fb&&st.fb.pick===o&&o!==p[1]?"wrong":""}" data-v="${esc(o)}" ${st.fb?"disabled":""}>${esc(o)}</button>`).join("");
+      if(st.fb)h+=`<button class="btn solid full" id="dnext">Next</button>`;
+      h+=`<p class="muted small">${st.i+1} of ${st.queue.length}</p>`;
+    }
+  }
+  if(d.type==="sort"){
+    if(st.i<st.queue.length){
+      const it=st.queue[st.i];
+      h+=`<div class="card"><div class="q">${esc(it[0])}</div></div><div class="cats">`+
+        d.cats.map((c,ci)=>`<button class="opt ${st.fb&&ci===it[1]?"right":""} ${st.fb&&st.fb.pick===ci&&ci!==it[1]?"wrong":""}" data-c="${ci}" ${st.fb?"disabled":""}>${esc(c)}</button>`).join("")+`</div>`;
+      if(st.fb)h+=`<button class="btn solid full" id="dnext">Next</button>`;
+      h+=`<p class="muted small">${st.i+1} of ${st.queue.length}</p>`;
+    }
+  }
+  if(d.type==="order"){
+    h+=`<p class="muted small">Tap the items in the right order.</p><ol class="built">${st.built.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`+
+      st.pool.map(x=>`<button class="opt ${st.fb===x?"wrong":""}" data-o="${esc(x)}">${esc(x)}</button>`).join("");
+  }
+  if(d.type==="explain"){
+    h+=`<div class="card"><div class="q">${esc(d.prompt)}</div></div><p class="muted small">Say your answer out loud, as if explaining to a colleague. Then compare.</p>`;
+    h+=st.shown?`<div class="note hook"><b>Model answer.</b> ${esc(d.model)}</div>
+      <div class="grades"><button class="g-ko" data-e="0">Missed it</button><button class="g-mid" data-e="1">Partly</button><button class="g-ok" data-e="2">Nailed it</button></div>`
+      :`<button class="btn solid full" id="show">Show model answer</button>`;
+  }
+  if(d.type==="calc"){
+    const c=st.c;
+    h+=`<div class="qen">${esc(c.q)}</div>`+c.o.map((o,i)=>`<button class="opt ${st.picked!==null&&i===c.a?"right":""} ${st.picked===i&&i!==c.a?"wrong":""}" data-k="${i}" ${st.picked!==null?"disabled":""}>${esc(o)}</button>`).join("");
+    if(st.picked!==null)h+=`<div class="note ${st.picked===c.a?"":"trap"}"><b>${st.picked===c.a?"Correct.":"Not quite."}</b> ${esc(c.x)}</div><button class="btn solid full" id="dnext">Next</button>`;
+  }
+  if(st.done)h+=`<div class="note ${st.err?"trap":""}"><b>${st.err?`Done, with ${st.err} mistake${st.err>1?"s":""}.`:"Perfect."}</b> ${st.err?"This exercise will come back.":""}</div><button class="btn solid full" id="dfinish">Continue</button>`;
+  return h;
+}
+function endDrill(ok){
+  const s=ses;recordDrill(s.dst.d,ok);if(ok)s.drillOk++;else s.missed.add(s.dst.d.f);
+  s.di++;s.dst=null;
+  if(s.di<s.drills.length){s.dst=prepDrill(s.drills[s.di]);render();window.scrollTo(0,0)}else go(3);
+}
+function bindDrill(){
+  const st=ses.dst,d=st.d,$=id=>document.getElementById(id);
+  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const p=st.queue[st.i];st.fb={pick:b.dataset.v};if(b.dataset.v!==p[1])st.err++;render()});
+  document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const it=st.queue[st.i];st.fb={pick:+b.dataset.c};if(+b.dataset.c!==it[1])st.err++;render()});
+  if($("dnext"))$("dnext").onclick=()=>{
+    if(d.type==="calc"){endDrill(st.picked===st.c.a);return}
+    st.fb=null;st.i++;if(st.i>=st.queue.length)st.done=true;render()};
+  document.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{
+    const want=d.items[st.built.length];
+    if(b.dataset.o===want){st.built.push(want);st.pool=st.pool.filter(x=>x!==want);st.fb=null;if(!st.pool.length)st.done=true}
+    else{st.err++;st.fb=b.dataset.o}
+    render()});
+  if($("show"))$("show").onclick=()=>{st.shown=true;render()};
+  document.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>endDrill(+b.dataset.e===2));
+  document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{st.picked=+b.dataset.k;render()});
+  if($("dfinish"))$("dfinish").onclick=()=>endDrill(st.err===0);
 }
 
 function renderSession(){
   const s=ses;let body="";
-  if(s.step===0){
-    body=`${ficheHTML(s.f)}<button class="btn solid full" id="next">J'ai lu, passer au rappel</button>`;
-  }else if(s.step===1){
+  if(s.step===0)body=lessonHTML(s.l)+`<button class="btn solid full" id="next">I've got it: start recall</button>`;
+  else if(s.step===1){
     const c=s.cards[s.ci];
-    body=`<p class="muted small">Carte ${s.ci+1} sur ${s.cards.length}. Réponds de tête avant de retourner.</p>
-    <div class="card flash"><div class="q">${esc(c.q)}</div>
-    ${s.reveal?`<div class="a">${esc(c.a)}</div>`:""}</div>
-    ${s.reveal?`<div class="grades"><button class="g-ko" data-g="0">Raté</button><button class="g-mid" data-g="1">Hésité</button><button class="g-ok" data-g="2">Su</button></div>`
-      :`<button class="btn solid full" id="reveal">Voir la réponse</button>`}
-    <p class="muted small" style="margin-top:10px">${esc(fiche(c.f).t)}</p>`;
-  }else if(s.step===2){
-    const q=s.qcm[s.qi];
-    body=`<p class="muted small">Question ${s.qi+1} sur ${s.qcm.length}. Pense comme un manager : la réponse qui protège l'organisation.</p>
-    <div class="qen" lang="en">${esc(q.q)}</div>
-    ${q.order.map(i=>{
-      let cls="";if(s.picked!==null){if(i===q.a)cls="right";else if(i===s.picked)cls="wrong"}
-      return `<button class="opt ${cls}" data-i="${i}" lang="en" ${s.picked!==null?"disabled":""}>${esc(q.o[i])}</button>`}).join("")}
-    ${s.picked!==null?`<div class="note ${s.picked===q.a?"":"trap"} expl"><b>${s.picked===q.a?"Juste.":"Pas tout à fait."}</b> ${esc(q.x)}</div>
-      <button class="btn solid full" id="nextq">${s.qi+1<s.qcm.length?"Question suivante":"Voir le bilan"}</button>`:""}`;
-  }else{
-    const weakList=[...new Set(s.missedQ.map(q=>q.f))].map(fiche);
-    body=`<h1>Séance terminée</h1>
-    <div class="stat">
-      <div><b>${s.score}/${s.qcm.length}</b><span class="muted small">QCM justes</span></div>
-      <div><b>${s.graded.ok}/${s.cards.length}</b><span class="muted small">cartes sues</span></div>
-      <div><b>${Math.max(1,Math.round((Date.now()-s.start)/60000))} min</b><span class="muted small">durée</span></div>
-    </div>
-    ${weakList.length?`<div class="block"><h2>À approfondir</h2>${weakList.map(f=>`<div class="dom"><b>${esc(f.t)}</b><div class="small muted">All-in-One ${esc(f.ref.a)}, Official Textbook ${esc(f.ref.o)}</div></div>`).join("")}</div>`
-      :`<p class="block">Aucune erreur au QCM. Les cartes ratées reviendront demain.</p>`}
-    <button class="btn solid full block" id="done">Retour à l'accueil</button>`;
+    body=`<p class="muted small">Card ${s.ci+1} of ${s.cards.length}. Answer in your head before you flip it.</p>
+    <div class="card flash"><div class="q">${esc(c.q)}</div>${s.reveal?`<div class="a">${esc(c.a)}</div>`:""}</div>
+    ${s.reveal?`<div class="grades"><button class="g-ko" data-g="0">Missed</button><button class="g-mid" data-g="1">Unsure</button><button class="g-ok" data-g="2">Knew it</button></div>
+      <button class="link" id="say" style="margin-top:12px">▶ Hear the answer</button>`
+      :`<button class="btn solid full" id="reveal">Show answer</button>`}
+    <p class="muted small" style="margin-top:10px">${esc(lesson(c.f).t)}</p>`;
   }
-  app.innerHTML=sessionHeader()+body;
-
+  else if(s.step===2)body=drillHTML(s.dst);
+  else if(s.step===3){
+    const q=s.qcm[s.qi];
+    body=`<p class="muted small">Question ${s.qi+1} of ${s.qcm.length}. Think like a manager: pick the answer that best protects the organization.</p>
+    <div class="qen">${esc(q.q)}</div>
+    ${q.order.map(i=>{let c="";if(s.picked!==null){if(i===q.a)c="right";else if(i===s.picked)c="wrong"}
+      return `<button class="opt ${c}" data-i="${i}" ${s.picked!==null?"disabled":""}>${esc(q.o[i])}</button>`}).join("")}
+    ${s.picked!==null?`<div class="note ${s.picked===q.a?"":"trap"}"><b>${s.picked===q.a?"Correct.":"Not quite."}</b> ${esc(q.x)}</div>
+      <button class="btn solid full" id="nextq">${s.qi+1<s.qcm.length?"Next question":"See my recap"}</button>`:""}`;
+  }else{
+    const weak=[...s.missed].map(lesson);
+    body=`<h1>Session complete</h1>
+    <div class="stat"><div><b>${s.score}/${s.qcm.length}</b><span class="muted small">exam questions</span></div>
+    <div><b>${s.graded.ok}/${s.cards.length}</b><span class="muted small">cards known</span></div>
+    <div><b>${Math.max(1,Math.round((Date.now()-s.start)/60000))} min</b><span class="muted small">duration</span></div></div>
+    ${weak.length?`<div class="block"><h2>To revisit</h2>${weak.map(l=>`<button class="item" data-l="${l.id}"><span>${esc(l.t)}</span><span class="small muted">Open</span></button>`).join("")}</div>`
+      :`<p class="block">No mistakes this time. Missed cards will come back tomorrow.</p>`}
+    <button class="btn solid full block" id="done">Back to home</button>`;
+  }
+  app.innerHTML=header()+`<div class="list">${body}</div>`;
   const $=id=>document.getElementById(id);
-  if($("next"))$("next").onclick=()=>{S.read[s.f.id]=today();save();s.step=s.cards.length?1:2;render();window.scrollTo(0,0)};
+  if(s.step===0)bindListen(s.l);
+  if(s.step===2)bindDrill();
+  if($("next"))$("next").onclick=()=>{S.read[s.l.id]=today();save();go(1)};
   if($("reveal"))$("reveal").onclick=()=>{s.reveal=true;render()};
-  document.querySelectorAll(".grades button").forEach(b=>b.onclick=()=>{
-    const g=+b.dataset.g;grade(s.cards[s.ci],g);s.graded[["ko","mid","ok"][g]]++;
-    s.ci++;s.reveal=false;if(s.ci>=s.cards.length)s.step=s.qcm.length?2:3;render();window.scrollTo(0,0)});
-  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  if($("say"))$("say").onclick=()=>speak(s.cards[s.ci].q+" "+s.cards[s.ci].a);
+  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{
+    const g=+b.dataset.g,c=s.cards[s.ci];grade(c,g);s.graded[["ko","mid","ok"][g]]++;if(g===0)s.missed.add(c.f);
+    s.ci++;s.reveal=false;stopSpeak();if(s.ci>=s.cards.length)go(2);else{render();window.scrollTo(0,0)}});
+  document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{
     const q=s.qcm[s.qi];s.picked=+b.dataset.i;const ok=s.picked===q.a;
     const st=S.qcm[q.id]||{ok:0,miss:0};ok?st.ok++:st.miss++;st.last=ok;S.qcm[q.id]=st;save();
-    if(ok)s.score++;else s.missedQ.push(q);render()});
-  if($("nextq"))$("nextq").onclick=()=>{s.qi++;s.picked=null;if(s.qi>=s.qcm.length){s.step=3;bumpStreak();
-    S.log.push({d:today(),q:s.score+"/"+s.qcm.length,f:s.f?s.f.id:"faiblesses"});save()}render();window.scrollTo(0,0)};
+    if(ok)s.score++;else s.missed.add(q.f);render()});
+  if($("nextq"))$("nextq").onclick=()=>{s.qi++;s.picked=null;if(s.qi>=s.qcm.length)finish();render();window.scrollTo(0,0)};
+  document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ses=null;tab="lessons";openLesson=b.dataset.l;render();window.scrollTo(0,0)});
   if($("done"))$("done").onclick=()=>setTab("home");
 }
 
-/* ---- Fiches ---- */
-function renderFiches(){
-  if(openFiche){
-    const f=fiche(openFiche);
-    app.innerHTML=`<button class="link" id="back">Toutes les fiches</button><div class="block">${ficheHTML(f)}</div>
-    <button class="btn solid full" id="study">Faire une séance sur cette fiche</button>`;
-    document.getElementById("back").onclick=()=>{openFiche=null;render()};
-    document.getElementById("study").onclick=()=>startSession(f.id,false);
+/* ---------- Lessons ---------- */
+function renderLessons(){
+  if(openLesson){
+    const l=lesson(openLesson);
+    app.innerHTML=`<button class="link" id="back">All lessons</button><div class="block">${lessonHTML(l)}</div>
+    <button class="btn solid full" id="study">Start a session on this lesson</button>`;
+    bindListen(l);
+    document.getElementById("back").onclick=()=>{stopSpeak();openLesson=null;render()};
+    document.getElementById("study").onclick=()=>startSession(l.id,false);
     return;
   }
-  const avail=[...new Set(FICHES.map(f=>f.d))];
-  app.innerHTML=`<h1>Fiches</h1>
-  <div class="tabsdom">${avail.map(d=>`<button data-d="${d}" class="${d===ficheFilter?"on":""}">Domaine ${d}</button>`).join("")}</div>
-  <p class="muted small">${esc(DOMAINS[ficheFilter-1].en)}, ${DOMAINS[ficheFilter-1].w} % de l'examen.</p>
-  <div class="list">${FICHES.filter(f=>f.d===ficheFilter).map(f=>`<button class="item" data-f="${f.id}"><span>${esc(f.t)}${f.maj?' <span class="small muted">(mise à jour)</span>':""}</span><span class="chk">${S.read[f.id]?"Vue":""}</span></button>`).join("")}</div>`;
-  document.querySelectorAll(".tabsdom button").forEach(b=>b.onclick=()=>{ficheFilter=+b.dataset.d;render()});
-  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>{openFiche=b.dataset.f;render();window.scrollTo(0,0)});
+  const avail=[...new Set(LESSONS.map(l=>l.d))];
+  app.innerHTML=`<h1>Lessons</h1>
+  <div class="tabsdom">${avail.map(d=>`<button data-d="${d}" class="${d===filter?"on":""}">Domain ${d}</button>`).join("")}</div>
+  <p class="muted small">${esc(DOMAINS[filter-1].name)}, ${DOMAINS[filter-1].w} % of the exam.</p>
+  <div class="list">${LESSONS.filter(l=>l.d===filter).map(l=>`<button class="item" data-f="${l.id}"><span>${esc(l.t)}</span><span class="chk">${S.read[l.id]?"Learned":""}</span></button>`).join("")}</div>`;
+  document.querySelectorAll(".tabsdom button").forEach(b=>b.onclick=()=>{filter=+b.dataset.d;render()});
+  document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{openLesson=b.dataset.f;render();window.scrollTo(0,0)});
 }
 
-/* ---- Faiblesses ---- */
+/* ---------- Weak spots ---------- */
 function renderWeak(){
-  const list=FICHES.map(f=>({f,w:weakness(f.id)})).filter(x=>x.w>0).sort((a,b)=>b.w-a.w);
-  app.innerHTML=`<h1>Mes faiblesses</h1>
-  <p class="muted">Remplie automatiquement avec tes cartes ratées et tes erreurs de QCM. C'est ta liste pour l'étape d'approfondissement.</p>
-  ${list.length?`<button class="go" id="gow">Séance faiblesses<span>Seulement ce que tu rates, sans nouvelle notion</span></button>
-  <div class="block">${list.map(x=>`<div class="dom"><div class="top"><b>${esc(x.f.t)}</b><span class="small muted">D${x.f.d}</span></div>
-    <div class="small muted">All-in-One ${esc(x.f.ref.a)}, Official Textbook ${esc(x.f.ref.o)}, Conrad ${esc(x.f.ref.c)}</div></div>`).join("")}</div>`
-  :`<div class="card">Rien pour l'instant. Fais une séance : chaque erreur viendra se ranger ici.</div>`}`;
+  const list=LESSONS.map(l=>({l,w:weakness(l.id)})).filter(x=>x.w>0).sort((a,b)=>b.w-a.w);
+  app.innerHTML=`<h1>My weak spots</h1>
+  <p class="muted">Filled automatically from missed cards, exercises and exam questions. This is your list for the deep-dive stage.</p>
+  ${list.length?`<button class="go" id="gow">Weak spots session<span>Only what you missed, no new lesson</span></button>
+  <div class="block list">${list.map(x=>`<button class="item" data-l="${x.l.id}"><span>${esc(x.l.t)}</span><span class="small muted">D${x.l.d}</span></button>`).join("")}</div>`
+  :`<div class="card">Nothing yet. Do a session: every mistake will land here.</div>`}`;
   const g=document.getElementById("gow");if(g)g.onclick=()=>startSession(null,true);
+  document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{tab="lessons";openLesson=b.dataset.l;render();window.scrollTo(0,0)});
 }
 
-/* ---- Réglages ---- */
+/* ---------- Settings ---------- */
 function renderSettings(){
-  app.innerHTML=`<h1>Réglages</h1>
-  <h2 class="block">Thème</h2>
-  <div class="tabsdom">${["auto","light","dark"].map(t=>`<button data-t="${t}" class="${(localStorage.getItem("cissprep.theme")||"auto")===t?"on":""}">${{auto:"Auto",light:"Clair",dark:"Sombre"}[t]}</button>`).join("")}</div>
-  <h2 class="block">Sauvegarde de ta progression</h2>
-  <p class="muted small">Ta progression reste dans ce navigateur. Pour passer du téléphone à l'ordinateur, copie ce texte puis colle-le dans l'autre appareil.</p>
+  let th="auto";try{th=localStorage.getItem("cissprep.theme")||"auto"}catch(e){}
+  app.innerHTML=`<h1>Settings</h1>
+  <h2 class="block">Theme</h2>
+  <div class="tabsdom">${["auto","light","dark"].map(t=>`<button data-t="${t}" class="${th===t?"on":""}">${{auto:"Auto",light:"Light",dark:"Dark"}[t]}</button>`).join("")}</div>
+  <h2 class="block">Backup</h2>
+  <p class="muted small">Your progress is stored in this browser only. To move between phone and computer, copy this text and paste it on the other device.</p>
   <textarea id="exp" readonly>${esc(JSON.stringify(S))}</textarea>
-  <button class="btn full" id="copy" style="margin-top:8px">Copier</button>
-  <textarea id="imp" placeholder="Colle ici une sauvegarde" style="margin-top:14px"></textarea>
-  <button class="btn full" id="doimp" style="margin-top:8px">Restaurer cette sauvegarde</button>
-  <h2 class="block">Recommencer</h2>
-  <button class="btn full" id="reset" style="border-color:var(--ko);color:var(--ko)">Effacer toute ma progression</button>
-  <p class="muted small block">Contenu : ${FICHES.length} fiches, ${CARDS.length} cartes, ${QCM.length} QCM. Domaines 1 et 2.</p>`;
+  <button class="btn full" id="copy" style="margin-top:8px">Copy</button>
+  <textarea id="imp" placeholder="Paste a backup here" style="margin-top:14px"></textarea>
+  <button class="btn full" id="doimp" style="margin-top:8px">Restore this backup</button>
+  <h2 class="block">Start over</h2>
+  <button class="btn full danger" id="reset">Erase all my progress</button>
+  <p class="muted small block">Content: ${LESSONS.length} lessons, ${CARDS.length} cards, ${DRILLS.length} exercises, ${QCM.length} exam questions. Domains 1 and 2.</p>`;
   document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{try{localStorage.setItem("cissprep.theme",b.dataset.t)}catch(e){}applyTheme();render()});
   document.getElementById("copy").onclick=()=>{const t=document.getElementById("exp");t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand("copy")}};
-  document.getElementById("doimp").onclick=()=>{try{const d=JSON.parse(document.getElementById("imp").value);if(!d.cards)throw 0;S=d;save();setTab("home")}catch(e){alert("Sauvegarde illisible : vérifie que tu as copié tout le texte.")}};
-  document.getElementById("reset").onclick=()=>{if(confirm("Effacer toute la progression ?")){S=blank();save();setTab("home")}};
+  document.getElementById("doimp").onclick=()=>{try{const d=JSON.parse(document.getElementById("imp").value);if(!d.cards)throw 0;S={...blank(),...d};save();setTab("home")}catch(e){alert("This backup cannot be read. Make sure you copied all of the text.")}};
+  document.getElementById("reset").onclick=()=>{if(confirm("Erase all progress?")){S=blank();save();setTab("home")}};
 }
-
 function applyTheme(){let t="auto";try{t=localStorage.getItem("cissprep.theme")||"auto"}catch(e){}
   if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t)}
 applyTheme();
-setInterval(()=>{if(ses&&ses.step<3){const c=document.querySelector(".clock span:last-child");if(c)c.textContent=Math.floor((Date.now()-ses.start)/60000)+" / "+SESSION_MIN+" min"}},20000);
+setInterval(()=>{if(ses&&ses.step<4){const c=document.getElementById("clk");if(c)c.textContent=Math.floor((Date.now()-ses.start)/60000)+" / "+SESSION_MIN+" min"}},20000);
 render();
+
 </script>
 </body>
 </html>
