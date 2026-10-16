@@ -72,6 +72,8 @@ button{font:inherit;cursor:pointer}
 .dom .top{display:flex;justify-content:space-between;gap:10px}
 .bar{height:8px;background:var(--line);border-radius:4px;margin-top:8px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--ok);border-radius:4px}
+.opt.sel{border-color:var(--focus);box-shadow:inset 0 0 0 1px var(--focus)}
+.btn[disabled]{opacity:.4;cursor:default}
 .dom.soon{opacity:.55}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
@@ -119,7 +121,7 @@ textarea{width:100%;min-height:120px;font:inherit;font-size:.85rem;border:1px so
 
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
-nav div{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav div{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav button{background:none;border:0;color:var(--muted);padding:12px 4px 14px;font-size:.88rem;font-weight:700}
 nav button.on{color:var(--ink);box-shadow:inset 0 3px 0 var(--flap)}
 @media (prefers-reduced-motion:no-preference){
@@ -146,6 +148,7 @@ ol.built li{color:var(--ok);font-weight:700;margin-bottom:4px}
   <button data-tab="home">Home</button>
   <button data-tab="lessons">Lessons</button>
   <button data-tab="weak">Weak spots</button>
+  <button data-tab="exam">Exam</button>
   <button data-tab="settings">Settings</button>
 </div></nav>
 <script>
@@ -2136,7 +2139,570 @@ const LESSONS = [
  trap:"In SaaS, the customer still owns its data, identities and access configuration. The provider never takes that responsibility.",
  mnem:"Buy it, borrow it, commission it or rent it: assess it every time.",
  upd:"A software bill of materials (SBOM) is increasingly requested from vendors to see which open source components a product contains.",
- ref:{a:"ch. 25",o:"Domain 8"}}
+ ref:{a:"ch. 25",o:"Domain 8"}},
+{id:"y1-risque",d:1,lvl:3,t:"Risk vocabulary: inherent, total, residual and the controls gap",
+ what:"The 2024 outline expands risk management with precise vocabulary, cybersecurity insurance, reporting and maturity. The Sybex guide gives simple formulas that help on scenario questions.",
+ pts:["Inherent risk (initial or starting risk) is the natural risk before any risk management effort. It is what the risk assessment identifies.",
+      "Total risk is the risk the organization would face with no safeguards: threats and vulnerabilities and asset value = total risk.",
+      "The controls gap is the amount of risk removed by the safeguards. Total risk − controls gap = residual risk.",
+      "Residual risk is what management chooses to accept, usually because further safeguards would not be cost-effective.",
+      "Risk response includes buying cybersecurity insurance, a form of risk transfer. Control assessments check that security and privacy controls work; results are reported internally (management, board) and externally (regulators, customers).",
+      "The risk maturity model (RMM) has five levels: ad hoc, preliminary, defined, integrated, optimized.",
+      "Risk frameworks named in the outline: ISO, NIST, COBIT, SABSA, PCI DSS, plus FedRAMP for US government cloud services."],
+ ex:"Before any controls, a ransomware attack on the ERP would be catastrophic (total risk). Backups, EDR and MFA remove most of it (controls gap). What remains, a few hours of data loss, is formally accepted by management (residual risk), and cyber insurance covers part of the financial impact.",
+ terms:[["Inherent risk","Risk before any risk management effort."],["Controls gap","The amount of risk reduced by safeguards."],["Residual risk","Risk remaining after safeguards, accepted by management."],["Risk maturity model","Five-level scale of risk management maturity."]],
+ trap:"Residual risk = total risk − controls gap. It is never zero, and it must be accepted by management, not by IT.",
+ mnem:"RMM levels: Ad hoc, Preliminary, Defined, Integrated, Optimized: 'A Proper Defense Is Organized'.",
+ ref:{s:"ch. 2",o:"Domain 1"}},
+
+{id:"y1-vie-privee",d:1,lvl:3,t:"Privacy laws around the world: GDPR, CCPA, PIPL, POPIA",
+ what:"The 2024 outline names four privacy laws explicitly. They share common principles, and a multinational group often falls under several at once.",
+ pts:["GDPR (EU, enforceable since May 2018): applies to anyone processing personal data of people in the EU. Key ideas: lawful basis, data minimization, data subject rights, breach notification within 72 hours, heavy fines.",
+      "CCPA (California Consumer Privacy Act): gives California residents the right to know what data is collected, to delete it and to opt out of its sale.",
+      "PIPL (China, 2021): China's first comprehensive privacy law, close to GDPR. Explicit consent, minimum necessary collection, data subject rights, and strict rules for transferring data out of China (security assessment required). Penalties include suspension of business.",
+      "POPIA (South Africa, in effect 2020): eight conditions for lawful processing (accountability, processing limitation, purpose specification, further processing limitation, information quality, openness, security safeguards, data subject participation). Special personal information and children's data get extra protection.",
+      "All four restrict cross-border transfers unless the destination offers adequate protection.",
+      "Contracting and procurement must carry these obligations to suppliers that process personal data."],
+ ex:"A group with HR data in Switzerland, Belgium, Nigeria and Cambodia must map where personal data flows. Data on EU employees falls under GDPR wherever it is processed, and transfers to other countries need appropriate safeguards such as standard contractual clauses.",
+ terms:[["PIPL","China's Personal Information Protection Law (2021)."],["POPIA","South Africa's Protection of Personal Information Act."],["CCPA","California Consumer Privacy Act."],["Cross-border transfer","Moving personal data to another country."]],
+ trap:"GDPR protects people in the EU, not only EU citizens, and applies to non-EU organizations that process their data.",
+ mnem:"GDPR Europe, CCPA California, PIPL China, POPIA South Africa: one principle everywhere, protect the person.",
+ upd:"Switzerland's revised Federal Act on Data Protection (nFADP) has applied since September 2023 and follows similar principles. Nigeria adopted its Data Protection Act in 2023.",
+ ref:{s:"ch. 4",o:"Domain 1"}},
+
+{id:"y1-ingenierie",d:1,lvl:3,t:"Social engineering: the principles behind the attacks",
+ what:"Social engineering works because it exploits human nature. The Sybex guide lists the psychological principles attackers use; recognizing them is the first defense.",
+ pts:["Authority: people obey someone who appears to be in charge (a spoofed CEO email). Intimidation: authority plus threat of a penalty.",
+      "Consensus (social proof): 'everyone else already did it'. Scarcity: 'only two left'. Urgency: 'pay now or the service is cut', often combined with scarcity.",
+      "Familiarity (liking): pretending to be someone known, such as your bank or a mutual contact. Trust: building a relationship over time, then exploiting it.",
+      "Eliciting information gathers details to build a believable pretext, a false but convincing story.",
+      "Prepending adds 'RE:', 'FW:', 'INTERNAL' or 'SAFE' to make a message look like part of a conversation or to fool filters.",
+      "Invoice scams send a fake invoice with pressure to pay, often combined with business email compromise (BEC).",
+      "Defenses: training, verification procedures (call back on a known number), classification of information and reporting suspicious contacts."],
+ ex:"An accountant receives an email from the 'CFO' (authority) asking to pay a new supplier today before the bank closes (urgency), and to keep it quiet because the deal is confidential. A callback to the CFO's known number stops the fraud.",
+ terms:[["Pretext","A false, believable story used to manipulate a target."],["Consensus","Pressure from what others supposedly did (social proof)."],["Prepending","Adding RE:, FW: or labels to make a message look legitimate."],["Invoice scam","A fake invoice pushed for urgent payment."]],
+ trap:"Urgency and scarcity often appear together. If a message pushes you to act before you can think, that is the attack.",
+ mnem:"AICSUFT: Authority, Intimidation, Consensus, Scarcity, Urgency, Familiarity, Trust.",
+ ref:{s:"ch. 2",o:"Domain 1"}},
+
+{id:"y1-formation",d:1,lvl:3,t:"Awareness, training and education programs",
+ what:"Objective 1.12 asks you to build a program that changes behavior, keeps content current and proves it works. The Sybex guide distinguishes three levels and lists modern techniques.",
+ pts:["Awareness makes security visible to everyone and sets a common minimum. Training teaches people to do their job securely (an administrative control). Education goes far beyond the job, for certifications and security careers.",
+      "Micro-training delivers short, focused modules, often on mobile.",
+      "Techniques: phishing simulations, role-playing, capture-the-flag drills, computer-based training, role-based training, varied formats and topics.",
+      "Security champions are non-security staff who lead adoption of good practices in their own team.",
+      "Gamification uses points, badges and competition to increase engagement and retention.",
+      "Periodic content reviews add emerging technologies and trends: cryptocurrency, blockchain, artificial intelligence. Topics also include insider threat, social media risks and 2FA fatigue (users trying to bypass MFA prompts).",
+      "Program effectiveness evaluation: post-training tests, phishing click rates, incident trends."],
+ ex:"Each site appoints a security champion who relays the monthly five-minute micro-training. Phishing simulation click rates drop from 18 % to 6 % in a year, which proves the program works.",
+ terms:[["Education","Learning well beyond the job, for professional growth."],["Security champion","A non-security employee who promotes security in their team."],["Gamification","Using game elements to drive engagement."],["Micro-training","Short, focused learning units."]],
+ trap:"Awareness changes behavior for everyone; training builds a skill for a job; education builds knowledge for a career.",
+ mnem:"Awareness = what, Training = how, Education = why.",
+ ref:{s:"ch. 2 and 16",o:"Domain 1"}},
+
+{id:"y1-scrm",d:1,lvl:3,t:"Supply chain mitigations: root of trust, PUF, SBOM",
+ what:"The 2024 outline adds specific supply chain risks (tampering, counterfeits, implants) and specific hardware and software mitigations. It also adds external dependencies to business continuity.",
+ pts:["Risks: product tampering, counterfeit parts and implants (hidden malicious components) introduced anywhere in the supply chain.",
+      "Mitigations: third-party assessment and monitoring, minimum security requirements, service level requirements.",
+      "A silicon root of trust (hardware root of trust) is a tamper-resistant hardware component that verifies firmware, boot loader and OS at startup (secure boot).",
+      "A physically unclonable function (PUF) uses tiny manufacturing variations of a chip to create a unique, unforgeable fingerprint, used for device authentication and keys.",
+      "A software bill of materials (SBOM) lists every component and library in a product, so you know quickly if you are affected by a newly disclosed vulnerability.",
+      "Business continuity must consider external dependencies: suppliers, utilities, telecom and cloud providers your critical processes rely on."],
+ ex:"When a critical flaw is announced in a common logging library, a company with SBOMs for its applications knows within an hour which ones contain it. Without SBOMs, it takes weeks of guessing.",
+ terms:[["Silicon root of trust","Tamper-resistant hardware that anchors secure boot."],["PUF","Physically unclonable function: a unique hardware fingerprint."],["SBOM","Software bill of materials: list of all components."],["External dependency","Something outside the organization a critical process relies on."]],
+ trap:"An SBOM does not fix vulnerabilities; it tells you where you are exposed.",
+ mnem:"Root of trust checks the boot, PUF proves the chip, SBOM lists the parts.",
+ ref:{s:"ch. 1 and 3",o:"Domain 1"}},
+
+{id:"y2-anonymisation",d:2,lvl:3,t:"Pseudonymization, tokenization, anonymization and masking",
+ what:"When data must be used or shared without exposing who it is about, four techniques reduce the risk. They differ on one key question: can the original data be recovered?",
+ pts:["Pseudonymization replaces identifying data with artificial identifiers (Patient 23456). The link to the real identity is kept elsewhere, so the process is reversible. GDPR rewards it with lighter requirements but still treats the data as personal.",
+      "Tokenization replaces sensitive data with a random token. The real value sits in a protected tokenization vault. Common for card payments: the shop never sees the card number.",
+      "Anonymization removes all data that could identify a person. Done properly, the data is no longer personal under GDPR, but true anonymization is hard: inference can re-identify people.",
+      "Randomized masking shuffles values within columns so records no longer match real people, while aggregate values (such as an average age) stay correct.",
+      "Choose by need: if you must link back later, pseudonymize or tokenize; if you never need identities, anonymize."],
+ ex:"Phone payments use tokenization: the digital wallet sends a token to the shop's terminal, the payment network's vault turns it back into the card number, and the shop never stores or sees the card.",
+ terms:[["Pseudonymization","Replacing identifiers with pseudonyms; reversible with separate data."],["Tokenization","Replacing data with tokens resolved by a secure vault."],["Anonymization","Irreversibly removing identifying data."],["Re-identification","Recovering identities from supposedly anonymous data."]],
+ trap:"Pseudonymized data is still personal data under GDPR. Only truly anonymized data falls outside it.",
+ mnem:"Pseudonym = alias you can unmask. Token = voucher the vault can redeem. Anonymous = nobody can tell.",
+ ref:{s:"ch. 5",o:"Domain 2"}},
+
+{id:"y3-sase-cycle",d:3,lvl:3,t:"SASE and the information system life cycle",
+ what:"The 2024 outline adds Secure Access Service Edge to the design principles and a full objective on managing the information system life cycle.",
+ pts:["SASE combines network security and WAN capabilities in a cloud-native service, instead of separate on-premises boxes.",
+      "SASE is identity-centric: access is based on who the user and device are, not on network location, through zero trust network access (ZTNA) with MFA.",
+      "SASE uses edge computing and a globally distributed network to bring security close to users, typically combining SD-WAN, secure web gateway, CASB, firewall as a service and ZTNA.",
+      "Information system life cycle stages: stakeholders' needs and requirements, requirements analysis (functional and nonfunctional), architectural design, development and implementation, integration, verification and validation, transition and deployment, operations and maintenance (sustainment), retirement and disposal.",
+      "Verification checks each component is built correctly; validation checks the whole system fulfills its purpose."],
+ ex:"Staff working from plantations, hotels and home connect to a SASE service: their identity and device health are checked, web traffic is filtered in the cloud, and they reach only the applications they are allowed to use, with no full network VPN.",
+ terms:[["SASE","Secure Access Service Edge: cloud-delivered networking and security."],["ZTNA","Zero trust network access: per-application, identity-based access."],["Verification","Checking each component is built to specification."],["Validation","Checking the whole system meets its intended purpose."]],
+ trap:"Verification: 'did we build it right?' Validation: 'did we build the right thing?'",
+ mnem:"Needs, Analyze, Design, Build, Integrate, Verify, Deploy, Operate, Retire.",
+ ref:{s:"ch. 8",o:"Domain 3"}},
+
+{id:"y3-crypto",d:3,lvl:3,t:"Quantum, homomorphic encryption and modern crypto uses",
+ what:"The 2024 outline adds quantum cryptography and quantum key distribution, and stresses key rotation. The Sybex guide also covers homomorphic encryption, which lets you compute on data without decrypting it.",
+ pts:["Quantum computers use qubits. Quantum supremacy could break factoring and discrete logarithm problems, making RSA and Diffie-Hellman insecure.",
+      "Quantum key distribution (QKD) uses quantum physics to create a shared secret key between two parties, like Diffie-Hellman; any eavesdropping disturbs the exchange.",
+      "Post-quantum thinking today: consider how long your data must stay secret, because attackers can steal encrypted data now and decrypt it later ('harvest now, decrypt later').",
+      "Homomorphic encryption allows calculations on encrypted data; decrypting the result gives the same answer as computing on the plaintext. Useful for privacy-preserving processing in the cloud.",
+      "Key management practices include regular key rotation, so a compromised key exposes less data.",
+      "Blockchain is a distributed, tamper-evident ledger secured by hashing; cryptocurrency is its best-known use."],
+ ex:"A research partner needs statistics on salary data without seeing individual salaries. With homomorphic encryption, it computes the average on encrypted values and only the data owner decrypts the result.",
+ terms:[["Qubit","A quantum bit, the unit of quantum computing."],["QKD","Quantum key distribution: sharing a key using quantum physics."],["Homomorphic encryption","Encryption that allows computation on ciphertext."],["Key rotation","Replacing keys on a regular schedule."]],
+ trap:"QKD distributes keys; it does not encrypt data by itself. Data is still encrypted with a symmetric algorithm using the key.",
+ mnem:"Harvest now, decrypt later: protect long-lived secrets today.",
+ upd:"NIST published its first post-quantum standards in August 2024 (FIPS 203, 204, 205), after the Sybex guide went to print.",
+ ref:{s:"ch. 6 and 7",o:"Domain 3"}},
+
+{id:"y4-architecture",d:4,lvl:3,t:"Network architecture: planes, traffic flows and segmentation",
+ what:"The 2024 outline adds several design concepts to Domain 4: how devices are built (planes, switching modes), which way traffic flows, and the different kinds of segmentation.",
+ pts:["Transport architecture: the data plane forwards traffic, the control plane builds forwarding tables (routing protocols), the management plane configures and monitors devices.",
+      "Cut-through switching forwards a frame as soon as it reads the destination address (low latency). Store-and-forward receives the whole frame first (better error checking).",
+      "North-south traffic flows in and out between internal and external systems. East-west traffic flows within a network, data center or cloud. Attackers moving laterally create east-west traffic.",
+      "Physical segmentation: in-band (data and control share the same paths), out-of-band (management and control traffic on a separate network), air-gapped (no connection at all, the strictest).",
+      "Logical segmentation: VLANs, VPNs, virtual routing and forwarding (VRF, several routing tables in one router) and virtual domains (independent virtual firewalls or switches in one appliance).",
+      "Micro-segmentation divides down to a single workload, using overlays, distributed firewalls and IDS/IPS, in line with zero trust."],
+ ex:"Switches and firewalls are managed through a dedicated out-of-band management network. Even if the production network is compromised or down, administrators keep control, and attackers cannot reach the management interfaces.",
+ terms:[["Management plane","Device administration: configuration and monitoring."],["East-west traffic","Traffic between systems inside the same environment."],["Out-of-band","Management traffic on a separate network."],["VRF","Virtual routing and forwarding: multiple routing tables in one router."]],
+ trap:"Perimeter firewalls watch north-south traffic. Lateral movement is east-west, which needs internal segmentation to see and stop.",
+ mnem:"North-south crosses the border, east-west stays in town.",
+ ref:{s:"ch. 11",o:"Domain 4"}},
+
+{id:"y4-edge",d:4,lvl:3,t:"Edge networks, VPC, NFV and new converged protocols",
+ what:"Modern networks extend to the edge and into the cloud. The 2024 outline names several of these building blocks, plus new converged protocols and IP addressing types.",
+ pts:["Edge networks bring computing and content closer to users to cut latency. Ingress points bring external data in; egress points send traffic out; peering connects edge networks directly without intermediaries.",
+      "A virtual private cloud (VPC) is an isolated, logically segmented network inside a public cloud, where the customer controls addressing, subnets and routing.",
+      "SDN separates control from forwarding and is driven through APIs; network functions virtualization (NFV) runs network functions such as firewalls or routers as software on standard hardware.",
+      "New converged protocols: InfiniBand over Ethernet (high-speed, low-latency cluster networking) and Compute Express Link (CXL, a fast link between processors, memory and accelerators).",
+      "IP traffic types: unicast (one to one), broadcast (one to all on a segment), multicast (one to a group), anycast (one to the nearest of several, used by DNS and CDNs).",
+      "Third-party connectivity now explicitly includes telecom providers and hardware support access; data communications include backhaul and satellite links."],
+ ex:"A company's Azure subscription has a VPC (called a virtual network in Azure) with separate subnets for web servers and databases, and network security groups between them, exactly like VLANs and firewalls on site.",
+ terms:[["Edge peering","Direct interconnection between edge networks."],["VPC","Virtual private cloud: isolated network inside a public cloud."],["NFV","Network functions virtualization."],["Anycast","Delivery to the nearest of several destinations."]],
+ trap:"SDN separates the control plane; NFV virtualizes network appliances. They complement each other but are different.",
+ mnem:"Uni = one, Broad = all, Multi = some, Any = nearest.",
+ ref:{s:"ch. 11",o:"Domain 4"}},
+
+{id:"y4-performance",d:4,lvl:3,t:"Network performance metrics and monitoring",
+ what:"Security also depends on a network that performs and is watched. The 2024 outline adds performance metrics and monitoring and management practices.",
+ pts:["Bandwidth: the capacity of a medium. Throughput: the data actually delivered.",
+      "Latency (propagation delay): time for a signal to travel from sender to receiver. Jitter: the variation in latency between packets, which ruins voice and video.",
+      "Signal-to-noise ratio compares the useful signal to background noise. Attenuation, interference (EMI, RFI) and noise degrade quality.",
+      "Network observability: collecting metrics, logs and traces to understand the network's internal state.",
+      "Traffic flow and shaping prioritize important traffic and control bandwidth. Capacity management plans for current and future demand.",
+      "Fault detection and handling find failures fast and limit downtime. Load balancing spreads traffic over several links or servers."],
+ ex:"VoIP calls between two sites become choppy although bandwidth is fine. Monitoring shows high jitter on the satellite link; traffic shaping gives voice priority and the calls clear up.",
+ terms:[["Throughput","Data actually delivered per unit of time."],["Jitter","Variation in latency between packets."],["Observability","Understanding a network's state from its metrics, logs and traces."],["Traffic shaping","Controlling and prioritizing network traffic."]],
+ trap:"Bandwidth is capacity, throughput is what you actually get. A link can have plenty of bandwidth and still poor throughput.",
+ mnem:"Latency = how long, jitter = how unsteady.",
+ ref:{s:"ch. 11 and 12",o:"Domain 4"}},
+
+{id:"y4-email",d:4,lvl:3,t:"Email security: S/MIME, SPF, DKIM, DMARC, STARTTLS",
+ what:"Email was designed without security, and it remains the top entry point for phishing and business email compromise. Several standards add authentication and encryption without replacing SMTP.",
+ pts:["S/MIME uses X.509 certificates. A signed message gives integrity, sender authentication and nonrepudiation; an enveloped (encrypted) message gives confidentiality.",
+      "PGP is a peer-to-peer alternative based on a web of trust.",
+      "SPF (Sender Policy Framework) publishes in DNS which servers may send mail for a domain; receivers check the sending server against it.",
+      "DKIM (DomainKeys Identified Mail) signs messages with the domain's key, so receivers can verify they were authorized by the domain and not altered.",
+      "DMARC builds on SPF and DKIM: the domain owner publishes in DNS what to do with failing messages (deliver, quarantine, reject) and receives reports. It targets spoofing, phishing and BEC.",
+      "STARTTLS upgrades an SMTP connection to TLS if both sides support it (opportunistic encryption, port 587 for submission); implicit SMTPS uses TLS from the start."],
+ ex:"Attackers send invoices that appear to come from the company's own domain. Publishing SPF, signing with DKIM and moving DMARC to 'reject' makes receiving servers drop these spoofed messages.",
+ terms:[["SPF","DNS list of servers allowed to send mail for a domain."],["DKIM","Domain signature on email messages."],["DMARC","Policy telling receivers how to handle SPF/DKIM failures."],["STARTTLS","SMTP command that upgrades a connection to TLS."]],
+ trap:"DMARC does not work alone: it relies on SPF and DKIM results. And STARTTLS is an SMTP command, not a separate protocol.",
+ mnem:"SPF = who may send, DKIM = signed by whom, DMARC = what to do if both fail.",
+ ref:{s:"ch. 12",o:"Domain 4"}},
+
+{id:"y5-identite",d:5,lvl:3,t:"Identity strategy: proofing, passwordless, groups and service accounts",
+ what:"The 2024 outline reorganizes Domain 5 around designing an identification and authentication strategy for people, devices and services. A few items are new or more detailed.",
+ pts:["Registration, proofing and establishment of identity: new employees prove who they are with documents (passport, ID) before HR registers them. Online, organizations may use knowledge-based authentication (questions about the person's history) for identity proofing.",
+      "Password-less authentication replaces passwords with something stronger, such as FIDO2 security keys, passkeys or Windows Hello combined with a device.",
+      "Groups and roles simplify administration: rights are given to groups or roles, never directly to individuals.",
+      "Access must be controlled to information, systems, devices, facilities, applications and services (services were added in 2024).",
+      "Federated identity with a third-party service can be on-premises, cloud-based or hybrid.",
+      "Service accounts management: inventory them, give each the least privilege, rotate their passwords (or use managed service accounts), never use them interactively, and review them regularly."],
+ ex:"An audit finds a service account created years ago with domain admin rights and a password that never expires. It is reduced to the rights the application really needs and converted to a managed service account with automatic password rotation.",
+ terms:[["Identity proofing","Verifying that a person is who they claim to be before registration."],["Password-less authentication","Authenticating without a password, for example with a security key."],["Knowledge-based authentication","Proving identity by answering questions about one's history."],["Service account","An account used by an application or service, not a person."]],
+ trap:"Rights go to groups or roles, not individuals. Assigning permissions directly to users is the wrong answer on the exam.",
+ mnem:"Prove, register, group, review.",
+ ref:{s:"ch. 13",o:"Domain 5"}},
+
+{id:"y5-zerotrust",d:5,lvl:3,t:"Zero trust access policy enforcement: PDP and PEP",
+ what:"The 2024 outline adds access policy enforcement, using the vocabulary of NIST's zero trust architecture. Every request is checked when it happens, and the checking is split into components with precise names.",
+ pts:["Zero trust assumes there is no trust boundary and no network edge: each action is validated at request time, continuously.",
+      "Subjects (users, services, systems) request access to enterprise resources.",
+      "The policy engine decides: it applies rules and inputs such as identity, threat intelligence, SIEM data and device posture through a trust algorithm, then grants, denies or revokes access.",
+      "The policy administrator is a component (not a person) that opens or closes the communication path and issues session tokens, following the engine's decision.",
+      "Together, the policy engine and the policy administrator form the policy decision point (PDP).",
+      "The policy enforcement point (PEP) sits in the path between subject and resource, forwards requests and enforces the decision, often as a local agent plus a gateway."],
+ ex:"A user opens the ERP from a laptop. The access proxy (PEP) asks the decision service (PDP), which checks identity, MFA, device compliance and current risk, then tells the proxy to allow the session. If the laptop later fails a health check, the PDP tells the PEP to end it.",
+ terms:[["Policy engine","Makes the access decision using a trust algorithm."],["Policy administrator","Opens or closes the path and issues session credentials."],["PDP","Policy decision point: engine plus administrator."],["PEP","Policy enforcement point: applies the decision in the traffic path."]],
+ trap:"The PDP decides, the PEP enforces. And the policy administrator is a system component, not a human administrator.",
+ mnem:"PDP = Decides, PEP = Enforces at the door.",
+ ref:{s:"ch. 14",o:"Domain 5"}},
+
+{id:"y5-attaques",d:5,lvl:3,t:"Access control attacks: spraying, stuffing, Mimikatz and more",
+ what:"The Sybex guide reviews the attacks that target authentication and access control. Several of them are everyday threats for any Active Directory environment.",
+ pts:["Privilege escalation: horizontal (another user's rights at the same level) or vertical (higher privileges).",
+      "Password spraying tries one common password against many accounts, slowly, to avoid account lockout.",
+      "Credential stuffing reuses username and password pairs stolen from one site on many other sites, relying on password reuse.",
+      "Birthday attack: finding hash collisions, easier than expected (the birthday paradox). Rainbow tables are countered by salts.",
+      "Mimikatz reads LM and NTLM hashes and Kerberos tickets from Windows memory, enabling pass-the-hash and Kerberos exploitation.",
+      "Sniffer attacks capture credentials sent in cleartext; spoofing attacks impersonate users, IP addresses, emails or phone numbers.",
+      "Defenses: MFA, unique passwords, monitoring of failed logins across accounts, credential protection on endpoints, encrypted protocols."],
+ ex:"The logs show one failed login for 'Winter2026!' on 900 different accounts in an hour, then the same for 'Welcome1'. No account is locked out: that is password spraying, and MFA plus banned password lists stop it.",
+ terms:[["Password spraying","One password tried against many accounts to avoid lockout."],["Credential stuffing","Reusing stolen credentials on other sites."],["Mimikatz","Tool that extracts credentials and tickets from Windows memory."],["Horizontal escalation","Gaining another user's rights at the same level."]],
+ trap:"Spraying: many accounts, one password. Stuffing: one stolen pair, many sites. Lockout policies don't stop spraying.",
+ mnem:"Spray wide, stuff deep.",
+ ref:{s:"ch. 14",o:"Domain 5"}},
+
+{id:"y6-audits",d:6,lvl:3,t:"Audit types: where the books disagree",
+ what:"Internal, external and third-party audits are defined differently by the All-in-One and the Sybex guide. The 2024 outline settles the question with one word each: control.",
+ pts:["2024 outline wording: internal = within organization control; external = outside organization control; third-party = outside of enterprise control. A new item adds location: on-premises, cloud, hybrid.",
+      "Sybex: internal audits are run by the organization's own auditors. External audits are performed by an independent firm hired by the organization (such as the Big Four). Third-party audits are conducted by or on behalf of another organization, such as a regulator or a customer, which picks the auditor and the scope.",
+      "All-in-One: an external audit is a second-party audit by or for a business partner; a third-party audit is by a neutral auditor. Read the scenario and ask who controls the audit.",
+      "SSAE 18 (US) and ISAE 3402 (international) are the standards behind SOC reports. SOC 2 results are confidential (shared under NDA); SOC 3 is public.",
+      "Type I: opinion on the design at a point in time. Type II: operating effectiveness over at least six months.",
+      "Test scheduling depends on criticality, sensitivity, likelihood of failure or misconfiguration, attack risk, rate of change, effort and business impact."],
+ ex:"A bank's regulator sends its own auditors to check the bank's payment controls: under Sybex and the outline, that is a third-party audit, because the bank does not control it. The bank hiring KPMG for its yearly assessment is an external audit.",
+ terms:[["Internal audit","Under the organization's own control."],["External audit","Outside firm, still hired by the organization (Sybex)."],["Third-party audit","Run by or for another organization, outside the enterprise's control."],["ISAE 3402","International standard for service organization control reports."]],
+ trap:"On the exam, decide by who controls the audit: you (internal), an independent firm you hired (external), or someone else (third-party).",
+ mnem:"Internal = my team, External = my hired firm, Third-party = their choice.",
+ ref:{s:"ch. 15",o:"Domain 6"}},
+
+{id:"y6-exercices",d:6,lvl:3,t:"Exercises: red, blue, white and purple teams",
+ what:"The 2024 outline explicitly mentions red, blue and purple team exercises under penetration testing. Exercises train people and reveal weaknesses at the same time.",
+ pts:["Red team: attackers who try to gain access.",
+      "Blue team: defenders who secure and monitor systems, usually with a head start before the attack phase.",
+      "White team: observers and referees who enforce the rules, settle disputes, document lessons and make sure the exercise does not disrupt production.",
+      "Purple teaming: red and blue share tactics and lessons after (or during) the exercise to improve defenses.",
+      "Capture the flag (CTF): the red team has set objectives (steal a file, deface a site) and the score compares objectives achieved with those prevented.",
+      "Exercises can run in a separate environment to protect production. Tabletop exercises use no systems at all: participants talk through a scenario.",
+      "Synthetic transactions and benchmarks, and interface testing of user interfaces, network interfaces and APIs, are also listed in the 2024 outline."],
+ ex:"A one-day exercise: the red team tries to reach the finance share from the guest Wi-Fi, the blue team defends, a white team referees. In the afternoon, both teams sit together (purple) and turn each finding into a detection rule.",
+ terms:[["Red team","Attackers in an exercise."],["Blue team","Defenders in an exercise."],["White team","Referees and observers."],["Capture the flag","Exercise scored on objectives achieved or prevented."]],
+ trap:"The white team, not the blue team, referees and protects production during the exercise.",
+ mnem:"Red attacks, Blue defends, White judges, Purple shares.",
+ ref:{s:"ch. 15",o:"Domain 6"}},
+
+{id:"y7-detection",d:7,lvl:3,t:"Detection methods and SOAR: playbooks versus runbooks",
+ what:"The Sybex guide explains the two detection approaches behind IDS and anti-malware tools, and how SOAR automates the response.",
+ pts:["Knowledge-based detection (signature-based, pattern matching) compares activity with known attack signatures. Few false positives, but blind to new attacks.",
+      "Behavior-based detection (statistical, anomaly-based, heuristics-based) builds a baseline of normal activity and flags deviations. Can find new attacks but produces more false positives, and the baseline must be updated when the network changes.",
+      "UEBA applies the behavior approach to individual users and entities.",
+      "Allow lists (whitelisting) permit only approved items; deny lists (blacklisting) block known bad items.",
+      "Third-party security services (managed SOC, MDR) can provide detection the organization cannot staff itself.",
+      "A playbook is a document or checklist that defines how to verify an incident and how to respond. A runbook implements the playbook in an automated tool. SOAR platforms run these responses automatically.",
+      "Machine learning and AI tools help with anomaly detection and triage at scale."],
+ ex:"The IDS flags a possible SYN flood. The SOAR runbook automatically checks the playbook's criteria (connection counts, half-open sessions), confirms the attack, enables SYN protection on the firewall and opens a ticket, within seconds.",
+ terms:[["Knowledge-based detection","Matching activity against known signatures."],["Behavior-based detection","Flagging deviations from a normal baseline."],["Playbook","Document defining how to verify and respond to an incident."],["Runbook","Automated implementation of a playbook."]],
+ trap:"Within incident response, the playbook defines the actions and the runbook automates them. Other fields sometimes use the words differently.",
+ mnem:"Playbook = the recipe, runbook = the robot cook.",
+ ref:{s:"ch. 17",o:"Domain 7"}},
+
+{id:"y7-crime",d:7,lvl:3,t:"Computer crime categories and types of evidence",
+ what:"Knowing why attackers act helps predict what they will do and what evidence they leave. The Sybex guide also gives four categories of evidence and two specific rules for documents.",
+ pts:["Crime categories: military and intelligence attacks, business attacks (corporate espionage), financial attacks, terrorist attacks, grudge attacks (often insiders), thrill attacks, hacktivist attacks.",
+      "Real evidence (object evidence): physical items such as a seized hard drive.",
+      "Documentary evidence: written items such as logs; it must be authenticated, often by a witness who explains how it was produced.",
+      "Best evidence rule: the original document must be used, not a copy. Parol evidence rule: a written agreement is assumed to contain all terms, and no verbal agreement can modify it.",
+      "Testimonial evidence: what witnesses say, under oath. Demonstrative evidence: items that support testimony, such as charts or diagrams.",
+      "To be admissible, evidence must be relevant, material and competent (legally obtained)."],
+ ex:"A supplier claims the IT manager verbally agreed to extend support for free, but the signed contract says otherwise. Under the parol evidence rule, the written contract prevails.",
+ terms:[["Parol evidence rule","A written agreement cannot be changed by verbal agreements."],["Documentary evidence","Written items, such as logs, used to prove facts."],["Demonstrative evidence","Material that supports testimony, such as charts."],["Grudge attack","Attack motivated by resentment, often from insiders."]],
+ trap:"The best evidence rule is about originals versus copies. The parol evidence rule is about written versus verbal agreements.",
+ mnem:"Four evidence types: Real, Documentary, Testimonial, Demonstrative: 'Really Detailed Testimony Demonstrates'.",
+ ref:{s:"ch. 19",o:"Domain 7"}},
+
+{id:"y7-reprise",d:7,lvl:3,t:"Recovery strategies and DR testing in the 2024 outline",
+ what:"The 2024 outline adds cloud backup options, resource capacity agreements and communications during DR tests. It also renames the test types.",
+ pts:["Backup storage strategies: onsite (fast restore, same disaster risk), offsite (protected from local disaster), cloud storage (geographic dispersion, but depends on Internet links and the provider).",
+      "Organizations using the cloud for DR should sign a resource capacity agreement, guaranteeing the provider will supply the needed resources during a disaster, when every customer wants them at once.",
+      "Mutual assistance agreements (reciprocal agreements) are cheap but hard to enforce, and both parties may be hit by the same regional disaster.",
+      "Multiple processing sites spread operations so one site's loss is not a disaster.",
+      "DR test types in the outline: read-through and tabletop, walkthrough, simulation, parallel, full interruption.",
+      "Test communications: keep stakeholders, test status and regulators informed before, during and after the test."],
+ ex:"A company plans to restart its servers in a cloud region if its data center fails. Without a resource capacity agreement, a regional disaster could leave the provider without enough capacity for everyone at the worst moment.",
+ terms:[["Resource capacity agreement","Provider's commitment to supply resources for DR."],["Mutual assistance agreement","Two organizations agree to help each other in a disaster."],["Full interruption test","Production really shuts down and moves to the recovery site."],["Multiple processing sites","Operations spread over several sites."]],
+ trap:"A full interruption test is the most realistic and the most dangerous; it can cause the disaster it tests.",
+ mnem:"Read, Walk, Simulate, Parallel, Interrupt: from paper to real.",
+ ref:{s:"ch. 18",o:"Domain 7"}},
+
+{id:"y8-methodes",d:8,lvl:3,t:"Scaled Agile, code reviews and ACID databases",
+ what:"The 2024 outline adds the Scaled Agile Framework to development methods. The Sybex guide also details formal code reviews and the ACID properties that keep database transactions reliable.",
+ pts:["The Scaled Agile Framework (SAFe) applies Agile to large organizations with many teams. Teams work in Agile Release Trains (ARTs), delivering program increments of about 8 to 12 weeks.",
+      "SAFe has four configurations: Essential SAFe, Large Solution SAFe, Portfolio SAFe and Full SAFe.",
+      "Fagan inspections are the most formal code reviews, with six steps: planning, overview, preparation, inspection, rework, follow-up. Used where code flaws could be catastrophic.",
+      "ACID: atomicity (all or nothing; a failed transaction is rolled back entirely), consistency (the database follows its rules before and after), isolation (transactions on the same data run one after another), durability (committed transactions are preserved, using logs and backups).",
+      "Knowledge-based systems: expert systems combine a knowledge base with an inference engine; machine learning learns from data; neural networks imitate the brain's structure to recognize patterns."],
+ ex:"A bank transfer debits one account and credits another. Atomicity means that if the credit fails, the debit is cancelled too: money never disappears halfway.",
+ terms:[["SAFe","Scaled Agile Framework for large organizations."],["Agile Release Train","Group of Agile teams delivering together."],["Fagan inspection","Highly formal six-step code review."],["ACID","Atomicity, consistency, isolation, durability."]],
+ trap:"Atomicity is about all or nothing; isolation is about transactions not interfering with each other. They are easily confused.",
+ mnem:"Fagan steps: Please Only Prepare Inspections, Rework, Follow up.",
+ ref:{s:"ch. 15 and 20",o:"Domain 8"}},
+
+{id:"y8-attaques",d:8,lvl:3,t:"Application attacks and defenses",
+ what:"The Sybex guide gives a detailed tour of attacks on applications and the controls that stop them. This builds on the basic list of vulnerabilities from the Eleventh Hour.",
+ pts:["SQL injection variants: classic, blind content-based (the page changes with true or false conditions), blind timing-based (the response delay leaks data). Code injection and command injection make the application run attacker code or system commands.",
+      "Authorization flaws: insecure direct object references (changing an ID in the URL to see someone else's record), directory traversal, local and remote file inclusion.",
+      "Web attacks: cross-site scripting, reflected (in a crafted link) or stored/persistent (saved on the site); cross-site request forgery; server-side request forgery (SSRF), where the server is tricked into making requests to internal systems.",
+      "Malware types include viruses, logic bombs, Trojans, worms, spyware and adware, ransomware, malicious scripts and zero-day attacks.",
+      "Application security controls: input validation (allow lists are better than deny lists), web application firewalls, parameterized queries, code signing, integrity measurement.",
+      "Secure coding: remove sensitive source code comments, handle errors without revealing details, never hard-code credentials, manage memory and resources carefully."],
+ ex:"A customer portal shows invoices at /invoice?id=1043. Changing the number to 1044 displays another customer's invoice: an insecure direct object reference. The fix is checking on the server that the invoice belongs to the logged-in user.",
+ terms:[["Blind SQL injection","Extracting data without seeing it, from page behavior or delays."],["IDOR","Insecure direct object reference."],["Stored XSS","Malicious script saved on the site and shown to every visitor."],["SSRF","Server-side request forgery: the server is tricked into internal requests."]],
+ trap:"CSRF abuses the victim's browser against a site; SSRF abuses the server against internal systems.",
+ mnem:"Validate input, encode output, parameterize queries, check every object.",
+ ref:{s:"ch. 21",o:"Domain 8"}},
+{id:"y2-classif",d:2,lvl:3,t:"Classification labels, marking and handling",
+ what:"The Sybex guide compares government and commercial classification schemes and walks through how sensitive assets are marked, handled, stored and destroyed.",
+ pts:["Government labels: Top Secret (exceptionally grave damage), Secret (serious damage), Confidential (damage), Unclassified.",
+      "Commercial (nonmilitary) labels: Confidential or Proprietary (highest, exceptionally grave damage to the organization), Private (internal personal data), Sensitive (would harm the organization if disclosed), Public.",
+      "The label name matters less than the definitions: each organization defines its own levels and what each requires.",
+      "Marking (labeling) applies the classification to data and media, physically or electronically, so people and systems know how to protect it. Unclassified media should be marked too, so a missing label is never mistaken for 'public'.",
+      "Handling covers transport and use; storage needs protection equal to the classification; backups have the same label as the original data.",
+      "Destruction terms: erasing (deleting, data remains), clearing (overwriting for reuse in the same environment), purging (more intense, for reuse in a less secure environment), declassification (reusing media at a lower level, often not recommended), sanitization (removing all sensitive data)."],
+ ex:"A board pack is labeled 'Confidential' in the header and footer, and the document management system applies an encryption label automatically. Printed copies are shredded, never thrown in the bin.",
+ terms:[["Marking","Applying a classification label to data or media."],["Declassification","Reclassifying media so it can be used at a lower level."],["Purging","Sanitization strong enough for reuse in a less secure environment."],["Proprietary","Commercial label for the most valuable business data."]],
+ trap:"Purged media can be reused in a less secure environment; cleared media should stay at the same level. Many organizations forbid declassification and destroy media instead.",
+ mnem:"Commercial ladder: Confidential, Private, Sensitive, Public.",
+ ref:{s:"ch. 5",o:"Domain 2"}},
+
+{id:"y2-roles",d:2,lvl:3,t:"Data roles in the Sybex guide",
+ what:"The 2024 outline lists data owners, controllers, custodians, processors and users or subjects. The Sybex guide adds a few more roles and draws precise lines between them.",
+ pts:["Data owner: ultimately responsible for the data (classification, protection rules). Often a senior manager, liable for negligence.",
+      "Asset owner (system owner): owns the system that processes the data. Business or mission owner: owns a business process and may weigh security against business needs.",
+      "Data controller: decides what data is processed, why and how. Data processor: processes data on behalf of the controller, under a contract (GDPR term).",
+      "Custodian: day-to-day protection delegated by the owner (backups, patches, configuration), often IT staff.",
+      "Administrator: grants access to users according to the owner's rules, often through roles (RBAC).",
+      "User: accesses data to do their job, and must follow security policies. Data subject: the person the personal data is about."],
+ ex:"Finance owns the accounting data (data owner); IT runs the ERP servers (custodian); an IT admin creates roles in the ERP following finance's rules (administrator); a payroll firm processes salaries under contract (processor).",
+ terms:[["Asset owner","Owns the system that processes the data."],["Business owner","Owns a business process using the system."],["Administrator","Grants access according to the owner's rules."],["Data processor","Processes data on behalf of the controller."]],
+ trap:"The custodian performs protection tasks; the owner decides and remains accountable. Delegation never transfers accountability.",
+ mnem:"Owner decides, custodian does, administrator grants, user uses.",
+ ref:{s:"ch. 5",o:"Domain 2"}},
+
+{id:"y2-baselines",d:2,lvl:3,t:"Security baselines, scoping, tailoring and standards selection",
+ what:"Rather than inventing controls from scratch, organizations start from a baseline and adapt it. The Sybex guide shows how NIST baselines, scoping and tailoring fit together.",
+ pts:["A security baseline is a minimum set of controls applied to a system type.",
+      "NIST SP 800-53B provides control baselines for low-impact, moderate-impact and high-impact systems, matching the system's categorization.",
+      "Scoping selects which controls of the baseline apply (for example, wireless controls do not apply to a system without wireless).",
+      "Tailoring modifies the baseline to fit the organization's mission, for example adding compensating controls or adjusting parameters such as lockout thresholds.",
+      "Standards selection: choose the frameworks and standards that fit your obligations and environment (NIST, ISO 27001/27002, CIS benchmarks, PCI DSS for card data).",
+      "Images and configuration templates (such as CIS benchmarks or Microsoft security baselines) turn baselines into concrete settings."],
+ ex:"A new file server is categorized moderate. The team starts from the NIST moderate baseline, removes controls for features the server does not have (scoping), raises the log retention period to match a legal requirement (tailoring), and applies the CIS benchmark settings.",
+ terms:[["Baseline","Minimum set of controls for a type of system."],["Scoping","Choosing which baseline controls apply."],["Tailoring","Adapting the baseline to the organization."],["Standards selection","Choosing the frameworks and standards to follow."]],
+ trap:"Scoping is a part of tailoring in NIST terms. If the question is about removing controls that don't apply, the best answer is scoping.",
+ mnem:"Scope = what applies, Tailor = how it fits.",
+ ref:{s:"ch. 5",o:"Domain 2"}},
+
+{id:"y2-retention",d:2,lvl:3,t:"Retention of data, hardware and personnel knowledge",
+ what:"Asset retention covers how long data, hardware and even people's knowledge are kept. The Sybex guide links retention to end of life, end of support and data location.",
+ pts:["Record retention keeps data only as long as needed for business or legal reasons, then destroys it. Keeping data longer increases legal exposure (eDiscovery) and breach impact.",
+      "Retention policies must cover backups too; deleted data that remains on backup tapes is still discoverable.",
+      "Hardware retention: equipment may be kept until data is sanitized, or replaced when it reaches end of life (no longer sold) or end of support (no more patches).",
+      "Personnel retention: knowledge held by employees; NDAs remind them of their obligations after they leave.",
+      "Data location: know where data and its backups are stored, including cloud regions, because laws (data sovereignty) and disasters depend on location.",
+      "Data maintenance keeps data accurate and its copies consistent; data collection limitation means collecting only what is needed."],
+ ex:"A litigation hold requires the company to preserve emails about a contract. Because the retention policy deletes email after five years, only the relevant period must be searched, and older mail no longer exists to be discovered.",
+ terms:[["Record retention","Keeping data for a defined period, then destroying it."],["Litigation hold","Suspending deletion to preserve evidence for a legal case."],["Data location","Where data and its copies are physically stored."],["Data collection limitation","Collecting only the data that is needed."]],
+ trap:"Retention is not 'keep everything forever'. Data kept beyond its required period is a liability, not an asset.",
+ mnem:"Keep what the law and business need, destroy the rest on schedule.",
+ ref:{s:"ch. 5",o:"Domain 2"}},
+
+{id:"y3-tcb",d:3,lvl:3,t:"Trusted computing base, security kernel and CIA techniques",
+ what:"The Sybex guide describes how a system enforces its security policy from the inside: a small trusted core, a boundary around it, and techniques that keep processes apart.",
+ pts:["The trusted computing base (TCB) is the combination of hardware, software and controls that enforces the security policy. It should be as small as possible so it can be verified.",
+      "The security perimeter is the imaginary boundary between the TCB and the rest of the system. Communication across it uses trusted paths.",
+      "The reference monitor is the concept that validates every access before granting it. The security kernel is the set of TCB components that implements the reference monitor.",
+      "Confinement restricts a process to reading from and writing to certain memory locations only (sandboxing). Bounds are the limits of memory a process may use. Isolation keeps processes separate (process isolation, memory protection).",
+      "Security attributes can be stored as tokens, capabilities lists (rows of rights for each subject) or security labels (permanent, hardest to tamper with).",
+      "Trust is about the security features present; assurance is the degree of confidence that they work as intended."],
+ ex:"A browser runs each tab in a sandbox: the tab's process is confined to its own memory (bounds), isolated from other tabs, and must ask the browser's broker process (a small trusted component) for anything outside.",
+ terms:[["TCB","Trusted computing base: everything that enforces the security policy."],["Security kernel","TCB components implementing the reference monitor."],["Trusted path","Secure channel between the TCB and the rest of the system."],["Assurance","Confidence that security features work as intended."]],
+ trap:"The reference monitor is a concept; the security kernel is its implementation.",
+ mnem:"Keep the TCB tiny, guard its border, check every access.",
+ ref:{s:"ch. 8",o:"Domain 3"}},
+
+{id:"y3-modeles",d:3,lvl:3,t:"State machine, information flow and Take-Grant models",
+ what:"Behind Bell-LaPadula and Biba sit more general models. The Sybex guide presents them as building blocks, and clears up the 'Star Model' mentioned in the 2024 outline.",
+ pts:["State machine model: a system is secure if it starts in a secure state and every possible transition leads to another secure state. Many other models build on it.",
+      "Information flow model: controls the direction and type of information flows, allowing only authorized flows; by excluding undefined paths, it addresses covert channels. Bell-LaPadula and Biba are information flow models.",
+      "Noninterference model: actions of a high-level subject must not affect, or be noticed by, low-level subjects.",
+      "Take-Grant model uses a directed graph and four rules: take, grant, create and remove rights. It helps find where rights can leak.",
+      "There is no formal 'Star Model': the outline refers to the star (*) properties of Bell-LaPadula and Biba. Do not confuse with the Cloud Security Alliance's STAR program, which audits cloud providers.",
+      "Other models exist (Goguen-Meseguer, Sutherland, Lipner and more) but the exam focuses on the classic ones."],
+ ex:"File permissions inherited from a parent folder behave like the Take-Grant grant rule: rights are copied along a path. Mapping these paths shows how a contractor ended up with access to the finance share.",
+ terms:[["State machine model","Secure in every state and every transition."],["Information flow model","Allows only authorized flows of information."],["Take-Grant","Model of how rights are taken, granted, created and removed."],["CSA STAR","Cloud Security Alliance's provider assurance program, not a security model."]],
+ trap:"Take-Grant is about how rights move between subjects and objects, not about confidentiality levels.",
+ mnem:"Take, Grant, Create, Remove: the four verbs of rights.",
+ ref:{s:"ch. 8",o:"Domain 3"}},
+
+{id:"y3-physique",d:3,lvl:3,t:"Physical security in the Sybex guide: facilities and metrics",
+ what:"Chapter 10 of the Sybex guide reviews facility design and adds a useful idea: physical security must be measured like any other control.",
+ pts:["Server rooms and data centers: no windows, restricted access, located in the center of the building, not on the top floor or in the basement; hot and cold aisles for cooling.",
+      "Wiring closets (intermediate distribution facilities): locked, not used for storage, monitored, with access logged.",
+      "Evidence storage: dedicated, secured, access logged, and protecting the chain of custody. Media storage: controlled access, environmental protection, check-in and check-out.",
+      "Restricted and work areas: separate sensitivity levels, escort visitors, clean desk policy.",
+      "Fire needs heat, oxygen and fuel (the fire triangle); fire develops in four stages: incipient, smoke, flame, heat. Detect early.",
+      "Physical security key performance indicators include number of successful and unsuccessful intrusions, number of crimes, number of incidents and disruptions, time to detect, assess and respond, and frequency of evacuation drills."],
+ ex:"Quarterly reports for the head office track badge-sharing incidents, tailgating attempts caught on camera and average guard response time. A rising response time leads to a change in patrol routes.",
+ terms:[["Hot and cold aisles","Rack arrangement separating cool intake air from hot exhaust."],["Fire triangle","Heat, oxygen and fuel: remove one to stop a fire."],["Incipient stage","First stage of fire, only air ionization, no smoke yet."],["Clean desk policy","No sensitive material left unattended on desks."]],
+ trap:"A data center belongs in the core of the building, away from exterior walls, the top floor (roof leaks) and the basement (flooding).",
+ mnem:"Fire stages: Incipient, Smoke, Flame, Heat: 'I See Fire Here'.",
+ ref:{s:"ch. 10",o:"Domain 3"}},
+
+{id:"y4-attaques",d:4,lvl:3,t:"Network attacks and their countermeasures",
+ what:"The Sybex guide ends Domain 4 with the classic network attacks. Each has a known countermeasure, and exam questions often ask for the best one.",
+ pts:["Denial of service floods or crashes a target; distributed DoS uses many sources (botnets). Variants: SYN flood, smurf (ICMP to broadcast addresses), fraggle (UDP), ping of death, teardrop (overlapping fragments), land attack (same source and destination).",
+      "Eavesdropping (sniffing) captures traffic; defend with encryption and physical security of cabling.",
+      "Impersonation or masquerading uses stolen credentials or spoofed addresses; defend with strong authentication.",
+      "Replay attacks resend captured traffic; defend with timestamps, nonces and session tokens.",
+      "Modification attacks alter data in transit; defend with digital signatures and hashing.",
+      "ARP spoofing redirects local traffic; DNS poisoning (rogue DNS server, cache poisoning, hosts file changes, domain hijacking) redirects names. Defenses: dynamic ARP inspection, DNSSEC, monitoring.",
+      "Hyperlink spoofing and typosquatting lure users to fake sites; defend with awareness and URL filtering."],
+ ex:"An attacker registers 'soc1in.com', copies the company's webmail login page and emails staff a link. That is typosquatting combined with phishing; URL filtering and domain monitoring catch it.",
+ terms:[["Smurf attack","ICMP echo to broadcast addresses with a spoofed source."],["Teardrop","Overlapping fragmented packets that crash the receiver."],["Replay attack","Resending captured valid traffic."],["Typosquatting","Registering misspelled domains to trap users."]],
+ trap:"Replay attacks are stopped by freshness (timestamps, nonces, one-time tokens), not by encryption alone.",
+ mnem:"Smurf = ICMP, Fraggle = UDP: same trick, different protocol.",
+ ref:{s:"ch. 12",o:"Domain 4"}},
+
+{id:"y5-aaa",d:5,lvl:3,t:"The AAA model and session management",
+ what:"The Sybex guide breaks access control into five elements and adds session management, which the 2024 outline lists explicitly.",
+ pts:["Identification: claiming an identity (username). Authentication: proving it. Authorization: what the identity may do. Auditing: recording activity. Accounting: holding users accountable from the audit trail.",
+      "Accountability requires unique identities and strong authentication; shared accounts destroy it.",
+      "Session management: idle timeouts with screen lock, maximum session duration, re-authentication for sensitive actions, protection of session identifiers from theft.",
+      "Single sign-on and federated identity can be implemented on premises, in the cloud or hybrid; just-in-time provisioning creates accounts at first login through federation.",
+      "Credential management systems (password vaults) store and manage credentials securely, including for privileged accounts."],
+ ex:"A shared 'admin' account on the firewalls means nobody can tell who changed a rule. Personal admin accounts, logged in the SIEM, restore accountability.",
+ terms:[["Auditing","Recording user and system activity."],["Accounting","Holding users responsible based on audit records."],["Session timeout","Ending or locking a session after inactivity."],["Just-in-time provisioning","Creating an account automatically at first federated login."]],
+ trap:"Accountability depends on identification and authentication: without unique, authenticated identities, logs cannot prove who did what.",
+ mnem:"Identify, Authenticate, Authorize, Audit, Account.",
+ ref:{s:"ch. 13",o:"Domain 5"}},
+
+{id:"y5-modeles",d:5,lvl:3,t:"Access control models in detail: implicit deny, ACLs and MAC variants",
+ what:"The Sybex guide goes deeper into how access control models are built and how mandatory access control can be organized.",
+ pts:["Implicit deny: anything not explicitly allowed is denied. Firewalls and most access control lists end with it.",
+      "An access control list (ACL) is attached to an object and lists who may do what. A capability table is attached to a subject and lists what it may access.",
+      "Constrained interfaces limit what users can see or do in an application (grayed-out menus, restricted views).",
+      "Discretionary access control (DAC) lets owners decide. Nondiscretionary models (role-based, rule-based, attribute-based, MAC) are centrally administered.",
+      "MAC environments can be hierarchical (levels such as Secret above Confidential), compartmentalized (separate domains with no relation, need to know), or hybrid (levels with compartments).",
+      "Rule-based access control applies global rules to all subjects, such as firewall rules."],
+ ex:"A Secret-cleared analyst working on project Alpha cannot open Secret documents of project Beta: the hybrid MAC system checks both the level and the compartment.",
+ terms:[["Implicit deny","Default denial of anything not explicitly allowed."],["Capability table","Rights listed per subject."],["Constrained interface","Restricting functions available in the user interface."],["Hybrid MAC","Hierarchical levels combined with compartments."]],
+ trap:"An ACL is focused on the object; a capability table is focused on the subject.",
+ mnem:"ACL = Attached to the object, Capability = Carried by the subject.",
+ ref:{s:"ch. 14",o:"Domain 5"}},
+
+{id:"y6-scans",d:6,lvl:3,t:"Vulnerability scans and Nmap",
+ what:"The Sybex guide details the four kinds of vulnerability scans and how network discovery tools such as Nmap report what they find.",
+ pts:["Network discovery scans find systems and open ports without testing for vulnerabilities. TCP SYN scan (half-open), TCP connect scan (full connection, for users without raw packet rights), TCP ACK scan (maps firewall rules), UDP scan, Xmas scan (FIN, PSH and URG flags).",
+      "Nmap port states: open (an application accepts connections), closed (reachable but nothing listening), filtered (a firewall interferes), unfiltered (reachable but status unknown), open|filtered (no response).",
+      "Network vulnerability scans probe for known weaknesses; authenticated (credentialed) scans see much more and produce fewer false positives.",
+      "Web vulnerability scans test web applications for flaws such as SQL injection and XSS. Database vulnerability scans check databases.",
+      "SCAP (Security Content Automation Protocol) standardizes vulnerability data: CVE names flaws, CVSS scores them, CPE names products, CCE names configuration issues, XCCDF and OVAL describe checks.",
+      "Vulnerability management workflow: detect, validate (false positive?), remediate, and verify."],
+ ex:"Nmap reports port 3389 as 'filtered' from the Internet but 'open' from the internal network: the firewall blocks external RDP, but any compromised internal PC could still reach it.",
+ terms:[["SYN scan","Half-open scan using only the first step of the handshake."],["Filtered","Nmap cannot tell open from closed because of a firewall."],["SCAP","Security Content Automation Protocol."],["CPE","Common Platform Enumeration: standard product names."]],
+ trap:"Closed means the port is reachable but nothing listens; filtered means a firewall prevents knowing.",
+ mnem:"Xmas scan: lit up with FIN, PSH, URG.",
+ ref:{s:"ch. 15",o:"Domain 6"}},
+
+{id:"y6-pentest",d:6,lvl:3,t:"Penetration testing process and software testing techniques",
+ what:"The Sybex guide follows NIST SP 800-115 for penetration tests and gives several software testing details: fuzzing types, coverage criteria and monitoring.",
+ pts:["NIST SP 800-115 pentest phases: planning (scope, rules of engagement, authorization), discovery (information gathering, scanning, vulnerability analysis), attack (exploitation), reporting.",
+      "White-box (full knowledge), gray-box (partial) and black-box (zero knowledge) tests. Breach attack simulations automate attacks continuously.",
+      "Mutation (dumb) fuzzing alters real input values; generational (intelligent) fuzzing creates input from a model of the expected data.",
+      "Test coverage = use cases tested / total use cases. Criteria: branch, condition, function, loop and statement coverage.",
+      "Interface testing covers user interfaces, network interfaces and APIs. Misuse case testing models how attackers would abuse the application.",
+      "Website monitoring: synthetic (active) monitoring runs scripted transactions; passive monitoring analyzes real traffic, including real user monitoring (RUM)."],
+ ex:"Testers take an export file that the application normally imports and randomly flip bytes in it thousands of times to see if the import crashes: mutation fuzzing.",
+ terms:[["Rules of engagement","Agreed limits and conditions of a penetration test."],["Mutation fuzzing","Modifying real input to create test data."],["Generational fuzzing","Generating input from a model of valid data."],["Real user monitoring","Passive monitoring of real users' interactions."]],
+ trap:"Vulnerability scans stop at detection; the attack phase of a penetration test actually exploits the weaknesses.",
+ mnem:"Plan, Discover, Attack, Report.",
+ ref:{s:"ch. 15",o:"Domain 6"}},
+
+{id:"y6-processus",d:6,lvl:3,t:"Security management processes and process data",
+ what:"Assessment is not only technical. The Sybex guide describes the management processes that feed security data back to leadership.",
+ pts:["Log reviews: regular review of logs, often helped by SIEM; NTP keeps timestamps consistent across systems.",
+      "Account management reviews check that accounts and privileges are justified, especially privileged and service accounts.",
+      "Management review and approval: leadership reviews assessment results and approves actions; it gives oversight and deters insider abuse.",
+      "Key performance and risk indicators track the program: number of open vulnerabilities, time to resolve them, compromised accounts, software flaws found pre and post production, repeat audit findings, users visiting malicious sites.",
+      "Backup verification data: test restores regularly; a backup never tested is not a backup.",
+      "Training and awareness data and DR/BC test results complete the picture for management."],
+ ex:"A quarterly security dashboard for management shows the mean time to remediate critical vulnerabilities, the result of the last restore test and the phishing click rate, with a trend for each.",
+ terms:[["Management review","Leadership reviews results and approves actions."],["NTP","Network Time Protocol, used to synchronize clocks."],["Backup verification","Testing that backups can actually be restored."],["Repeat audit finding","An issue found again in a later audit."]],
+ trap:"An untested backup is not proof of anything. Backup verification data means successful test restores.",
+ mnem:"Measure, review, approve, improve.",
+ ref:{s:"ch. 15",o:"Domain 6"}},
+
+{id:"y7-ops",d:7,lvl:3,t:"Foundational operations concepts and agreements",
+ what:"The Sybex guide gathers the basic operations concepts and the agreements that govern services. Several have close cousins that the exam likes to contrast.",
+ pts:["Need to know grants access to specific data needed for the job; least privilege grants only the rights needed. They work together.",
+      "Separation (segregation) of duties splits a sensitive task between people. Two-person control requires two people to approve or perform an action together. Split knowledge divides the information needed for a task between people.",
+      "Job rotation and mandatory vacations deter and detect fraud and collusion.",
+      "Privileged account management monitors and limits privileged actions, often with separate admin accounts and recorded sessions.",
+      "Agreements: a service level agreement (SLA) sets measurable service levels with penalties; a memorandum of understanding (MOU) documents an intention to work together without legal force; an interconnection security agreement (ISA) sets security requirements for connecting two organizations' systems.",
+      "Media management: protect, label, store and track media through its life, and sanitize it before reuse or disposal."],
+ ex:"Opening the vault requires two officers present at the same time (two-person control), and each knows only half of the combination (split knowledge).",
+ terms:[["Two-person control","Two people must act together to complete a task."],["Split knowledge","No one person has all the information needed."],["MOU","Memorandum of understanding: intention without legal penalties."],["ISA","Interconnection security agreement for connecting systems."]],
+ trap:"An SLA has measurable commitments and penalties; an MOU usually has neither.",
+ mnem:"SLA = Service Levels with teeth, MOU = Mutual Understanding.",
+ ref:{s:"ch. 16",o:"Domain 7"}},
+
+{id:"y7-cloud",d:7,lvl:3,t:"Managed services in the cloud and shared responsibility",
+ what:"The Sybex guide treats cloud services as an operations topic: who patches, who backs up and who secures data depends on the service model.",
+ pts:["SaaS: the provider manages everything up to the application; the customer manages its data, users and access configuration.",
+      "PaaS: the provider manages the platform (OS, runtime); the customer manages applications and data.",
+      "IaaS: the provider manages hardware and virtualization; the customer manages the operating system, patches, applications and data.",
+      "Whatever the model, the customer remains responsible for its data and for who can access it.",
+      "Deployment models: public, private, community, hybrid.",
+      "Before choosing a provider: check its SOC 2 or ISO 27001 evidence, data location, backup and exit options, incident notification commitments, and the SLA."],
+ ex:"A company moves a file server to an IaaS virtual machine and assumes the cloud provider will patch Windows. It won't: in IaaS, OS patching stays with the customer.",
+ terms:[["Shared responsibility model","Division of security duties between provider and customer."],["IaaS","Customer manages from the OS up."],["PaaS","Customer manages applications and data."],["SaaS","Customer manages data, users and configuration."]],
+ trap:"The more the provider manages, the less you do, but data and access always remain yours.",
+ mnem:"IaaS: you patch the OS. PaaS: you deploy code. SaaS: you manage users and data.",
+ ref:{s:"ch. 16",o:"Domain 7"}},
+
+{id:"y8-sdlc",d:8,lvl:3,t:"The SDLC steps and project tools in the Sybex guide",
+ what:"The Sybex guide uses its own list of SDLC steps, with security activities in each. It also mentions classic project management tools.",
+ pts:["Conceptual definition: a simple statement of purpose and requirements, agreed by stakeholders.",
+      "Functional requirements determination: specific features, inputs and outputs. Control specifications development: security controls such as access control, encryption and audit trails, defined early.",
+      "Design review: check the design meets requirements and controls. Coding, then code review walk-through to find flaws.",
+      "System test review (user acceptance testing): verify the system works as intended, including security tests.",
+      "Maintenance and change management: keep the system secure through controlled changes until it is retired.",
+      "Gantt charts show tasks over time; PERT (Program Evaluation Review Technique) estimates task durations and dependencies to calculate schedule."],
+ ex:"For a new procurement portal, the control specifications (MFA, role-based access, encryption of bids) are written right after the functional requirements, so they are designed in and not bolted on.",
+ terms:[["Control specifications","Security controls defined during requirements."],["Code review walk-through","Peer review of code to find flaws."],["Gantt chart","Bar chart of tasks over time."],["PERT","Technique for estimating task duration and schedule."]],
+ trap:"Security controls are specified early, alongside functional requirements, never added after coding.",
+ mnem:"Concept, Function, Controls, Design, Code, Review, Test, Maintain.",
+ ref:{s:"ch. 20",o:"Domain 8"}},
+
+{id:"y8-bdd",d:8,lvl:3,t:"Database security: multilevel databases, concurrency and NoSQL",
+ what:"Databases concentrate valuable data, so they attract specific threats. The Sybex guide covers multilevel security, concurrency, newer database types and storage threats.",
+ pts:["Multilevel databases hold data of different classifications; views restrict what each user sees.",
+      "Aggregation (combining low-level data into sensitive information) and inference (deducing sensitive facts) are countered by controlling access to combinations, blurring data and polyinstantiation.",
+      "Concurrency control (edit control) uses locks so two users cannot update the same data at once, preventing lost updates and dirty reads.",
+      "Other controls: semantic integrity checks, time and date stamps, granular (content-dependent and context-dependent) access control, cell suppression, noise and perturbation.",
+      "NoSQL databases: key-value stores, graph databases and document stores; they need the same security as relational ones.",
+      "Storage threats: unauthorized access to storage, and covert channels (storage or timing) that leak information."],
+ ex:"A salary database allows statistics only on groups of at least ten people, and adds small random noise to results, so no one can infer a single colleague's salary from averages.",
+ terms:[["Concurrency control","Locking to prevent conflicting simultaneous updates."],["Cell suppression","Hiding individual database fields to prevent inference."],["Noise and perturbation","Adding false data to hinder inference."],["NoSQL","Non-relational databases such as key-value, graph and document stores."]],
+ trap:"Aggregation and inference are database threats where each piece of data is harmless on its own; access control on single records does not stop them.",
+ mnem:"Lock to stay consistent, blur to stay private.",
+ ref:{s:"ch. 20",o:"Domain 8"}},
+
+{id:"y8-malware",d:8,lvl:3,t:"Malware: propagation, technologies and defenses",
+ what:"The Sybex guide details how viruses spread and hide, the main malware families and the defenses that work against them.",
+ pts:["Virus propagation: master boot record (MBR) viruses, file infectors, macro viruses, service injection (injecting into trusted system processes).",
+      "Virus technologies: multipartite (several propagation methods), stealth (hides from the OS), polymorphic (changes its code with each infection), encrypted (encrypts itself to evade signatures), hoaxes.",
+      "Logic bombs wait for a condition; Trojans pretend to be useful (remote access Trojans give attackers control); worms spread on their own (Code Red, Stuxnet, which damaged industrial equipment).",
+      "Spyware and adware monitor users or show ads; ransomware encrypts data for extortion, often stealing it first; malicious scripts automate attacks; zero-day attacks exploit unknown flaws.",
+      "Defenses: anti-malware on all platforms, integrity monitoring (file hashes), advanced threat protection or EDR with behavioral detection, application allow listing, patching and backups.",
+      "Ransomware recovery depends on offline or immutable backups and a tested plan, not on paying."],
+ ex:"Stuxnet spread through USB drives and network shares, then reprogrammed specific industrial controllers. It showed that malware can cause physical damage, not just data loss.",
+ terms:[["Multipartite virus","Uses several propagation techniques."],["Service injection","Hiding malicious code inside trusted system processes."],["Remote access Trojan","Trojan giving an attacker remote control."],["Integrity monitoring","Detecting changes to files by comparing hashes."]],
+ trap:"Polymorphic viruses change their code to defeat signatures; behavioral detection is the better countermeasure.",
+ mnem:"Viruses hitch rides, worms walk alone, Trojans wear masks, logic bombs wait.",
+ ref:{s:"ch. 21",o:"Domain 8"}}
 ];
 
 /* Recall cards: full questions */
@@ -2276,7 +2842,47 @@ const CARD_SRC = {
 "x8-methodes":[["What is the difference between SAMM and BSIMM?","SAMM is prescriptive; BSIMM is descriptive."],["What does shift left mean?","Moving security activities earlier in development."],["What is DevSecOps?","DevOps with security integrated and automated throughout."]],
 "x8-ecosysteme":[["Why are C and C++ more prone to buffer overflows?","They let programmers manage memory directly."],["What does software composition analysis do?","Identifies third-party components and their vulnerabilities."],["Why is the CI/CD pipeline a high-value target?","It holds secrets and can deploy to production."]],
 "x8-tests":[["What is the difference between SAST and DAST?","SAST analyzes source code; DAST tests the running application."],["What is the main defense against SQL injection?","Parameterized queries (plus input validation)."],["What is software-defined security?","Security controls defined, versioned and deployed as code."]],
-"x8-acquisition":[["What must a contract for custom software include for security?","Secure development requirements, testing rights, source code escrow."],["What stays the customer's responsibility in SaaS?","Its data, identities and access configuration."],["What should you check before adopting open source?","Community activity, fix speed and license obligations."]]
+"x8-acquisition":[["What must a contract for custom software include for security?","Secure development requirements, testing rights, source code escrow."],["What stays the customer's responsibility in SaaS?","Its data, identities and access configuration."],["What should you check before adopting open source?","Community activity, fix speed and license obligations."]],
+"y1-risque":[["What is the formula for residual risk?","Total risk − controls gap = residual risk."],["What is inherent risk?","Risk before any risk management effort."],["List the five risk maturity model levels.","Ad hoc, preliminary, defined, integrated, optimized."]],
+"y1-vie-privee":[["Which country does PIPL apply to, and since when?","China, since 2021."],["What does POPIA require for children's data?","Consent from a competent person such as a parent, and extra safeguards."],["What is the GDPR breach notification deadline?","72 hours."]],
+"y1-ingenierie":[["Name the seven social engineering principles.","Authority, intimidation, consensus, scarcity, urgency, familiarity, trust."],["What is a pretext?","A false, believable story used to manipulate the target."],["What is prepending?","Adding RE:, FW: or labels like SAFE to make a message look legitimate."]],
+"y1-formation":[["What is the difference between training and education?","Training teaches job skills; education goes beyond the job, for careers and certifications."],["What is a security champion?","A non-security employee who promotes security in their team."],["Which emerging technologies does the outline say to add to training content?","Cryptocurrency, blockchain and artificial intelligence."]],
+"y1-scrm":[["What is a silicon root of trust?","Tamper-resistant hardware that verifies the boot chain."],["What does a PUF provide?","A unique, unforgeable hardware fingerprint from manufacturing variations."],["What is an SBOM used for?","Knowing which components a product contains, to find exposure to new vulnerabilities."]],
+"y2-anonymisation":[["Is pseudonymized data still personal data under GDPR?","Yes."],["Where is the real value stored in tokenization?","In a protected tokenization vault."],["Why is anonymization hard?","Inference can re-identify people from remaining data."]],
+"y3-sase-cycle":[["What does SASE combine?","Network (WAN) capabilities and security functions, delivered from the cloud."],["What is the difference between verification and validation?","Verification: built right. Validation: right thing built."],["What access model is at the core of SASE?","Zero trust network access (ZTNA)."]],
+"y3-crypto":[["What does homomorphic encryption allow?","Computing on encrypted data without decrypting it."],["What does QKD do?","Uses quantum physics to establish a shared secret key."],["What does 'harvest now, decrypt later' mean?","Attackers store encrypted data today to decrypt it with future quantum computers."]],
+"y4-architecture":[["What are the three planes of a network device?","Data, control and management."],["What is east-west traffic?","Traffic within the same network, data center or cloud."],["Name the three types of physical segmentation.","In-band, out-of-band, air-gapped."]],
+"y4-edge":[["What is a VPC?","An isolated, customer-controlled network inside a public cloud."],["What is anycast?","Delivery to the nearest of several destinations."],["What is NFV?","Running network functions as software on standard hardware."]],
+"y4-performance":[["What is jitter?","Variation in latency between packets."],["What is the difference between bandwidth and throughput?","Bandwidth is capacity; throughput is data actually delivered."],["Name the four monitoring and management practices in the outline.","Observability, traffic flow and shaping, capacity management, fault detection and handling."]],
+"y4-email":[["What does SPF check?","Whether the sending server is authorized by the domain's DNS record."],["What does DMARC add to SPF and DKIM?","A published policy for failing messages and reporting."],["What does a signed S/MIME message provide?","Integrity, sender authentication and nonrepudiation."]],
+"y5-identite":[["What is identity proofing?","Verifying a person is who they claim to be before registering them."],["Give an example of password-less authentication.","FIDO2 security key or passkey."],["Name three good practices for service accounts.","Least privilege, password rotation (or managed accounts), no interactive use, regular review."]],
+"y5-zerotrust":[["What makes up the PDP?","The policy engine and the policy administrator."],["What does the PEP do?","Sits in the traffic path and enforces the access decision."],["Is the policy administrator a person?","No, it is a system component."]],
+"y5-attaques":[["What is password spraying?","Trying one password against many accounts to avoid lockout."],["What is credential stuffing?","Reusing stolen credential pairs on other sites."],["What does Mimikatz do?","Extracts hashes and Kerberos tickets from Windows memory."]],
+"y6-audits":[["According to Sybex, who hires the auditor in an external audit?","The audited organization itself."],["What is a third-party audit (Sybex)?","An audit run by or for another organization, such as a regulator or customer."],["Which standards underlie SOC reports?","SSAE 18 (US) and ISAE 3402 (international)."]],
+"y6-exercices":[["What is the white team's role?","Referees and observers who enforce rules and protect production."],["What is purple teaming?","Red and blue teams sharing tactics and lessons."],["How is a CTF exercise scored?","On objectives achieved by red versus prevented by blue."]],
+"y7-detection":[["What is the main weakness of knowledge-based detection?","It cannot detect new attacks without signatures."],["What is the difference between a playbook and a runbook?","Playbook: document of actions. Runbook: automated implementation."],["What does behavior-based detection need first?","A baseline of normal activity."]],
+"y7-crime":[["List the four types of evidence.","Real, documentary, testimonial, demonstrative."],["What does the parol evidence rule state?","A written agreement contains all terms; verbal agreements cannot modify it."],["What three requirements make evidence admissible (Sybex)?","Relevant, material, competent."]],
+"y7-reprise":[["What is a resource capacity agreement?","A cloud provider's commitment to supply resources during DR."],["Name the five DR test types in the 2024 outline.","Read-through/tabletop, walkthrough, simulation, parallel, full interruption."],["What is the main weakness of mutual assistance agreements?","Hard to enforce, and both parties may face the same disaster."]],
+"y8-methodes":[["What does ACID stand for?","Atomicity, consistency, isolation, durability."],["List the six Fagan inspection steps.","Planning, overview, preparation, inspection, rework, follow-up."],["What is an Agile Release Train?","A group of Agile teams delivering together in SAFe."]],
+"y8-attaques":[["What is an IDOR?","Accessing another user's object by changing its identifier."],["What is the difference between reflected and stored XSS?","Reflected comes in a crafted link; stored is saved on the site."],["What is SSRF?","Tricking a server into making requests to internal systems."]],
+"y2-classif":[["List the commercial classification labels from highest to lowest.","Confidential or proprietary, private, sensitive, public."],["What is the difference between clearing and purging?","Clearing allows reuse at the same level; purging allows reuse in a less secure environment."],["Why mark unclassified media too?","So a missing label is never mistaken for public data."]],
+"y2-roles":[["Who remains accountable when protection tasks are delegated?","The data owner."],["What does an administrator do in the Sybex role list?","Grants access according to the owner's rules."],["What is an asset owner?","The owner of the system that processes the data."]],
+"y2-baselines":[["Which NIST document provides low, moderate and high baselines?","NIST SP 800-53B."],["What is scoping?","Selecting which baseline controls apply."],["What is tailoring?","Adapting the baseline to the organization's mission."]],
+"y2-retention":[["Why is keeping data too long a risk?","It increases legal exposure (eDiscovery) and breach impact."],["What is a litigation hold?","Suspending deletion to preserve evidence."],["Do retention rules apply to backups?","Yes."]],
+"y3-tcb":[["What is the TCB?","Hardware, software and controls that enforce the security policy."],["What is the difference between the reference monitor and the security kernel?","The reference monitor is the concept; the security kernel implements it."],["What is a trusted path?","A secure channel between the TCB and the rest of the system."]],
+"y3-modeles":[["What are the four Take-Grant rules?","Take, grant, create, remove."],["What makes a state machine secure?","It starts secure and every transition leads to a secure state."],["Is there a formal 'Star Model'?","No; it refers to the star properties of Bell-LaPadula and Biba."]],
+"y3-physique":[["Where should a data center be located in a building?","In the core, not on the top floor, basement or exterior walls."],["What are the four stages of fire?","Incipient, smoke, flame, heat."],["Give two physical security KPIs.","Number of intrusions, time to detect and respond, number of incidents, drill frequency."]],
+"y4-attaques":[["What is a smurf attack?","ICMP echo to broadcast addresses with the victim's spoofed source."],["How do you stop replay attacks?","Timestamps, nonces and one-time session tokens."],["What is typosquatting?","Registering misspelled domains to trap users."]],
+"y5-aaa":[["List the five AAA elements in the Sybex guide.","Identification, authentication, authorization, auditing, accounting."],["Why do shared accounts break accountability?","Logs cannot show which person acted."],["What is just-in-time provisioning?","Automatic account creation at first federated login."]],
+"y5-modeles":[["What is implicit deny?","Everything not explicitly allowed is denied."],["What is the difference between an ACL and a capability table?","ACL: per object. Capability table: per subject."],["What is a hybrid MAC environment?","Hierarchical levels combined with compartments."]],
+"y6-scans":[["What does a TCP SYN scan do?","Sends only SYN and watches for SYN/ACK: a half-open scan."],["What does 'filtered' mean in Nmap?","A firewall prevents determining whether the port is open."],["What does SCAP standardize?","Vulnerability data: CVE, CVSS, CPE, CCE, XCCDF, OVAL."]],
+"y6-pentest":[["What are the NIST SP 800-115 pentest phases?","Planning, discovery, attack, reporting."],["What is the difference between mutation and generational fuzzing?","Mutation alters real input; generational builds input from a data model."],["What is the test coverage formula?","Use cases tested divided by total use cases."]],
+"y6-processus":[["Why use NTP for logging?","To keep timestamps consistent across systems."],["What does management review provide?","Oversight, approval of actions and deterrence of insider abuse."],["What proves backups work?","Successful test restores."]],
+"y7-ops":[["What is the difference between two-person control and split knowledge?","Two-person control: two people act together. Split knowledge: each holds part of the information."],["How does an MOU differ from an SLA?","An MOU expresses intent without penalties; an SLA has measurable levels and penalties."],["What is an ISA?","An interconnection security agreement for connecting systems."]],
+"y7-cloud":[["In IaaS, who patches the operating system?","The customer."],["What is always the customer's responsibility?","Its data and access management."],["Name the four cloud deployment models.","Public, private, community, hybrid."]],
+"y8-sdlc":[["When should security controls be specified?","Early, during control specifications development, alongside functional requirements."],["What is PERT?","A technique to estimate task durations and the schedule."],["What is a system test review?","User acceptance and security testing of the finished system."]],
+"y8-bdd":[["What does concurrency control prevent?","Conflicting simultaneous updates such as lost updates."],["Name two defenses against inference.","Cell suppression, noise and perturbation, polyinstantiation, restricted views."],["Name three NoSQL database types.","Key-value, graph, document."]],
+"y8-malware":[["What is a multipartite virus?","A virus using several propagation methods."],["What did Stuxnet show?","Malware can physically damage industrial equipment."],["What is the best recovery approach for ransomware?","Offline or immutable backups and a tested recovery plan."]]
 };
 
 /* Exam-style questions */
@@ -2551,7 +3157,115 @@ const QCM_SRC = [
 ["x8-methodes","Which maturity model describes what real organizations actually do, for benchmarking?",["SAMM","BSIMM","CMMI","ITIL"],1,"BSIMM is descriptive."],
 ["x8-ecosysteme","Which practice identifies vulnerable third-party libraries used by an application?",["DAST","Software composition analysis","Fuzzing","Code signing"],1,"SCA inventories components and their known flaws."],
 ["x8-tests","You have no access to the source code but can reach the running web application. Which testing type fits?",["SAST","DAST","Code review","Static analysis"],1,"DAST tests the running application from outside."],
-["x8-acquisition","In a SaaS service, which responsibility ALWAYS stays with the customer?",["Physical security of the data center","Patching the operating system","Managing user access and data","Hypervisor security"],2,"Customers always own their data and access management."]
+["x8-acquisition","In a SaaS service, which responsibility ALWAYS stays with the customer?",["Physical security of the data center","Patching the operating system","Managing user access and data","Hypervisor security"],2,"Customers always own their data and access management."],
+["y1-risque","Which formula describes residual risk?",["Threats × vulnerabilities","Total risk − controls gap","Asset value × exposure factor","Total risk + controls gap"],1,"The controls gap is what safeguards remove from total risk."],
+["y1-risque","Buying cybersecurity insurance is which risk response?",["Mitigation","Transfer","Avoidance","Acceptance"],1,"The insurer takes the financial impact."],
+["y1-risque","At which risk maturity level is risk integrated into business processes and measured with metrics?",["Preliminary","Defined","Integrated","Optimized"],2,"Level 4, integrated."],
+["y1-vie-privee","Which law is China's first comprehensive national privacy law?",["POPIA","PIPL","CCPA","GDPR"],1,"The Personal Information Protection Law took effect in 2021."],
+["y1-vie-privee","Which law sets eight conditions for lawful processing of personal information?",["POPIA","PIPL","CCPA","HIPAA"],0,"South Africa's POPIA lists eight conditions."],
+["y1-ingenierie","An email claims all your colleagues have already completed a 'mandatory' form. Which principle is used?",["Authority","Consensus","Scarcity","Familiarity"],1,"Social proof, or consensus."],
+["y1-ingenierie","What is the BEST defense against a fake urgent payment request from an executive?",["Reply to the email to confirm","Verify through a known, separate channel","Pay quickly to avoid problems","Forward it to colleagues"],1,"Out-of-band verification defeats authority and urgency."],
+["y1-formation","Short, focused learning modules often delivered on mobile are called:",["Gamification","Micro-training","Education","Role-based training"],1,"That is micro-training."],
+["y1-formation","Users approve MFA prompts just to stop them appearing. This issue is called:",["Credential stuffing","2FA fatigue","Shoulder surfing","Pretexting"],1,"Training should address 2FA fatigue."],
+["y1-scrm","Which mitigation lets an organization quickly find whether its products contain a newly vulnerable library?",["Silicon root of trust","SBOM","PUF","SLA"],1,"The software bill of materials lists components."],
+["y1-scrm","Which hardware feature creates a unique device fingerprint from physical manufacturing variations?",["TPM","PUF","HSM","SED"],1,"A physically unclonable function."],
+["y2-anonymisation","A hospital replaces patient names with codes, keeping a separate table to link them back. This is:",["Anonymization","Pseudonymization","Masking","Encryption"],1,"Reversible with separate data: pseudonymization."],
+["y2-anonymisation","Which technique takes data outside the scope of GDPR if done properly?",["Pseudonymization","Tokenization","Anonymization","Encryption"],2,"Only truly anonymized data is no longer personal data."],
+["y3-sase-cycle","Which framework combines WAN capabilities and network security functions in a cloud-native, identity-centric service?",["SD-WAN","SASE","NFV","VPC"],1,"Secure Access Service Edge."],
+["y3-sase-cycle","Confirming that the whole system fulfills its intended purpose is:",["Verification","Validation","Integration","Transition"],1,"Validation checks the right system was built."],
+["y3-crypto","Which technology allows calculations on encrypted data whose decrypted result matches calculations on the plaintext?",["Quantum key distribution","Homomorphic encryption","Tokenization","Hashing"],1,"Homomorphic encryption."],
+["y3-crypto","Why should organizations consider post-quantum risks today?",["Quantum computers already break AES","Encrypted data stolen now could be decrypted later","Hashing will stop working","Certificates will expire"],1,"Harvest now, decrypt later."],
+["y4-architecture","Traffic between two servers in the same data center is called:",["North-south","East-west","Ingress","Egress"],1,"Internal traffic is east-west."],
+["y4-architecture","Management traffic is carried on a dedicated network separate from production. This is:",["In-band","Out-of-band","Air-gapped","VRF"],1,"Out-of-band segmentation."],
+["y4-architecture","Which switching mode forwards a frame as soon as it reads the destination address?",["Store-and-forward","Cut-through","Fragment-free","Multicast"],1,"Cut-through favors low latency."],
+["y4-edge","An isolated network that a customer controls inside a public cloud is a:",["VLAN","VPC","CDN","DMZ"],1,"Virtual private cloud."],
+["y4-performance","Voice calls are choppy because packet delays vary widely. Which metric is the problem?",["Bandwidth","Jitter","Throughput","Attenuation"],1,"Jitter is variation in latency."],
+["y4-email","Which mechanism lets a domain owner tell receivers to reject messages that fail SPF and DKIM?",["S/MIME","STARTTLS","DMARC","PGP"],2,"DMARC publishes the handling policy."],
+["y4-email","Which email technology lists in DNS the servers allowed to send for a domain?",["DKIM","SPF","DMARC","S/MIME"],1,"Sender Policy Framework."],
+["y5-identite","New customers verify their identity online by answering questions about their credit history. This is:",["Biometric enrollment","Knowledge-based authentication for identity proofing","Federated identity","Password-less authentication"],1,"KBA is used for online identity proofing."],
+["y5-identite","What is the BEST way to assign permissions in an organization?",["Directly to each user","To groups or roles","To service accounts","To the help desk"],1,"Groups and roles simplify and standardize access."],
+["y5-zerotrust","In NIST's zero trust architecture, which component sits in the traffic path and applies access decisions?",["Policy engine","Policy administrator","Policy enforcement point","Trust algorithm"],2,"The PEP enforces."],
+["y5-zerotrust","The policy engine and the policy administrator together form the:",["Policy enforcement point","Policy decision point","Identity provider","Trust boundary"],1,"Engine plus administrator = PDP."],
+["y5-attaques","An attacker tries 'Summer2026!' once on each of 1,000 accounts to avoid lockouts. This is:",["Credential stuffing","Password spraying","Dictionary attack","Birthday attack"],1,"One password, many accounts."],
+["y5-attaques","What BEST defends against credential stuffing?",["Account lockout","Unique passwords per site and MFA","Longer session timeouts","Salting hashes"],1,"Stuffing relies on password reuse."],
+["y6-audits","A regulator sends its own auditors to examine a bank's controls. According to the 2024 outline wording, this audit is:",["Internal","External","Third-party","Self-assessment"],2,"It is outside the enterprise's control."],
+["y6-audits","Which SOC report is intended for public disclosure?",["SOC 1","SOC 2","SOC 3","SOC 2 Type II"],2,"SOC 2 results are confidential; SOC 3 is public."],
+["y6-exercices","During an exercise, who settles rule disputes and ensures production is not disrupted?",["Red team","Blue team","White team","Purple team"],2,"The white team referees."],
+["y7-detection","Which detection method can find previously unknown attacks but generates more false positives?",["Knowledge-based","Behavior-based","Signature-based","Pattern matching"],1,"Anomaly detection compares with a baseline."],
+["y7-detection","In incident response, which item implements a playbook's actions automatically?",["Runbook","Policy","Baseline","SLA"],0,"The runbook automates the playbook."],
+["y7-crime","A written contract says one thing; a party claims a verbal promise changed it. Which rule applies?",["Best evidence rule","Parol evidence rule","Hearsay rule","Exclusionary rule"],1,"The written agreement prevails."],
+["y7-crime","An attack by a former employee seeking revenge is a:",["Thrill attack","Grudge attack","Business attack","Financial attack"],1,"Resentment drives grudge attacks."],
+["y7-reprise","An organization relying on the cloud for DR wants assurance of available resources in a regional disaster. It should negotiate a:",["Mutual assistance agreement","Resource capacity agreement","Cold site lease","Software escrow"],1,"Resource capacity agreements guarantee DR resources."],
+["y8-methodes","Which ACID property ensures that if any part of a transaction fails, the whole transaction is rolled back?",["Atomicity","Consistency","Isolation","Durability"],0,"All or nothing."],
+["y8-methodes","Which development framework applies Agile across many teams using Agile Release Trains?",["Scrum","SAFe","Spiral","Waterfall"],1,"The Scaled Agile Framework."],
+["y8-attaques","Changing an invoice number in a URL reveals another customer's invoice. This is:",["Stored XSS","Insecure direct object reference","SQL injection","CSRF"],1,"The server does not check ownership of the object."],
+["y8-attaques","An attacker makes a web server send requests to internal systems it can reach. This is:",["CSRF","SSRF","Reflected XSS","Directory traversal"],1,"Server-side request forgery."],
+["y8-attaques","Which input validation approach is MOST secure?",["Deny list of known bad input","Allow list of expected input","No validation if a WAF exists","Client-side validation only"],1,"Allow lists accept only what is expected."],
+["y2-classif","Which commercial label is generally the HIGHEST level of classified business data?",["Private","Sensitive","Confidential or proprietary","Public"],2,"Confidential or proprietary data would cause exceptionally grave damage."],
+["y2-classif","Media will be reused in a less secure environment. Which process is required?",["Erasing","Clearing","Purging","Labeling"],2,"Purging supports reuse in a less secure environment."],
+["y2-roles","Who assigns access to users according to the rules set by the data owner?",["Custodian","Administrator","Data processor","Data subject"],1,"The administrator grants access."],
+["y2-baselines","An organization removes wireless controls from a baseline because the system has no wireless capability. This is:",["Tailoring","Scoping","Standards selection","Accreditation"],1,"Selecting applicable controls is scoping."],
+["y2-retention","What is the MAIN risk of keeping data longer than required?",["Higher storage costs only","More data exposed in breaches and legal discovery","Slower backups","Licensing issues"],1,"Unneeded data is a liability."],
+["y3-tcb","Which component implements the reference monitor concept?",["Security perimeter","Security kernel","Trusted path","Capability list"],1,"The security kernel implements the reference monitor."],
+["y3-tcb","Restricting a process to reading and writing only certain memory locations is called:",["Confinement","Assurance","Aggregation","Polyinstantiation"],0,"Confinement limits where a process can read and write."],
+["y3-modeles","Which model uses a directed graph to show how rights pass between subjects and objects?",["Bell-LaPadula","Take-Grant","Clark-Wilson","Biba"],1,"Take-Grant uses take, grant, create and remove rules."],
+["y3-physique","Where is the BEST location for a data center within a multistory building?",["Top floor","Basement","Center of the building","Next to the main entrance"],2,"The core avoids roof leaks, floods and exterior threats."],
+["y4-attaques","Which countermeasure BEST prevents replay attacks?",["Longer passwords","Timestamps and one-time session tokens","Larger bandwidth","Content filtering"],1,"Freshness makes captured traffic useless."],
+["y4-attaques","An attack sends ICMP echo requests to broadcast addresses with the victim's address as source. This is:",["Fraggle","Smurf","Teardrop","Land"],1,"Fraggle is the UDP version."],
+["y5-aaa","Which element MOST depends on unique, authenticated user identities?",["Availability","Accountability","Confidentiality","Scalability"],1,"Without unique identities, actions cannot be tied to people."],
+["y5-modeles","A firewall rule base ends with a rule denying everything not explicitly allowed. This is:",["Explicit allow","Implicit deny","Constrained interface","Least functionality"],1,"Implicit deny is the default rule."],
+["y5-modeles","A table listing, for each subject, the objects it can access is a:",["Access control list","Capability table","Security label","Constrained interface"],1,"Capabilities are subject-focused."],
+["y6-scans","Nmap reports a port as 'closed'. What does this mean?",["A firewall blocks it","It is reachable but no application is listening","An application accepts connections","Nmap cannot determine reachability"],1,"Closed means reachable but nothing listening."],
+["y6-scans","Which scan type sends a SYN and analyzes the reply without completing the handshake?",["TCP connect scan","TCP SYN scan","Xmas scan","ACK scan"],1,"The SYN scan is half-open."],
+["y6-pentest","In NIST SP 800-115, during which phase are vulnerabilities actually exploited?",["Planning","Discovery","Attack","Reporting"],2,"The attack phase exploits weaknesses."],
+["y6-pentest","Fuzzing that builds test input from a model of the program's expected data is:",["Mutation fuzzing","Generational fuzzing","Static analysis","Regression testing"],1,"Generational, or intelligent, fuzzing."],
+["y6-processus","What BEST demonstrates that backups are effective?",["Backup job success logs","Regular successful test restores","The number of backup tapes","The backup software version"],1,"Only a restore proves recoverability."],
+["y7-ops","Two officers must both be present to open the vault. This is:",["Split knowledge","Two-person control","Job rotation","Least privilege"],1,"Acting together is two-person control."],
+["y7-ops","Which agreement documents an intention to cooperate WITHOUT measurable penalties?",["SLA","MOU","ISA","NDA"],1,"A memorandum of understanding."],
+["y7-cloud","A company runs Windows VMs in an IaaS cloud. Who is responsible for patching the OS?",["The cloud provider","The customer","The hardware vendor","Nobody, it is automatic"],1,"IaaS leaves the OS to the customer."],
+["y8-sdlc","In which SDLC step are security controls such as access control and audit trails defined?",["Coding","Control specifications development","Maintenance","System test review"],1,"Controls are specified early."],
+["y8-bdd","Which control prevents two users from updating the same record at the same time?",["Polyinstantiation","Concurrency control (locking)","Cell suppression","Normalization"],1,"Locks enforce concurrency control."],
+["y8-malware","Which virus type changes its code with each infection to evade signatures?",["Multipartite","Polymorphic","Stealth","Macro"],1,"Polymorphic viruses mutate."],
+["d1-ethique","During an engagement, a consultant discovers that the client is secretly selling customer data in breach of the law. The client asks the consultant to stay silent. What should the consultant do FIRST according to the ISC2 Code of Ethics?",["Respect the client's confidentiality, as required by canon 3","Protect society and the public by addressing the illegal activity","Resign quietly without saying anything","Publish the findings on social media"],1,"Canon 1 (protect society) outranks canon 3 (serve principals). The right way is through proper channels, not public exposure.",1],
+["d1-choix","A risk assessment shows that a legacy application has a high risk that cannot be mitigated cost-effectively. The business still needs it for six months. What is the BEST course of action?",["Ignore the risk until the application is replaced","Have the business owner formally accept the risk with compensating controls and a review date","Shut the application down immediately","Transfer the risk to IT by assigning them the problem"],1,"Acceptance by the right owner, documented, time-limited and with compensating controls is the managerial answer.",1],
+["d1-ale","Management must decide on a safeguard. Which information is MOST important for that decision?",["The technical sophistication of the safeguard","The cost of the safeguard compared with the reduction in annualized loss","The vendor's market share","The opinion of the IT team"],1,"Safeguards are justified when their annual cost is lower than the risk they remove.",1],
+["x1-gouvernance","A new CISO finds that security initiatives keep failing because business units ignore them. What should the CISO do FIRST?",["Buy better security tools","Obtain visible support and sponsorship from senior management","Write stricter technical standards","Block noncompliant users"],1,"Security must be driven top-down; without management backing, nothing sticks.",1],
+["d1-tiers","Your company is about to outsource payroll processing. When is the BEST time to define security requirements for the provider?",["After the first audit","Before the contract is signed","After an incident occurs","At the contract renewal"],1,"Requirements and audit rights must be in the contract; afterwards you have little leverage.",1],
+["d2-roles","Who should decide the classification of a new customer database?",["The database administrator","The data owner","The security team","The users of the application"],1,"Classification is the data owner's decision; others implement it.",1],
+["d2-destruction","Hard drives containing highly sensitive research data are being retired and will not be reused. What is the MOST appropriate action?",["Format the drives","Overwrite them once","Physically destroy the drives","Degauss and resell them"],2,"When media will not be reused and the data is highly sensitive, destruction is the most secure option.",1],
+["x2-protection","An organization wants to prevent employees from emailing documents labeled 'Confidential' to personal addresses. Which control is MOST appropriate?",["Full disk encryption","Data loss prevention","Digital rights management only","A web application firewall"],1,"DLP inspects outgoing content and blocks unauthorized transfers.",1],
+["y2-anonymisation","A research partner needs patient data to study trends but must never be able to identify patients, and the hospital never needs to re-identify them. Which technique is BEST?",["Pseudonymization","Tokenization","Anonymization","Encryption"],2,"No need to reverse the process: anonymization removes the GDPR scope if done properly.",1],
+["d2-cadres","An organization adopts a standard but adjusts several control parameters to match its business needs. This is:",["Scoping","Tailoring","Certification","Baselining"],1,"Adapting the standard's controls is tailoring.",1],
+["d3-modeles-integ","A company's main concern is that data entered by untrusted sources might corrupt its financial reports. Which model BEST addresses this concern?",["Bell-LaPadula","Biba","Brewer-Nash","Noninterference"],1,"Biba's no read down keeps low-integrity data out of trusted processes.",1],
+["d3-signature-pki","An employee's private key has been stolen. What should happen FIRST?",["Reissue the certificate with the same key","Revoke the certificate and publish the revocation","Notify the employee's manager","Delete all signed documents"],1,"Revocation stops anyone trusting signatures made with the stolen key.",1],
+["d3-asymetrique","Two offices must agree on a symmetric session key over the Internet without having shared any secret beforehand. Which algorithm is designed for this?",["AES","SHA-256","Diffie-Hellman","HMAC"],2,"Diffie-Hellman is a key agreement protocol.",1],
+["x3-principes","A new system is being designed. When should security requirements be defined to be MOST cost-effective?",["During testing","After deployment","At the start, during requirements and design","During the first audit"],2,"Security built in early costs far less than security added later.",1],
+["d3-incendie","A fire alarm sounds in the data center while an administrator is restoring a critical database. What should the administrator do?",["Finish the restore, then leave","Shut down the servers, then leave","Leave immediately following the evacuation plan","Activate the suppression system manually and stay"],2,"Human safety always comes first.",1],
+["d4-firewalls","An organization must allow only HTTP traffic to its web servers and inspect requests for SQL injection. Which device is MOST appropriate?",["Packet filter","Stateful firewall","Web application firewall","Hub"],2,"Only an application-layer device such as a WAF understands HTTP content.",1],
+["d4-wifi","A company must secure its corporate Wi-Fi so that each user authenticates individually and stolen passwords alone are not enough. Which is BEST?",["WPA2-Personal with a long key","WPA2 or WPA3 Enterprise with EAP-TLS","Hidden SSID with MAC filtering","WEP with 128-bit keys"],1,"802.1X with certificates authenticates each user and device.",1],
+["x4-segmentation","After a breach, investigators find the attacker moved freely between servers in the same data center. Which control would have BEST limited this?",["A stronger perimeter firewall","Micro-segmentation of east-west traffic","More bandwidth","A new antivirus"],1,"Lateral movement is east-west traffic, limited by internal segmentation.",1],
+["y4-email","Customers receive phishing emails that appear to come from your exact domain. What is the BEST long-term fix?",["Train customers to ignore emails","Publish SPF and DKIM and enforce DMARC with a reject policy","Change the domain name","Block all external email"],1,"DMARC with SPF and DKIM lets receivers reject spoofed mail.",1],
+["d4-vpn","A traveling executive needs secure access to internal applications from hotel networks. What is the BEST solution?",["Open RDP to the Internet","A VPN or zero trust access with MFA","Email files to a personal account","Use public Wi-Fi without protection"],1,"Encrypted, strongly authenticated access is required.",1],
+["d5-modeles","A hospital wants permissions to follow job functions so that staff changing jobs automatically get the right access. Which model is BEST?",["DAC","MAC","RBAC","Rule-based"],2,"RBAC ties permissions to roles that follow job functions.",1],
+["d5-centralise","An audit shows many former employees still have active accounts. Which process failure is MOST likely?",["Weak password policy","Missing or ineffective deprovisioning","No MFA","Lack of encryption"],1,"Leavers' accounts must be disabled promptly in the provisioning life cycle.",1],
+["d5-biometrie","A highly secure facility must ensure impostors are never admitted, even at the cost of some inconvenience. How should the biometric system be tuned?",["Lower sensitivity to reduce false rejects","Raise sensitivity to minimize false accepts","Set it exactly at the CER","Disable biometrics"],1,"Minimizing Type II errors (false accepts) is the priority in high-security areas.",1],
+["x5-cycle","An employee moves from finance to marketing. What should happen to the finance access rights?",["Keep them in case she returns","Remove them when the new rights are granted","Remove them at the next annual review","Transfer them to her manager"],1,"Transfers must remove old rights to avoid authorization creep.",1],
+["y5-zerotrust","In a zero trust architecture, which component makes the decision to grant or deny access?",["Policy enforcement point","Policy engine","Firewall","Identity provider"],1,"The policy engine decides; the PEP enforces.",1],
+["d6-pentest-regles","Before a penetration test begins, what is the MOST important document to obtain?",["The tester's resume","Written authorization defining scope and rules of engagement","The network diagram","The previous audit report"],1,"Without written authorization, testing is illegal.",1],
+["d6-evaluations","Management wants to know whether the organization meets PCI DSS requirements. What is the BEST approach?",["Vulnerability scan","Penetration test","Security audit against PCI DSS","Log review"],2,"Compliance with a published standard is verified by an audit.",1],
+["x6-rapports","A penetration test finds a critical vulnerability. The system owner says it cannot be fixed for six months. What should the security manager do?",["Ignore the finding","Document an exception with risk acceptance by the owner and compensating controls","Fix it without approval","Remove it from the report"],1,"Exceptions must be formally accepted and compensated.",1],
+["x6-audits","A cloud provider wants to give customers evidence that its controls operated effectively over the last year. Which report is BEST?",["SOC 1 Type I","SOC 2 Type II","SOC 3 Type I","An internal audit memo"],1,"SOC 2 covers security controls; Type II covers effectiveness over a period.",1],
+["d6-code","A development team wants to find security flaws as early as possible, before the application can even run. Which method is BEST?",["Fuzzing","Static code analysis","Penetration testing","User acceptance testing"],1,"Static analysis works on source code before execution.",1],
+["d7-incident","A security analyst confirms that a server is infected with ransomware that is spreading. What should be done FIRST?",["Pay the ransom","Contain the incident by isolating affected systems","Restore from backup immediately","Inform the press"],1,"Containment stops the spread before eradication and recovery.",1],
+["d7-incident","After an incident is resolved, what activity MOST improves the organization's future response?",["Deleting the logs","A lessons learned review","Firing the responsible employee","Buying a new firewall"],1,"Lessons learned feeds back into preparation.",1],
+["d7-bia","What is the PRIMARY goal of a business impact analysis?",["Identify technical vulnerabilities","Determine the maximum tolerable downtime of critical functions","Select backup software","Train staff"],1,"The BIA establishes MTD and priorities for recovery.",1],
+["d7-sites","An organization's critical system has an MTD of four hours and the budget is limited. Which recovery option is MOST appropriate?",["Cold site","Hot site","Mobile site delivered next week","Reciprocal agreement with a competitor"],1,"Only a hot site meets a four-hour MTD among these options.",1],
+["x7-enquetes","During an investigation, an analyst needs to examine a suspect's hard drive. What is the BEST practice?",["Analyze the original drive directly","Create a verified bit-by-bit image and analyze the copy","Copy only the user's documents","Run antivirus on the drive first"],1,"Work on a hashed forensic image to preserve the original.",1],
+["d7-admin","An employee in accounts payable can both create suppliers and approve payments. Which control is MISSING?",["Job rotation","Separation of duties","Mandatory vacation","Least functionality"],1,"Creating and paying suppliers must be split between people.",1],
+["d8-vulns","A web form passes user input directly into a database query. What is the BEST fix?",["Add a CAPTCHA","Use parameterized queries and validate input","Encrypt the database","Hide the form"],1,"Parameterized queries stop SQL injection at the source.",1],
+["d8-modeles","A project must deliver working software quickly while requirements change often and the customer is closely involved. Which approach fits BEST?",["Waterfall","Agile (for example Scrum)","Cold site planning","Spiral with fixed requirements"],1,"Agile handles changing requirements with frequent delivery.",1],
+["x8-acquisition","Before adopting a SaaS application for HR data, what should the organization do FIRST?",["Migrate all data immediately","Assess the provider's security, contract terms and data location","Ask employees for their opinion","Disable MFA for easier access"],1,"Due diligence before contracting protects the organization.",1],
+["d8-maturite","An organization's software process is documented and standardized across all projects. At which CMM level is it?",["Initial","Repeatable","Defined","Optimizing"],2,"Documented, standardized processes define level 3.",1]
 ];
 
 /* Practice drills: match, sort, order, explain */
@@ -2699,7 +3413,47 @@ const DRILL_SRC = [
 {f:"x8-methodes",type:"sort",title:"Prescriptive or descriptive?",cats:["Prescriptive","Descriptive"],items:[["OWASP SAMM",0],["CMMI",0],["BSIMM",1]]},
 {f:"x8-ecosysteme",type:"match",title:"Match each element with its main risk",pairs:[["C and C++","Buffer overflows"],["Third-party libraries","Inherited vulnerabilities"],["IDE plugins","Malicious extensions"],["CI/CD pipeline","Automated deployment of injected code"],["Code repository","Leaked secrets and unauthorized commits"]]},
 {f:"x8-tests",type:"sort",title:"SAST or DAST?",cats:["SAST","DAST"],items:[["Needs the source code",0],["Finds flaws before the app runs",0],["More false positives",0],["Tests the running application",1],["No source code needed",1],["Behaves like a black-box attacker",1]]},
-{f:"x8-acquisition",type:"match",title:"Match each software source with a key check",pairs:[["COTS","Vendor reputation and certifications"],["Open source","Community activity and license"],["Custom third-party","Security requirements in the contract"],["SaaS","SOC 2 report and shared responsibility"]]}
+{f:"x8-acquisition",type:"match",title:"Match each software source with a key check",pairs:[["COTS","Vendor reputation and certifications"],["Open source","Community activity and license"],["Custom third-party","Security requirements in the contract"],["SaaS","SOC 2 report and shared responsibility"]]},
+{f:"y1-risque",type:"order",title:"Order the risk maturity model levels",items:["Ad hoc","Preliminary","Defined","Integrated","Optimized"]},
+{f:"y1-vie-privee",type:"match",title:"Match each privacy law with its jurisdiction",pairs:[["GDPR","European Union"],["CCPA","California"],["PIPL","China"],["POPIA","South Africa"],["nFADP","Switzerland"]]},
+{f:"y1-ingenierie",type:"match",title:"Match each lure with its principle",pairs:[["Email signed by the CEO","Authority"],["You will lose your bonus if you don't act","Intimidation"],["Everyone in your team already did it","Consensus"],["Only two tickets left","Scarcity"],["Pay today or the service is cut","Urgency"],["Call appears to come from your bank","Familiarity"]]},
+{f:"y1-formation",type:"sort",title:"Awareness, training or education?",cats:["Awareness","Training","Education"],items:[["Poster about locking screens",0],["Phishing alert email to all staff",0],["Teaching admins to harden servers",1],["Help desk course on identity verification",1],["Studying for the CISSP",2],["Master's degree in cybersecurity",2]]},
+{f:"y1-scrm",type:"match",title:"Match each mitigation with what it does",pairs:[["Silicon root of trust","Verifies the boot chain in hardware"],["PUF","Unique fingerprint from chip variations"],["SBOM","Lists all software components"],["Third-party assessment","Checks a supplier's controls"],["Service level requirements","Measurable expectations in the contract"]]},
+{f:"y2-anonymisation",type:"sort",title:"Reversible or not?",cats:["Reversible","Not reversible"],items:[["Pseudonymization",0],["Tokenization",0],["Encryption",0],["Anonymization",1],["Randomized masking",1]]},
+{f:"y3-sase-cycle",type:"order",title:"Order the information system life cycle",items:["Stakeholders' needs and requirements","Requirements analysis","Architectural design","Development and implementation","Integration","Verification and validation","Transition and deployment","Operations and maintenance","Retirement and disposal"]},
+{f:"y3-crypto",type:"match",title:"Match each concept with its description",pairs:[["Qubit","Quantum bit"],["QKD","Shared key created with quantum physics"],["Homomorphic encryption","Computation on encrypted data"],["Key rotation","Regular replacement of keys"],["Blockchain","Tamper-evident distributed ledger"]]},
+{f:"y4-architecture",type:"match",title:"Match each concept with its description",pairs:[["Data plane","Forwards traffic"],["Control plane","Builds forwarding tables"],["Management plane","Configures and monitors the device"],["Out-of-band","Separate network for management"],["Air gap","No connection at all"],["VRF","Several routing tables in one router"]]},
+{f:"y4-edge",type:"match",title:"Match each traffic type with its description",pairs:[["Unicast","One to one"],["Broadcast","One to all on a segment"],["Multicast","One to a group"],["Anycast","One to the nearest of several"]]},
+{f:"y4-performance",type:"match",title:"Match each metric with its definition",pairs:[["Bandwidth","Capacity of the medium"],["Throughput","Data actually delivered"],["Latency","Time to travel from sender to receiver"],["Jitter","Variation in latency"],["Signal-to-noise ratio","Useful signal versus background noise"]]},
+{f:"y4-email",type:"match",title:"Match each email technology with its role",pairs:[["SPF","Servers allowed to send for the domain"],["DKIM","Domain signature on messages"],["DMARC","Policy for failing messages"],["S/MIME","Certificate-based signing and encryption"],["STARTTLS","Upgrades SMTP to TLS"]]},
+{f:"y5-identite",type:"sort",title:"Good or bad practice for service accounts?",cats:["Good practice","Bad practice"],items:[["Least privilege for each service",0],["Automatic password rotation",0],["Regular review of all service accounts",0],["Using the service account to log on interactively",1],["Domain admin rights by default",1],["Password that never expires",1]]},
+{f:"y5-zerotrust",type:"match",title:"Match each zero trust component with its role",pairs:[["Subject","User, service or system requesting access"],["Policy engine","Decides with a trust algorithm"],["Policy administrator","Opens or closes the path, issues tokens"],["Policy enforcement point","Applies the decision in the traffic path"]]},
+{f:"y5-attaques",type:"match",title:"Match each attack with its description",pairs:[["Password spraying","One password, many accounts"],["Credential stuffing","Stolen pairs tried on many sites"],["Birthday attack","Finding hash collisions"],["Mimikatz","Extracts credentials from Windows memory"],["Sniffer attack","Captures cleartext credentials on the network"]]},
+{f:"y6-audits",type:"sort",title:"Internal, external or third-party audit (Sybex and 2024 outline)?",cats:["Internal","External","Third-party"],items:[["Run by the company's own audit team",0],["Big Four firm hired by the company",1],["Independent firm hired by the company for its SOC 2",1],["Regulator sends its auditors",2],["Major customer audits you under its contract",2]]},
+{f:"y6-exercices",type:"match",title:"Match each team with its role",pairs:[["Red team","Attacks"],["Blue team","Defends and monitors"],["White team","Referees and observes"],["Purple team","Shares lessons between attack and defense"]]},
+{f:"y7-detection",type:"sort",title:"Knowledge-based or behavior-based detection?",cats:["Knowledge-based","Behavior-based"],items:[["Matches known signatures",0],["Few false positives",0],["Misses new attacks",0],["Needs a baseline of normal activity",1],["Can detect unknown attacks",1],["Also called heuristic or anomaly detection",1]]},
+{f:"y7-crime",type:"match",title:"Match each evidence type with an example",pairs:[["Real evidence","A seized hard drive"],["Documentary evidence","A firewall log"],["Testimonial evidence","An administrator's statement under oath"],["Demonstrative evidence","A chart explaining the attack timeline"]]},
+{f:"y7-reprise",type:"order",title:"Order DR tests from least to most disruptive (2024 outline)",items:["Read-through or tabletop","Walkthrough","Simulation","Parallel","Full interruption"]},
+{f:"y8-methodes",type:"match",title:"Match each ACID property with its meaning",pairs:[["Atomicity","All or nothing"],["Consistency","Rules respected before and after"],["Isolation","Transactions don't interfere"],["Durability","Committed data is preserved"]]},
+{f:"y8-attaques",type:"match",title:"Match each attack with its description",pairs:[["Blind timing-based SQL injection","Leaks data through response delays"],["Command injection","Runs operating system commands"],["IDOR","Accesses another user's object by its ID"],["Stored XSS","Script saved on the site for all visitors"],["SSRF","Server tricked into internal requests"],["Directory traversal","Escapes the web root with ../"]]},
+{f:"y2-classif",type:"order",title:"Order the commercial labels from highest to lowest",items:["Confidential or proprietary","Private","Sensitive","Public"]},
+{f:"y2-roles",type:"match",title:"Match each role with its responsibility",pairs:[["Data owner","Ultimately accountable, sets classification"],["Asset owner","Owns the processing system"],["Custodian","Day-to-day protection tasks"],["Administrator","Grants access per the owner's rules"],["Data processor","Processes on the controller's behalf"],["Data subject","The person the data is about"]]},
+{f:"y2-baselines",type:"sort",title:"Scoping or tailoring?",cats:["Scoping","Tailoring"],items:[["Removing controls for features the system lacks",0],["Excluding physical controls for a cloud-only app",0],["Raising log retention to meet a law",1],["Adding a compensating control",1],["Changing lockout threshold to fit the business",1]]},
+{f:"y2-retention",type:"explain",title:"Explain it out loud",prompt:"Why is deleting data on schedule part of security, not just housekeeping?",model:"Data kept beyond its required period adds no value but still has to be protected, can be stolen in a breach and can be demanded in a lawsuit. A retention policy keeps what law and business need, destroys the rest on schedule, covers backups and is suspended only for litigation holds."},
+{f:"y3-tcb",type:"match",title:"Match each concept with its definition",pairs:[["TCB","Everything that enforces the security policy"],["Security perimeter","Boundary around the TCB"],["Reference monitor","Concept validating every access"],["Security kernel","Implementation of the reference monitor"],["Trusted path","Secure channel to the TCB"]]},
+{f:"y3-modeles",type:"match",title:"Match each model with its focus",pairs:[["State machine","Secure in every state and transition"],["Information flow","Only authorized flows allowed"],["Noninterference","High actions invisible to low subjects"],["Take-Grant","How rights are passed"],["Brewer-Nash","Conflicts of interest"]]},
+{f:"y3-physique",type:"order",title:"Order the stages of fire",items:["Incipient","Smoke","Flame","Heat"]},
+{f:"y4-attaques",type:"match",title:"Match each attack with its countermeasure",pairs:[["Eavesdropping","Encryption"],["Replay","Timestamps and nonces"],["Modification","Digital signatures and hashing"],["ARP spoofing","Dynamic ARP inspection"],["DNS poisoning","DNSSEC"],["Typosquatting","URL filtering and awareness"]]},
+{f:"y5-aaa",type:"order",title:"Put the AAA elements in order",items:["Identification","Authentication","Authorization","Auditing","Accounting"]},
+{f:"y5-modeles",type:"sort",title:"Object-focused or subject-focused?",cats:["Object-focused","Subject-focused"],items:[["Access control list",0],["Permissions on a file",0],["Capability table",1],["List of everything one user can access",1]]},
+{f:"y6-scans",type:"match",title:"Match each Nmap state with its meaning",pairs:[["Open","An application accepts connections"],["Closed","Reachable, nothing listening"],["Filtered","A firewall prevents a conclusion"],["Unfiltered","Reachable, status unknown"]]},
+{f:"y6-pentest",type:"order",title:"Order the NIST SP 800-115 pentest phases",items:["Planning","Discovery","Attack","Reporting"]},
+{f:"y6-processus",type:"sort",title:"KPI or KRI?",cats:["KPI","KRI"],items:[["Mean time to remediate critical vulnerabilities",0],["Percentage of successful test restores",0],["Number of compromised accounts rising",1],["Repeat audit findings increasing",1],["More users visiting malicious sites",1]]},
+{f:"y7-ops",type:"match",title:"Match each agreement or control with its description",pairs:[["SLA","Measurable service levels with penalties"],["MOU","Intention to cooperate"],["ISA","Security for connecting two organizations' systems"],["Two-person control","Two people act together"],["Split knowledge","Each person holds part of the secret"]]},
+{f:"y7-cloud",type:"sort",title:"Who patches the operating system?",cats:["Provider","Customer"],items:[["SaaS",0],["PaaS",0],["IaaS",1],["On-premises server",1]]},
+{f:"y8-sdlc",type:"order",title:"Order the SDLC steps (Sybex)",items:["Conceptual definition","Functional requirements determination","Control specifications development","Design review","Coding","Code review walk-through","System test review","Maintenance and change management"]},
+{f:"y8-bdd",type:"match",title:"Match each database control with its purpose",pairs:[["Concurrency control","Prevents conflicting updates"],["Cell suppression","Hides fields to prevent inference"],["Noise and perturbation","Adds false data to hinder inference"],["Views","Restrict what each user sees"],["Polyinstantiation","Different data at different levels"]]},
+{f:"y8-malware",type:"match",title:"Match each malware term with its description",pairs:[["MBR virus","Infects the boot record"],["Service injection","Hides in trusted processes"],["Stealth virus","Hides from the OS"],["Remote access Trojan","Gives the attacker remote control"],["Ransomware","Encrypts data for extortion"]]}
 ];
 
 /* ================= SETTINGS ================= */
@@ -2711,7 +3465,7 @@ const INTERVALS = {1:1,2:3,3:7,4:14,5:30};
 const CARDS = [];
 Object.keys(CARD_SRC).forEach(f=>CARD_SRC[f].forEach((c,i)=>CARDS.push({id:f+"-c"+i,f,q:c[0],a:c[1]})));
 const QCM = [];
-{const n={};QCM_SRC.forEach(q=>{n[q[0]]=(n[q[0]]||0)+1;QCM.push({id:q[0]+"-q"+n[q[0]],f:q[0],q:q[1],o:q[2],a:q[3],x:q[4]})})}
+{const n={};QCM_SRC.forEach(q=>{n[q[0]]=(n[q[0]]||0)+1;QCM.push({id:q[0]+"-q"+n[q[0]],f:q[0],q:q[1],o:q[2],a:q[3],x:q[4],h:!!q[5]})})}
 const DRILLS = [];
 {const n={};DRILL_SRC.forEach(d=>{n[d.f]=(n[d.f]||0)+1;DRILLS.push({...d,id:d.f+"-d"+n[d.f]})})}
 
@@ -2790,14 +3544,14 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>setTab(b.datase
 function render(){
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab&&!ses));
   if(ses)return renderSession();
-  ({home:renderHome,lessons:renderLessons,weak:renderWeak,settings:renderSettings})[tab]();
+  ({home:renderHome,lessons:renderLessons,weak:renderWeak,exam:renderExam,settings:renderSettings})[tab]();
 }
 const flaps=n=>String(Math.max(0,n)).padStart(2,"0").split("").map(d=>`<span class="flap">${d}</span>`).join("");
 
 function renderHome(){
   const dleft=daysUntil(TRAINING),due=dueCards().length,nl=nextLesson();
-  const line=nl?`${nl.lvl===2?"Deep dive":"Today's lesson"}: ${esc(nl.t)}`:"All available lessons done: review session.";
-  const baseDone=LESSONS.filter(l=>l.lvl!==2).every(l=>S.read[l.id]);
+  const line=nl?`${nl.lvl===2?"Deep dive (All-in-One)":nl.lvl===3?"Deep dive (Sybex)":"Today's lesson"}: ${esc(nl.t)}`:"All available lessons done: review session.";
+  const baseDone=LESSONS.filter(l=>!l.lvl).every(l=>S.read[l.id]),aioDone=LESSONS.filter(l=>l.lvl===2).every(l=>S.read[l.id]);
   const streak=(S.streak.last===today()||S.streak.last===addDays(today(),-1))?S.streak.count:0;
   app.innerHTML=`
   <div class="board" role="region" aria-label="Countdown">
@@ -2812,11 +3566,11 @@ function renderHome(){
     <div><b>${S.log.length}</b><span class="muted small">sessions done</span></div>
   </div>
   <div class="block"><h2>Your progress</h2>
-  <p class="muted small">${baseDone?"Stage 2: deep dives from the All-in-One, domain by domain.":"Stage 1: a first pass through all eight domains with the Eleventh Hour. Deep dives from the All-in-One unlock in your daily sessions once this pass is done."} Mastery measures your recall cards; the weight is the domain's share of the exam.</p>
+  <p class="muted small">${!baseDone?"Stage 1: a first pass through all eight domains with the Eleventh Hour. The deep dives (All-in-One, then Sybex) follow in your daily sessions once this pass is done.":!aioDone?"Stage 2: first deep dive, from the All-in-One, domain by domain. The Sybex deep dive comes next.":"Stage 3: second deep dive, from the Sybex Official Study Guide and the 2024 exam outline."} Mastery measures your recall cards; the weight is the domain's share of the exam.</p>
   ${DOMAINS.map(d=>{const m=mastery(d.id),ls=LESSONS.filter(l=>l.d===d.id);
     if(m===null)return `<div class="dom soon"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${d.w} %</span></div><div class="small muted">Coming soon</div></div>`;
-    const lb=ls.filter(l=>l.lvl!==2),lx=ls.filter(l=>l.lvl===2),r=lb.filter(l=>S.read[l.id]).length,rx=lx.filter(l=>S.read[l.id]).length;
-    return `<div class="dom"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${d.w} %</span></div><div class="small muted">${r}/${lb.length} lessons, ${rx}/${lx.length} deep dives, mastery ${m} %</div><div class="bar"><i style="width:${m}%"></i></div></div>`}).join("")}
+    const lb=ls.filter(l=>!l.lvl),lx=ls.filter(l=>l.lvl===2),ly=ls.filter(l=>l.lvl===3),r=lb.filter(l=>S.read[l.id]).length,rx=lx.filter(l=>S.read[l.id]).length,ry=ly.filter(l=>S.read[l.id]).length;
+    return `<div class="dom"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${d.w} %</span></div><div class="small muted">${r}/${lb.length} lessons, deep dives ${rx}/${lx.length} AIO and ${ry}/${ly.length} Sybex, mastery ${m} %</div><div class="bar"><i style="width:${m}%"></i></div></div>`}).join("")}
   </div>`;
   document.getElementById("go").onclick=()=>startSession(nl?nl.id:null,false);
 }
@@ -2889,7 +3643,7 @@ function header(){
 }
 function lessonHTML(l){
   return `<div class="fiche">
-  ${l.lvl===2?`<span class="badge">Deep dive, All-in-One</span>`:""}
+  ${l.lvl===2?`<span class="badge">Deep dive 1, All-in-One</span>`:l.lvl===3?`<span class="badge">Deep dive 2, Sybex Official Study Guide</span>`:""}
   <p class="muted small">Domain ${l.d}: ${esc(DOMAINS[l.d-1].name)}</p>
   <h1>${esc(l.t)}</h1>
   <button class="btn listen" id="listen">▶ Listen</button>
@@ -2902,7 +3656,7 @@ function lessonHTML(l){
   <div class="note trap"><b>Exam trap.</b> ${esc(l.trap)}</div>
   <div class="note hook"><b>Memory hook.</b> ${esc(l.mnem)}</div>
   ${l.upd?`<div class="note"><b>Updated since the books.</b> ${esc(l.upd)}</div>`:""}
-  <p class="refs">Book references: ${[l.ref.c&&("Eleventh Hour "+l.ref.c),l.ref.a&&("All-in-One "+l.ref.a),l.ref.o&&("Official Textbook "+l.ref.o)].filter(Boolean).map(esc).join(", ")}.</p>
+  <p class="refs">Book references: ${[l.ref.c&&("Eleventh Hour "+l.ref.c),l.ref.a&&("All-in-One "+l.ref.a),l.ref.s&&("Sybex Official Study Guide "+l.ref.s),l.ref.o&&("Official Textbook "+l.ref.o)].filter(Boolean).map(esc).join(", ")}.</p>
   </div>`;
 }
 function bindListen(l){const b=document.getElementById("listen");if(!b)return;
@@ -3035,7 +3789,7 @@ function renderLessons(){
   app.innerHTML=`<h1>Lessons</h1>
   <div class="tabsdom">${avail.map(d=>`<button data-d="${d}" class="${d===filter?"on":""}">Domain ${d}</button>`).join("")}</div>
   <p class="muted small">${esc(DOMAINS[filter-1].name)}, ${DOMAINS[filter-1].w} % of the exam.</p>
-  ${[[1,"Foundations (Eleventh Hour)"],[2,"Deep dive (All-in-One)"]].map(([lv,lab])=>{const ls=LESSONS.filter(l=>l.d===filter&&(l.lvl===2?2:1)===lv);return ls.length?`<h2 class="grp">${lab}</h2><div class="list">${ls.map(l=>`<button class="item" data-f="${l.id}"><span>${esc(l.t)}</span><span class="chk">${S.read[l.id]?"Learned":""}</span></button>`).join("")}</div>`:""}).join("")}`;
+  ${[[1,"Foundations (Eleventh Hour)"],[2,"Deep dive 1 (All-in-One)"],[3,"Deep dive 2 (Sybex Official Study Guide)"]].map(([lv,lab])=>{const ls=LESSONS.filter(l=>l.d===filter&&(l.lvl||1)===lv);return ls.length?`<h2 class="grp">${lab}</h2><div class="list">${ls.map(l=>`<button class="item" data-f="${l.id}"><span>${esc(l.t)}</span><span class="chk">${S.read[l.id]?"Learned":""}</span></button>`).join("")}</div>`:""}).join("")}`;
   document.querySelectorAll(".tabsdom button").forEach(b=>b.onclick=()=>{filter=+b.dataset.d;render()});
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{openLesson=b.dataset.f;render();window.scrollTo(0,0)});
 }
@@ -3052,6 +3806,85 @@ function renderWeak(){
   document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{tab="lessons";openLesson=b.dataset.l;render();window.scrollTo(0,0)});
 }
 
+
+/* ---------- Mock exam ---------- */
+const EXAMS={full:{n:125,min:180,t:"Full exam",s:"125 questions, 3 hours, like the real CAT exam"},half:{n:50,min:72,t:"Half exam",s:"50 questions, 72 minutes"},mini:{n:25,min:36,t:"Quick exam",s:"25 questions, 36 minutes"},hard:{n:0,min:0,t:"Hard questions",s:"ISC2-style 'best answer' scenarios, all domains"}};
+const qById=id=>QCM.find(q=>q.id===id);
+function buildExam(n,hard){
+  if(hard)return shuffle(QCM.filter(q=>q.h));
+  const quota=DOMAINS.map(d=>Math.round(n*d.w/100));
+  let diff=n-quota.reduce((a,b)=>a+b,0),k=0;
+  while(diff!==0){quota[k%8]+=diff>0?1:-1;diff+=diff>0?-1:1;k++}
+  const out=[],rest=[];
+  DOMAINS.forEach((d,i)=>{const p=shuffle(QCM.filter(q=>lesson(q.f).d===d.id));out.push(...p.slice(0,quota[i]));rest.push(...p.slice(quota[i]))});
+  if(out.length<n)out.push(...shuffle(rest).slice(0,n-out.length));
+  return shuffle(out);
+}
+function startExam(kind){
+  const qs=buildExam(EXAMS[kind].n,kind==="hard");
+  S.cur={kind,ids:qs.map(q=>q.id),ord:qs.map(q=>shuffle(q.o.map((_,i)=>i))),ans:[],i:0,pick:null,start:Date.now(),
+    min:kind==="hard"?Math.round(qs.length*1.44):EXAMS[kind].min};
+  save();render();window.scrollTo(0,0);
+}
+const examLeft=()=>S.cur.min*60000-(Date.now()-S.cur.start);
+function endExam(){
+  const c=S.cur;let ok=0;const by={};
+  c.ids.forEach((id,k)=>{const q=qById(id);if(!q)return;const d=lesson(q.f).d;by[d]=by[d]||[0,0];by[d][1]++;
+    if(k<c.ans.length){const good=c.ans[k]===q.a;if(good){ok++;by[d][0]++}
+      const st=S.qcm[q.id]||{ok:0,miss:0};good?st.ok++:st.miss++;st.last=good;S.qcm[q.id]=st}});
+  const total=c.ids.length;c.done=true;c.res={ok,total,by,pct:Math.round(ok/total*100),min:Math.max(1,Math.round((Date.now()-c.start)/60000))};
+  if(!S.exams)S.exams=[];S.exams.push({d:today(),k:c.kind,ok,total,pct:c.res.pct});
+  bumpStreak();save();render();window.scrollTo(0,0);
+}
+function renderExam(){
+  const c=S.cur,$=id=>document.getElementById(id);
+  if(c&&!c.done){
+    if(examLeft()<=0)return endExam();
+    const q=qById(c.ids[c.i]);
+    app.innerHTML=`<div class="sessionbar"><div class="clock"><span>Question ${c.i+1} of ${c.ids.length}</span><span id="exclk">${Math.ceil(examLeft()/60000)} min left</span></div>
+      <div class="bar"><i style="width:${Math.round(c.i/c.ids.length*100)}%"></i></div></div>
+      <p class="muted small">Domain ${lesson(q.f).d}. No feedback until the end and no going back, as in the real exam. Pick the answer that best protects the organization.</p>
+      <div class="qen">${esc(q.q)}</div>
+      ${c.ord[c.i].map(i=>`<button class="opt ${c.pick===i?"sel":""}" data-x="${i}">${esc(q.o[i])}</button>`).join("")}
+      <button class="btn solid full" id="exnext" ${c.pick===null?"disabled":""}>${c.i+1<c.ids.length?"Confirm and continue":"Confirm and finish"}</button>
+      <p class="block"><button class="link" id="exstop">Stop now and score</button></p>`;
+    document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{c.pick=+b.dataset.x;save();render()});
+    $("exnext").onclick=()=>{if(c.pick===null)return;c.ans.push(c.pick);c.pick=null;c.i++;save();
+      if(c.i>=c.ids.length)endExam();else{render();window.scrollTo(0,0)}};
+    $("exstop").onclick=()=>{if(confirm("Stop the exam? Unanswered questions count as wrong."))endExam()};
+    return;
+  }
+  if(c&&c.done){
+    const r=c.res,pass=r.pct>=70;
+    const missed=c.ids.map((id,k)=>({q:qById(id),a:c.ans[k]})).filter(x=>x.q&&x.a!==x.q.a);
+    app.innerHTML=`<h1>Exam results</h1>
+      <div class="board"><div class="row"><div><div class="dest">${esc(EXAMS[c.kind].t)}</div><div class="dest">${r.ok} correct out of ${r.total}, ${r.min} min</div></div>
+      <div class="flaps">${flaps(Math.min(r.pct,99))}</div></div><div class="sub">${pass?"Above the 70 % mark. Keep this level on every domain.":"Below the 70 % mark. Work on the weakest domains below."}</div></div>
+      <h2>By domain</h2>
+      ${DOMAINS.filter(d=>r.by[d.id]).map(d=>{const [o,t]=r.by[d.id],p=Math.round(o/t*100);
+        return `<div class="dom"><div class="top"><span>D${d.id}: ${esc(d.name)}</span><span>${o}/${t}</span></div><div class="bar"><i style="width:${p}%;background:${p>=70?"var(--ok)":"var(--ko)"}"></i></div></div>`}).join("")}
+      <h2 class="block">Questions to review (${missed.length})</h2>
+      ${missed.map(x=>`<div class="card block"><div class="q">${esc(x.q.q)}</div>
+        <p class="small">${x.a===undefined?"Not answered.":`Your answer: ${esc(x.q.o[x.a])}`}</p>
+        <p class="small"><b>Correct: ${esc(x.q.o[x.q.a])}</b></p><p class="small muted">${esc(x.q.x)}</p>
+        <button class="link" data-l="${x.q.f}">Open the lesson</button></div>`).join("")||"<p>No mistakes. Impressive.</p>"}
+      <button class="btn solid full block" id="exback">Back to the exam menu</button>`;
+    $("exback").onclick=()=>{S.cur=null;save();render();window.scrollTo(0,0)};
+    document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{tab="lessons";openLesson=b.dataset.l;render();window.scrollTo(0,0)});
+    return;
+  }
+  const hist=(S.exams||[]).slice(-10).reverse(),nh=QCM.filter(q=>q.h).length;
+  app.innerHTML=`<h1>Mock exam</h1>
+    <p class="muted">Questions are drawn from all eight domains in proportion to their weight on the exam. You see the results only at the end. Aim for 70 % or more, consistently.</p>
+    <button class="go" data-k="full">${EXAMS.full.t}<span>${EXAMS.full.s}</span></button>
+    <div class="list block">${["half","mini","hard"].map(k=>`<button class="item" data-k="${k}"><span>${EXAMS[k].t}<br><span class="small muted">${k==="hard"?nh+" questions, "+Math.round(nh*1.44)+" minutes. "+EXAMS[k].s:EXAMS[k].s}</span></span><span class="small muted">Start</span></button>`).join("")}</div>
+    <h2 class="block">History</h2>
+    ${hist.length?`<div class="list">${hist.map(h=>`<div class="item"><span>${esc(h.d)}: ${esc(EXAMS[h.k].t)}</span><span class="small ${h.pct>=70?"":"muted"}">${h.ok}/${h.total} (${h.pct} %)</span></div>`).join("")}</div>`
+      :`<div class="card">No exam yet. Start with a quick exam to get a baseline.</div>`}`;
+  document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>startExam(b.dataset.k));
+}
+setInterval(()=>{if(tab==="exam"&&!ses&&S.cur&&!S.cur.done){if(examLeft()<=0)endExam();else{const e=document.getElementById("exclk");if(e)e.textContent=Math.ceil(examLeft()/60000)+" min left"}}},15000);
+
 /* ---------- Settings ---------- */
 function renderSettings(){
   let th="auto";try{th=localStorage.getItem("cissprep.theme")||"auto"}catch(e){}
@@ -3066,7 +3899,7 @@ function renderSettings(){
   <button class="btn full" id="doimp" style="margin-top:8px">Restore this backup</button>
   <h2 class="block">Start over</h2>
   <button class="btn full danger" id="reset">Erase all my progress</button>
-  <p class="muted small block">Content: ${LESSONS.length} lessons, ${CARDS.length} cards, ${DRILLS.length} exercises, ${QCM.length} exam questions. All eight domains: Eleventh Hour foundations plus All-in-One deep dives.</p>`;
+  <p class="muted small block">Content: ${LESSONS.length} lessons, ${CARDS.length} cards, ${DRILLS.length} exercises, ${QCM.length} exam questions. All eight domains: Eleventh Hour foundations plus deep dives from the All-in-One and the Sybex Official Study Guide.</p>`;
   document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{try{localStorage.setItem("cissprep.theme",b.dataset.t)}catch(e){}applyTheme();render()});
   document.getElementById("copy").onclick=()=>{const t=document.getElementById("exp");t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand("copy")}};
   document.getElementById("doimp").onclick=()=>{try{const d=JSON.parse(document.getElementById("imp").value);if(!d.cards)throw 0;S={...blank(),...d};save();setTab("home")}catch(e){alert("This backup cannot be read. Make sure you copied all of the text.")}};
